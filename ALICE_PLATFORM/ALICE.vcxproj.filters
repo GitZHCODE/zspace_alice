@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="src\userSrc\sketch_zSpace_Slime.cpp">
+      <Filter>sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\Rainflow_Update.cpp">
+      <Filter>sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\scalarGraphs.cpp">
+      <Filter>sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zSpace_proceduralBuildings.cpp">
+      <Filter>sketches</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\alice\MODEL.h">
+      <Filter>MVC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alice\Controller.h">
+      <Filter>MVC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alice\utilities.h">
+      <Filter>MVC</Filter>
+    </ClInclude>
+    <ClInclude Include="src\alice\object.h">
+      <Filter>MVC</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="MVC">
+      <UniqueIdentifier>{363452be-02d7-4398-854d-90ea253cf8b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sketches">
+      <UniqueIdentifier>{4f63c95e-fc4a-4d9a-a768-3ceaeac8cedc}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

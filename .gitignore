@@ -1,0 +1,6 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/ALICE_PLATFORM/.vs/ALICE/v15/Browse.VC.db
+/ALICE_PLATFORM/.vs/ALICE/v15/Browse.VC.opendb
