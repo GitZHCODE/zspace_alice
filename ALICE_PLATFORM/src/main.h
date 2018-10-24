@@ -347,8 +347,8 @@ void drawCallBack()
 			SCENE.draw();
 			CONTROLLERS.update(SCENE); // !!!! temp
 			CONTROLLERS.draw(SCENE);
-			//S.draw();
-			//B.draw();
+			S.draw();
+			B.draw();
 		//////////////////////////////////////////////////////////////////////////
 
 		if (saveF)
@@ -390,7 +390,6 @@ void keyPressCallBack(unsigned char k, int xm, int ym)
 		if( saveF ) cout << " printing screen " << endl ;
 		else cout << " NOT printing screen " << endl ;
 	}
-
 	if (k == 'E')
 	{
 		FILE *fp;
@@ -484,7 +483,7 @@ int main(int argc,char** argv)
 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
 	glutInitWindowSize(winW,winH);
 	glutInitWindowPosition(200,100);
-	glutCreateWindow("Soft-Rigid-Block Equilibrium");
+	glutCreateWindow("Procedural Building");
 
 	// register event methods ;
 	glutDisplayFunc(drawCallBack); // register a drawing code 

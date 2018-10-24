@@ -1,20 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="src\userSrc\sketch_zSpace_Slime.cpp">
-      <Filter>sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\Rainflow_Update.cpp">
-      <Filter>sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\scalarGraphs.cpp">
-      <Filter>sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\sketch_zSpace_proceduralBuildings.cpp">
-      <Filter>sketches</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\alice\MODEL.h">
       <Filter>MVC</Filter>
     </ClInclude>
@@ -27,13 +13,16 @@
     <ClInclude Include="src\alice\object.h">
       <Filter>MVC</Filter>
     </ClInclude>
+    <ClInclude Include="src\userSrc\ProceduralBuilding\zProceduralBuilding.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MVC">
       <UniqueIdentifier>{363452be-02d7-4398-854d-90ea253cf8b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="sketches">
-      <UniqueIdentifier>{4f63c95e-fc4a-4d9a-a768-3ceaeac8cedc}</UniqueIdentifier>
-    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="\\zaha-hadid.com\Data\Projects\1453_CODE\1453___research\res_federico\Research\Workshops\BNCA\Alice\sketch_zSpace_Robot_Basic.cpp" />
+    <ClCompile Include="src\userSrc\ProceduralBuilding\zProceduralBuilding.cpp" />
+    <ClCompile Include="src\userSrc\ProceduralBuilding\sketch_empty.cpp" />
   </ItemGroup>
 </Project>

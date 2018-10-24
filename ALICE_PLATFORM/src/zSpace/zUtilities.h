@@ -225,6 +225,7 @@ namespace zSpace
 
 	zSPACE_API zVector rotateAboutAxis(zVector inVec, zVector axisVec, double angle = 0);
 
+
 	// NUMBER UTILITIES
 
 	/*! \brief This method returns a random number in the input domain.

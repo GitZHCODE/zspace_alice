@@ -27,16 +27,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\userSrc\Rainflow_Update.cpp" />
-    <ClCompile Include="src\userSrc\scalarGraphs.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zSpace_proceduralBuildings.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zSpace_Slime.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="src\alice\Controller.h" />
     <ClInclude Include="src\alice\MODEL.h" />
     <ClInclude Include="src\alice\object.h" />
     <ClInclude Include="src\alice\utilities.h" />
+    <ClInclude Include="src\userSrc\ProceduralBuilding\zProceduralBuilding.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\userSrc\ProceduralBuilding\sketch_empty.cpp" />
+    <ClCompile Include="src\userSrc\ProceduralBuilding\zProceduralBuilding.cpp" />
+    <ClCompile Include="\\zaha-hadid.com\Data\Projects\1453_CODE\1453___research\res_federico\Research\Workshops\BNCA\Alice\sketch_zSpace_Robot_Basic.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{523591A1-85D6-4C6F-9283-4989B0011977}</ProjectGuid>

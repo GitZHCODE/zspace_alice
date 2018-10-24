@@ -45,7 +45,16 @@ namespace zSpace
 	*	\param	[in]	HE_Datastructure	- input datastructure (zGraph or zMesh).
 	*/
 	template<class T>
-	void assignScalarsAsEdgeDistance(zMesh &fieldMesh, T &HE_DataStructure, double a, double b, vector<double> &edgeWeights,  vector<double> &scalars);
+	void assignScalarsAsEdgeDistance(zMesh &fieldMesh, T &HE_DataStructure, double a, double b, vector<double> &scalars);
+
+	/*! \brief This method creates a edge distance Field from the input HE data-structure.
+	*
+	*	\tparam			T					- Type to work with zGraph & zMesh
+	*	\param	[in]	HE_Datastructure	- input datastructure (zGraph or zMesh).
+	*/
+	template<class T>
+	void assignScalarsAsHalfEdgeDistance(zMesh &fieldMesh, T &HE_DataStructure, bool flip, double a, double b,  vector<double> &scalars);
+
 
 	/*! \brief This method creates a union of the fields at the input buffers and stores them in the result buffer.
 	*
@@ -91,16 +100,16 @@ namespace zSpace
 
 	zSPACE_API zMesh isolineMesh(zMesh &inMesh, double threshold = 0.5, bool invertMesh = false);
 
-	zSPACE_API zMesh isobandMesh(zMesh &inMesh, double thresholdLow = 0.2, double thresholdHigh = 0.5, bool invertMesh = false);
+	zSPACE_API zMesh isobandMesh(zMesh &inMesh,  double thresholdLow = 0.2, double thresholdHigh = 0.5, bool invertMesh = false);
 
-
+	
 	zSPACE_API int marchingSquares_Isoline_getCase(bool vertexBinary[4]);
 
 	zSPACE_API int marchingSquares_Isoband_getCase(int vertexTernary[4]);
 
-	zSPACE_API void marchingSquares_Isoline_computePoly(int& faceId, zMesh &inMesh, vector<zVector> &positions, vector<int> &polyConnects, vector<int> &polyCounts, zAttributeUnorderedMap <string, int> &positionVertex, double &threshold, bool invertMesh);
+	zSPACE_API void marchingSquares_Isoline_computePoly(int& faceId, zMesh &inMesh,  vector<zVector> &positions, vector<int> &polyConnects, vector<int> &polyCounts, zAttributeUnorderedMap <string, int> &positionVertex, double &threshold, bool invertMesh);
 
-	zSPACE_API void marchingSquares_Isoband_computePoly(int& faceId, zMesh &inMesh, vector<zVector> &positions, vector<int> &polyConnects, vector<int> &polyCounts, zAttributeUnorderedMap <string, int> &positionVertex, double &thresholdLow, double &thresholdHigh);
+	zSPACE_API void marchingSquares_Isoband_computePoly(int& faceId, zMesh &inMesh,  vector<zVector> &positions, vector<int> &polyConnects, vector<int> &polyCounts, zAttributeUnorderedMap <string, int> &positionVertex, double &thresholdLow, double &thresholdHigh);
 
 	zSPACE_API zVector getContourPosition(double &threshold, zVector& vertex_lower, zVector& vertex_higher, double& scalar_lower, double& scalar_higher);
 
@@ -113,6 +122,8 @@ namespace zSpace
 
 	zSPACE_API zMesh extrudeMeshUp(zMesh &m,  float extrudeThickness , bool thicknessTris = false);
 
+	zSPACE_API void offsetMeshFace(zMesh &m, int faceIndex, double offset, vector<zVector>& offsetPositions);
+
 	zSPACE_API void transformMesh(zMesh &m, Matrix4f& Transform);
 
 	zSPACE_API void setVertexColor(zMesh &m, zColor col , bool setFaceColor = false);
@@ -122,6 +133,8 @@ namespace zSpace
 	zSPACE_API void setFaceColor(zMesh &m, zColor col, bool setVertexColor = false);
 
 	zSPACE_API void setFaceColors(zMesh &m, vector<zColor>& col, bool setVertexColor = false);
+
+	
 }
 
 
@@ -192,14 +205,11 @@ void zSpace::assignScalarsAsVertexDistance(zMesh &fieldMesh, T & HE_DataStructur
 
 
 template<class T>
-void zSpace::assignScalarsAsEdgeDistance(zMesh & fieldMesh, T & HE_DataStructure, double a, double b, vector<double> &edgeWeights, vector<double>& scalars)
+void zSpace::assignScalarsAsEdgeDistance(zMesh & fieldMesh, T & HE_DataStructure, double a, double b, vector<double>& scalars)
 {
 	vector<double> out;
 
 	// update values from edge distance
-
-	//printf("\n HE_DataStructure.numEdges() : %i ", HE_DataStructure.numEdges());
-
 	for (int i = 0; i < fieldMesh.vertexPositions.size(); i++)
 	{
 		double d = 0.0;
@@ -223,9 +233,8 @@ void zSpace::assignScalarsAsEdgeDistance(zMesh & fieldMesh, T & HE_DataStructure
 
 			if (r < tempDist)
 			{
-				double weightB = (edgeWeights.size() == HE_DataStructure.numEdges()) ? edgeWeights[j] *b : 1.0 * b;
-					
-				d = F_of_r(r, a, weightB);
+				
+				d = F_of_r(r, a, b);
 				
 				//printf("\n F_of_r:  %1.4f ", F_of_r(r, a, b));
 
@@ -250,4 +259,87 @@ void zSpace::assignScalarsAsEdgeDistance(zMesh & fieldMesh, T & HE_DataStructure
 	scalars = out;
 }
 
+
+
+template<class T>
+void zSpace::assignScalarsAsHalfEdgeDistance(zMesh & fieldMesh, T & HE_DataStructure, bool flip, double a, double b, vector<double>& scalars)
+{
+	vector<double> out;
+
+	// update values from edge distance
+
+	//printf("\n HE_DataStructure.numEdges() : %i ", HE_DataStructure.numEdges());
+
+	for (int i = 0; i < fieldMesh.vertexPositions.size(); i++)
+	{
+		double d = 0.0;
+		double tempDist = 10000;
+
+		for (int j = 0; j < HE_DataStructure.numEdges(); j++ )
+		{
+
+			
+				int e0 = HE_DataStructure.edges[j].getVertex()->getVertexId();
+				int e1 = HE_DataStructure.edges[j].getSym()->getVertex()->getVertexId();
+
+
+
+				zVector closestPt;
+
+				double r = minDist_Edge_Point_2D(fieldMesh.vertexPositions[i], HE_DataStructure.vertexPositions[e0], HE_DataStructure.vertexPositions[e1], closestPt);
+
+				if (r < tempDist)
+				{
+
+					//double weightB = (edgeWeights.size() == HE_DataStructure.numEdges()) ? edgeWeights[j] * b : 1.0 * b;
+
+					d= F_of_r(r, a, b);
+
+
+					tempDist = r;
+				}
+			
+
+		}
+		
+		out.push_back(d);
+		//printf("\n scalars[buffer][i]:  %1.4f ", scalars[buffer][i]);
+	}
+
+
+
+	double dMin, dMax;
+	getMinMaxOfScalars(out, dMin, dMax);
+
+	for (int i = 0; i < out.size(); i++)out[i] = dMax - out[i];
+
+	normaliseScalars(out);
+
+
+	/*if (flip)
+	{
+		for (int j = 0; j < HE_DataStructure.numEdges(); j += 2)
+		{
+			int e0 = HE_DataStructure.edges[j].getVertex()->getVertexId();
+			int e1 = HE_DataStructure.edges[j].getSym()->getVertex()->getVertexId();
+
+
+			zPlane edgePlane;
+
+			edgePlane.X = (HE_DataStructure.vertexPositions[e0] - HE_DataStructure.vertexPositions[e1]);
+			edgePlane.X.normalize();
+
+			edgePlane.Y = zVector(0, 0, 1);
+
+			edgePlane.Z = edgePlane.X ^ edgePlane.Y;
+			edgePlane.Z.normalize();
+
+			edgePlane.O = HE_DataStructure.vertexPositions[e1];
+
+			clipwithPlane(fieldMesh, out, edgePlane);
+		}
+	}*/
+
+	scalars = out;
+}
 
