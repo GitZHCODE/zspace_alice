@@ -17,6 +17,7 @@ namespace zSpace
 	{
 		zMesh floor_slab;		
 		zMesh floor_soffit;
+		zMesh floor_balcony;
 		
 		zMesh glass;
 		zMesh balustrade;
@@ -34,9 +35,6 @@ namespace zSpace
 		void translatePositions(zMesh &m , zVector& trans);
 		
 		void transformFloor(Matrix4f& trans);
-
-
-
 	};
 	
 	class zSPACE_API zProceduralBuilding
@@ -45,10 +43,24 @@ namespace zSpace
 		//----  ATTRIBUTES
 		zMesh plot;
 		zMesh buildingOutline;
+
+		zGraph slabGraph; 
+		zGraph terraceGraph;
+		zGraph balconyGraph;
+		zGraph bridgeGraph;
 		
 		zScalarField2D field;
 		zMesh fieldMesh;
 
+		double maxHeight;
+		double floorWidth;
+		double floorHeight;
+		double slabDepth;
+		double terraceWidth;
+		double balconyWidth;
+		double bridgeWidth;
+
+		
 		vector<zMesh> slabs2D;	
 		vector<zProceduralFloor> floors;
 
@@ -85,11 +97,17 @@ namespace zSpace
 		*/
 		void setBuildingOutline(double plotOffset);
 
-		void generateDistanceFieldfromBuilding( double& floorWidth, vector<double>& scalars);
+		
+		void generateDistanceFieldfromBuilding(double& floorWidth, double& balconyWidth, double& terraceWidth, double& offsetweight, vector<vector<double>>& scalars);
+		void generateDistanceField_Slab( double& floorWidth, double& offsetweight,  vector<double>& scalars);
+		void generateDistanceField_Balcony(double& balconyWidth, double& offsetweight, int splitSteps, int numVerts_Terrace, int numVerts_Gap, vector<double>& scalars);
+		void generateDistanceField_Terrace(double& terraceWidth, double& offsetweight, vector<double>& scalars);
 
-		void generateFloors_GFA(double& requiredGFA, double& maxHeight, double& floorWidth, double& floorHeight, double& slabDepth, double& terraceWidth, double& balconyWidth, bool triangulate = false);
+		void generateEdgeDistanceField(zGraph& inGraph, double& width, vector<vector<double>>& scalars);
 
-		void addFloor(double& maxHeight, double& floorWidth, double& floorHeight, double& slabDepth, double& terraceWidth, double& balconyWidth,  bool triangulate = false);
+		void generateFloors_GFA(vector<vector<double>>& scalars, double& offsetweight, double& requiredGFA, double& maxHeight, double& floorWidth, double& floorHeight, double& slabDepth, double& terraceWidth, double& balconyWidth, bool triangulate = false);
+
+		void addFloor( bool floor_fieldBooleans[4],  vector<vector<double>>& scalars, bool triangulate = false);
 
 		void editFloor(int floorNum, double& maxHeight, double& floorWidth, double& floorHeight, double& slabDepth, double& terraceWidth, double& balconyWidth, bool triangulate = false);
 
@@ -99,6 +117,20 @@ namespace zSpace
 
 		double getGFA(zMesh &slab);
 
+	
+		zMesh getOffsetMesh(zMesh& inMesh, double offset);
+
+		zGraph getSlabGraph(zMesh& inMesh,  double& offsetweight, int splitSteps);
+
+		zGraph getBalconyGraph(zMesh& inMesh,  double& offsetweight, int splitSteps, int numVerts_Balcony, int numVerts_Gap, int startId = 0);
+		
+		zGraph getTerraceGraph(zMesh& inMesh,  double& offsetweight, int splitSteps, int numVerts_Terrace, int numVerts_Gap, int startId = 0);
+
+		zGraph getBridgeGraph(zMesh& inMesh, double& offsetweight, int splitSteps, int numBridges, int numVerts_Gap, int startId = 0);
+
+		zGraph getMeshFaceEdgesasGraph(zMesh& inMesh, int faceIndex);
+
+		  
 	};
 }
 

@@ -58,17 +58,17 @@ namespace zSpace
 
 	/*! \brief This method creates a union of the fields at the input buffers and stores them in the result buffer.
 	*
-	*	\param	[in]	buffer0				- value of buffer.
-	*	\param	[in]	buffer1				- value of buffer.
-	*	\param	[in]	res_buffer			- value of buffer to store the results.
+	*	\param	[in]	scalars0				- value of buffer.
+	*	\param	[in]	scalars1				- value of buffer.
+	*	\param	[in]	scalarsResult			- value of buffer to store the results.
 	*/
 	zSPACE_API void union_fields(vector<double>& scalars0, vector<double>& scalars1, vector<double>& scalarsResult);
 
 	/*! \brief This method creates a difference of the fields at the input buffers and stores them in the result buffer.
 	*
-	*	\param	[in]	buffer0				- value of buffer.
-	*	\param	[in]	buffer1				- value of buffer.
-	*	\param	[in]	res_buffer			- value of buffer to store the results.
+	*	\param	[in]	scalars0				- value of buffer.
+	*	\param	[in]	scalars1				- value of buffer.
+	*	\param	[in]	scalarsResult			- value of buffer to store the results.
 	*/
 	zSPACE_API void difference_fields(vector<double>& scalars0, vector<double>& scalars1, vector<double>& scalarsResult);
 
@@ -123,6 +123,8 @@ namespace zSpace
 	zSPACE_API zMesh extrudeMeshUp(zMesh &m,  float extrudeThickness , bool thicknessTris = false);
 
 	zSPACE_API void offsetMeshFace(zMesh &m, int faceIndex, double offset, vector<zVector>& offsetPositions);
+
+	zSPACE_API void offsetMeshFace_Variable(zMesh &m, int faceIndex, vector<double>& offsets, zVector& faceCenter, zVector& faceNormal,  vector<zVector>& intersectionPositions);
 
 	zSPACE_API void transformMesh(zMesh &m, Matrix4f& Transform);
 

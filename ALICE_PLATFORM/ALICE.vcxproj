@@ -31,18 +31,16 @@
     <ClInclude Include="src\alice\MODEL.h" />
     <ClInclude Include="src\alice\object.h" />
     <ClInclude Include="src\alice\utilities.h" />
-    <ClInclude Include="src\userSrc\ProceduralBuilding\zProceduralBuilding.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\userSrc\ProceduralBuilding\sketch_empty.cpp" />
-    <ClCompile Include="src\userSrc\ProceduralBuilding\zProceduralBuilding.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zSpace_empty.cpp" />
     <ClCompile Include="\\zaha-hadid.com\Data\Projects\1453_CODE\1453___research\res_federico\Research\Workshops\BNCA\Alice\sketch_zSpace_Robot_Basic.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{523591A1-85D6-4C6F-9283-4989B0011977}</ProjectGuid>
     <RootNamespace>freeglutx64_template</RootNamespace>
     <ProjectName>ALICE_PLATFORM</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">

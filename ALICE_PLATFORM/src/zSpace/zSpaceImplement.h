@@ -2,6 +2,7 @@
 
 #include <zSpace/zGraph.h>
 #include <zSpace/zMesh.h>
+#include <zSpace/zMeshUtilities.h>
 
 #include <zSpace/zClustering.h>
 #include <zSpace/zVault.h>

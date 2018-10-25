@@ -70,6 +70,7 @@ namespace zSpace
 
 
 		double distDifference;
+		bool targetReached;
 
 	};
 
@@ -260,7 +261,7 @@ namespace zSpace
 		*
 		*	\param [in]		infilename			- input file name including the directory path.
 		*/
-		void importJSON_robotJointMeshes(string directoryName = "C:/Users/vishu.b/Desktop");
+		void importOBJ_robotJointMeshes(string directoryName = "C:/Users/vishu.b/Desktop");
 
 		/*! \brief This method update the positions of the joint zMesh based on joint positions.
 		*
