@@ -226,20 +226,20 @@ void drawSphere(vec &a, vec rotate, vec scale = vec(1, 1, 1), float r = 1.0, flo
 
 }
 
-struct int2
+struct _int2
 {
 	int n;
 	int l;
 
-	int2() {};
-	int2(int _l, int _n)
+	_int2() {};
+	_int2(int _l, int _n)
 	{
 		
 		l = _l;
 		n = _n;
 
 	}
-	bool operator == (int2 &other)
+	bool operator == (_int2 &other)
 	{
 		return (other.n == n && other.l == l);
 	}

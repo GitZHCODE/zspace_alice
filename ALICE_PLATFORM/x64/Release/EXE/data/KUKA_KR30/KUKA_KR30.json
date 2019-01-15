@@ -39,5 +39,5 @@
 }
 
 { 
-"jointRotations_offset": [0.0,0.0,90.0,0.0,0.0,0.0]
+"jointRotations_offset": [0.0,-90.0,90.0,0.0,0.0,-180.0]
 }

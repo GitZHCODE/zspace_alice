@@ -1573,8 +1573,8 @@ namespace Alice
 	int gridSz = 20 ;
 	vec4 clearColor ;
 
-	int winW = 800;
-	int winH = 600 ;
+	int winW = 3840;
+	int winH = 2160 ;
 	long frame = 0;
 
 	GLfloat proj_matrix[16] , mv_matrix[16] ;

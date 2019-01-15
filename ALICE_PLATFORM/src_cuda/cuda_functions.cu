@@ -1,3 +1,5 @@
+#pragma once
+
 #ifndef MIN
 #define MIN(x,y) (((x) < (y)) ? (x) : (y))
 #endif
@@ -6,13 +8,9 @@
 #define MAX(x,y) (((x) > (y)) ? (x) : (y))
 #endif
 
-#include "channel_descriptor.h"
-#include "cuda_runtime_api.h"
-#include "driver_functions.h"
-//#include "host_defines.h"
-//#include "vector_functions.h"
-//#include "vector_types.h"
-#include <cuda_runtime.h>
+#include "cuda_runtime.h"
+#include "device_launch_parameters.h"
+
 #include <stdio.h>
 #include <iostream>
 

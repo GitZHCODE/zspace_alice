@@ -20,7 +20,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="\\zaha-hadid.com\Data\Projects\1453_CODE\1453___research\res_federico\Research\Workshops\BNCA\Alice\sketch_zSpace_Robot_Basic.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zSpace_empty.cpp" />
+    <ClCompile Include="\\zaha-hadid.com\Data\Projects\1453_CODE\1453___research\res_federico\Research\C++\Caustics\sketch_Caustics.cpp" />
   </ItemGroup>
 </Project>

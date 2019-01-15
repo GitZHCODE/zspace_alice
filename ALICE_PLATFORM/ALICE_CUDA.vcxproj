@@ -13,6 +13,16 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="src_cuda\kernel_test.cu" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src_cuda\kernel_test.cuh" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src_cuda\Main.cpp" />
+    <ClCompile Include="src_cuda\sketch_Empty.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}</ProjectGuid>
     <RootNamespace>simplePrintf_vs2017</RootNamespace>
@@ -24,7 +34,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
-    <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <UseDebugLibraries>true</UseDebugLibraries>
@@ -34,7 +44,7 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(CUDAPropsPath)\CUDA 9.0.props" />
+    <Import Project="$(CUDAPropsPath)\CUDA 10.0.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets">
     <Import Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" />
@@ -54,12 +64,12 @@
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <PreprocessorDefinitions>WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories);%(AdditionalIncludeDirectories)./;$(CudaToolkitDir)/include;src_cuda/common/inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>src/zSpace;src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories);%(AdditionalIncludeDirectories)./;$(CudaToolkitDir)/include;src_cuda/common/inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;src/freeglut;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;zSpace.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>src/zSpace;src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;src/freeglut;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
     </Link>
     <CudaCompile>
@@ -97,14 +107,8 @@
       <TargetMachinePlatform>64</TargetMachinePlatform>
     </CudaCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <CudaCompile Include="src_cuda\cuda_functions.cu" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src_cuda\cuda_sketch.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(CUDAPropsPath)\CUDA 9.0.targets" />
+    <Import Project="$(CUDAPropsPath)\CUDA 10.0.targets" />
   </ImportGroup>
 </Project>
