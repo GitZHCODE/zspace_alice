@@ -4,50 +4,30 @@
 #include "ALICE_DLL.h"
 using namespace Alice;
 
-#include "AL_gl2psUtils.h" // vector screen capture 
-
-#include "ALICE_ROBOT_DLL.h" // robot kinematics
-using namespace ROBOTICS;
+//#include "AL_gl2psUtils.h" // vector screen capture 
+//#include "ALICE_ROBOT_DLL.h" // robot kinematics
+//using namespace ROBOTICS;
 
 #include "CONTROLLER.h" // keyboard and mouse tracker
 #include "MODEL.h"// picking and selection
-
 #include "utilities.h"
 
 // ----------------------------------------------------------------------------- CUDA INCLUDES & DECLARATIONS
 
 #ifdef _CUDA_
 
+#include "channel_descriptor.h"
+#include "cuda_runtime_api.h"
+#include "vector_types.h"	
+#include "vector_functions.h"
+#include <cuda_gl_interop.h>
 
-
-//#include "windows.h" 
-////IMP !!! have to include this before cuda_gl_interop.h .. strange errors otherwise
-//
-//namespace cud
-//{
-//
-////#include "channel_descriptor.h"
-//#include "cuda_runtime_api.h"
-//#include "vector_types.h"	
-//#include "vector_functions.h"
-//#include <cuda_gl_interop.h>
-//
-//}
-#include "cuda_functions.h"
-#define GL_GLEXT_PROTOTYPES
-
-float	pos[MAX_DEVICE_ARRAY_SIZE][4];
-float	col[MAX_DEVICE_ARRAY_SIZE][4];
-
-struct cud::cudaGraphicsResource* posVbo_res;
-struct cud::cudaGraphicsResource* colVbo_res;
 
 #endif // _CUDA
 
 float  					gTotalTimeElapsed = 0;
 int 					gTotalFrames = 0;
 GLuint 					gTimer;
-
 
 
 void init_timer()
@@ -88,22 +68,17 @@ void displayFPS(float timeElapsed)
 
 #ifdef _CUDA_
 
+char *ref_file = NULL;
 
 //------------------------------------------------------------------------------- CUDA 
 
-bool vboInited = false;
-bool glewInited = false;
 bool cudaInited = false;
-bool CUDA_INITED = false;
-
-GLuint posVbo;
-GLuint colVbo;
 
 static void checkCUDAError(const char *msg)
 {
-	cud::cudaError_t err = cud::cudaGetLastError();
-	if (cud::cudaSuccess != err) {
-		fprintf(stderr, "Cuda error: %s: %s.\n", msg, cud::cudaGetErrorString(err));
+	cudaError_t err = cudaGetLastError();
+	if (cudaSuccess != err) {
+		fprintf(stderr, "Cuda error: %s: %s.\n", msg, cudaGetErrorString(err));
 		exit(EXIT_FAILURE);
 	}
 }
@@ -116,13 +91,23 @@ inline int _ConvertSMVer2Cores(int major, int minor)
 	} sSMtoCores;
 
 	sSMtoCores nGpuArchCoresPerSM[] =
-	{ { 0x10,  8 }, // Tesla Generation (SM 1.0) G80 class
-	{ 0x11,  8 }, // Tesla Generation (SM 1.1) G8x class
-	{ 0x12,  8 }, // Tesla Generation (SM 1.2) G9x class
-	{ 0x13,  8 }, // Tesla Generation (SM 1.3) GT200 class
-	{ 0x20, 32 }, // Fermi Generation (SM 2.0) GF100 class
-	{ 0x21, 48 }, // Fermi Generation (SM 2.1) GF10x class
-	{ -1, -1 }
+	{
+		{ 0x20, 32 }, // Fermi Generation (SM 2.0) GF100 class
+		{ 0x21, 48 }, // Fermi Generation (SM 2.1) GF10x class
+		{ 0x30, 192}, // Kepler Generation (SM 3.0) GK10x class
+		{ 0x32, 192}, // Kepler Generation (SM 3.2) GK10x class
+		{ 0x35, 192}, // Kepler Generation (SM 3.5) GK11x class
+		{ 0x37, 192}, // Kepler Generation (SM 3.7) GK21x class
+		{ 0x50, 128}, // Maxwell Generation (SM 5.0) GM10x class
+		{ 0x52, 128}, // Maxwell Generation (SM 5.2) GM20x class
+		{ 0x53, 128}, // Maxwell Generation (SM 5.3) GM20x class
+		{ 0x60, 64 }, // Pascal Generation (SM 6.0) GP100 class
+		{ 0x61, 128}, // Pascal Generation (SM 6.1) GP10x class
+		{ 0x62, 128}, // Pascal Generation (SM 6.2) GP10x class
+		{ 0x70,  64},
+		{ 0x72,  64},
+		{ 0x75,  64},
+		{   -1, -1 }
 	};
 
 	int index = 0;
@@ -140,13 +125,13 @@ int gpuGetMaxGflopsDeviceId()
 	int current_device = 0, sm_per_multiproc = 0;
 	int max_compute_perf = 0, max_perf_device = 0;
 	int device_count = 0, best_SM_arch = 0;
-	cud::cudaDeviceProp deviceProp;
-	cud::cudaGetDeviceCount(&device_count);
+	cudaDeviceProp deviceProp;
+	cudaGetDeviceCount(&device_count);
 
 	// Find the best major SM Architecture GPU device
 	while (current_device < device_count)
 	{
-		cud::cudaGetDeviceProperties(&deviceProp, current_device);
+		cudaGetDeviceProperties(&deviceProp, current_device);
 		if (deviceProp.major > 0 && deviceProp.major < 9999)
 		{
 			best_SM_arch = MAX(best_SM_arch, deviceProp.major);
@@ -158,7 +143,7 @@ int gpuGetMaxGflopsDeviceId()
 	current_device = 0;
 	while (current_device < device_count)
 	{
-		cud::cudaGetDeviceProperties(&deviceProp, current_device);
+		cudaGetDeviceProperties(&deviceProp, current_device);
 		if (deviceProp.major == 9999 && deviceProp.minor == 9999)
 		{
 			sm_per_multiproc = 1;
@@ -192,81 +177,18 @@ int gpuGetMaxGflopsDeviceId()
 	}
 	return max_perf_device;
 }
-void initialiseHostDrawArrays()
+int InitialiseCUDADevice()
 {
-	for (int i = 0; i < MAX_DEVICE_ARRAY_SIZE; i++)
-	{
-		pos[i][0] = col[i][0] = 0; //ofRandom(0, 1);
-		pos[i][1] = col[i][1] = 0; //ofRandom(0, 1);
-		pos[i][2] = col[i][2] = 0; //ofRandom(0, 1);
-		pos[i][3] = col[i][3] = 1;
-	}
 
-}
-void generateHostDataAndCopyToDevice()
-{
-	CUDA_STRUCT *h_dataArray;
-	h_dataArray = new CUDA_STRUCT[MAX_DEVICE_ARRAY_SIZE];
-
-	for (int i = 0; i < MAX_DEVICE_ARRAY_SIZE; i++)
-	{
-		h_dataArray[i].m = 1.0;
-		h_dataArray[i].p = cud::make_float3(ofRandom(-100, 100), ofRandom(-100, 100), ofRandom(-100, 100));
-	}
-
-	copyData_HostToDevice(h_dataArray, MAX_DEVICE_ARRAY_SIZE);
-	delete h_dataArray;
-}
-int InitialiseCUDADeviceAndBuffers()
-{
-	int maxNumParticles = MAX_POINTS;
-
-	printf(" -------------------------------------- CUDA INIT ///////// --------------------------------------   \n");
-
+	printf("\n CUDA INITIALIZED ");
 
 	if (!cudaInited)
 	{
 		cudaInited = true;
-		cud::cudaGLSetGLDevice(gpuGetMaxGflopsDeviceId());
+		cudaGLSetGLDevice(gpuGetMaxGflopsDeviceId());
 		checkCUDAError(" cudaGLSetGLDevice ");
-		printf("device set : %i \n", gpuGetMaxGflopsDeviceId());
+		printf("\n device set : %i", gpuGetMaxGflopsDeviceId());
 	}
-
-
-	if (!vboInited)
-	{
-
-		glewInit();
-		if (glewIsSupported("GL_VERSION_2_0"))
-			printf("Ready for OpenGL 2.0\n");
-		else
-		{
-			printf("OpenGL 2.0 not supported\n");
-			exit(1);
-		}
-
-
-		glGenBuffersARB(1, &posVbo);
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, posVbo);
-		//glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(cud::float4)*maxNumParticles, 0, GL_DYNAMIC_DRAW_ARB);
-		glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(pos), col, GL_STREAM_DRAW_ARB);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		glGenBuffersARB(1, &colVbo);
-		glBindBufferARB(GL_ARRAY_BUFFER_ARB, colVbo);
-		glBufferDataARB(GL_ARRAY_BUFFER_ARB, sizeof(col), col, GL_STREAM_DRAW_ARB);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-		cud::cudaGraphicsGLRegisterBuffer(&posVbo_res, posVbo, cud::cudaGraphicsMapFlagsWriteDiscard);
-		cud::cudaGraphicsGLRegisterBuffer(&colVbo_res, colVbo, cud::cudaGraphicsMapFlagsWriteDiscard);
-
-		// --------------- 
-
-
-		vboInited = true;
-
-	}
-
 
 	return 1;
 }
@@ -277,7 +199,7 @@ int InitialiseCUDADeviceAndBuffers()
 
 void setup();
 void update(int value);
-void draw() ;
+void draw();
 void keyPress(unsigned char k, int xm, int ym);
 void mousePress(int b,int s,int x,int y) ;
 void mouseMotion( int x, int y ) ;
@@ -293,6 +215,8 @@ CONTROLLER CONTROLLERS;
 MODEL SCENE;
 ButtonGroup B;
 SliderGroup S;
+
+
 //------------------------------------------------------------------------------- CALLBACKS
 
 void updateCallBack( int value )
@@ -318,53 +242,49 @@ void updateCallBack( int value )
 
 void drawCallBack()
 {
-	
 	long start = GetTickCount();
 	
-		float currentColor[4];
-		glGetFloatv(GL_CLEAR,currentColor) ;
+	float currentColor[4];
+	glGetFloatv(GL_CLEAR, currentColor);
 
-		glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); // background(255) ;
-		if(saveF)
-		{
-			buffer.Init( screenW , screenH ); // specify dimensions of the image file, max : 4000 x 4000 pixels ;	
-			buffer.beginRecord(0.95); // record to offScreen texture , additionally specify a background clr, default is black
-	
-		}
-		/*else
-			glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0 );*/
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	if (saveF)
+	{
+		buffer.Init(screenW, screenH); // specify dimensions of the image file, max : 4000 x 4000 pixels ;	
+		buffer.beginRecord(0.95); // record to offScreen texture , additionally specify a background clr, default is black
+	}
+
+	else
+		glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0 );
+
 		//////////////////////////////////////////////////////////////////////////
 
-			if(updateCam)updateCamera() ;
-			glColor3f(1,1,1);
-			//drawGrid( gridSz );	
+	if (updateCam)updateCamera();
 
-			draw() ;
+	glColor3f(1, 1, 1);
 
+	draw();
 
+	SCENE.draw();
+	CONTROLLERS.update(SCENE); // !!!! temp
+	CONTROLLERS.draw(SCENE);
+	S.draw();
+	B.draw();
 
-//			SCENE.performWindowSelection(CONTROLLERS);
-			SCENE.draw();
-			CONTROLLERS.update(SCENE); // !!!! temp
-			CONTROLLERS.draw(SCENE);
-			S.draw();
-			B.draw();
-		//////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
 
-		if (saveF)
-		{
-			buffer.endRecord(true, numFrames); // stop recording, additionally specify save texture to disk, and a max number of frames to save ;
-			buffer.drawTexture(proj_matrix, mv_matrix); // NOT WORKING draw recorded off-screen texture as image unto current screen
-		}
+	if (saveF)
+	{
+		buffer.endRecord(true, numFrames); // stop recording, additionally specify save texture to disk, and a max number of frames to save ;
+		buffer.drawTexture(proj_matrix, mv_matrix); // NOT WORKING draw recorded off-screen texture as image unto current screen
+	}
 
-		glutSwapBuffers();
+	glutSwapBuffers();
 	
 	long end = GetTickCount();
 	elapsedTime = end - startTime ;
 	long time = (end-start) ;
-	if( time < 10 )time = 10 ;
-
-	
+	if( time < 10 )time = 10 ;	
 }
 
 void keyPressCallBack(unsigned char k, int xm, int ym)
@@ -390,11 +310,11 @@ void keyPressCallBack(unsigned char k, int xm, int ym)
 		if( saveF ) cout << " printing screen " << endl ;
 		else cout << " NOT printing screen " << endl ;
 	}
+
 	if (k == 'E')
 	{
 		FILE *fp;
 		int state = GL2PS_OVERFLOW, buffsize = 0;
-
 
 		string file = "";
 		file += "data/out";
@@ -417,9 +337,6 @@ void keyPressCallBack(unsigned char k, int xm, int ym)
 
 			draw();
 
-
-
-//			SCENE.performWindowSelection(CONTROLLERS);
 			SCENE.draw();
 			CONTROLLERS.draw(SCENE);
 
@@ -430,22 +347,17 @@ void keyPressCallBack(unsigned char k, int xm, int ym)
 		printf("Done!\n");
 
 		counter++;
-
 	}
-	
-	
+		
 	keyPress(k,xm,ym);
 }
 
 void mousePressCallBack(int b,int s,int x,int y)
 {
-
 	 CONTROLLERS.mousePress(b, s, x, y);
-
 
 	 if (GLUT_LEFT_BUTTON == b && GLUT_DOWN == s)
 	 {
-
 		 B.performSelection(x, y);
 		 S.performSelection(x, y, HUDSelectOn);
 	 }
@@ -473,17 +385,13 @@ void motionCallBack( int x, int y )
 
 int main(int argc,char** argv)
 {
-	
-
 	if (argc > 1)inFile = argv[1];
-
-	
 
 	glutInit(&argc,argv);
 	glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA|GLUT_DEPTH);
 	glutInitWindowSize(winW,winH);
-	glutInitWindowPosition(200,100);
-	glutCreateWindow("Procedural Building");
+	glutInitWindowPosition(0,0);
+	glutCreateWindow("ZHCODE - Alice_CUDA");
 
 	// register event methods ;
 	glutDisplayFunc(drawCallBack); // register a drawing code 
@@ -498,10 +406,7 @@ int main(int argc,char** argv)
 		glewInit();
 
 		if (glewIsSupported("GL_VERSION_2_0"))
-		{
 			printf("Ready for OpenGL 2.0\n");
-			//glewInited = true ;
-		}
 		else 
 			printf("OpenGL 2.0 not supported\n");
 	}
@@ -509,18 +414,6 @@ int main(int argc,char** argv)
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_POINT_SMOOTH);
 
-	
-#ifdef _CUDA_
-
-	// ---------------------------- CUDA INIT
-
-	initialiseHostDrawArrays();
-	InitialiseCUDADeviceAndBuffers();
-	initialiseDeviceMemory();
-	generateHostDataAndCopyToDevice();
-	CUDA_INITED = true;
-
-#endif // _CUDA_
 	{
 		B = *new ButtonGroup(vec(50, 450, 0));
 		setup();
@@ -529,27 +422,6 @@ int main(int argc,char** argv)
 	init_timer();
 	glutMainLoop();
 
-	
 }
 
-//#include <qapplication.h>
-//
-//int main(int argc, char** argv)
-//{
-//	// Read command lines arguments.
-//	QApplication application(argc, argv);
-//
-//	// Instantiate the viewer.
-//	Viewer viewer;
-//
-//	viewer.setWindowTitle("simpleViewer");
-//
-//	// Make the viewer window visible on screen.
-//	viewer.show();
-//
-//	// Run main loop.
-//	return application.exec();
-//}
-//
-//
 #endif

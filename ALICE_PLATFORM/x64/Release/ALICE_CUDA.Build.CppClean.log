@@ -1,13 +1,11 @@
 c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\alice_cuda.lib
 c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\alice_cuda.exp
 c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\vc141.pdb
-c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\sketch_empty.obj
-c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\main.obj
+c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\sketch_cuda.obj
 c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\exe\alice_cuda.exe
-c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\kernel_test.cu.cache
-c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\kernel_test.cu.obj
-c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\sketch_caustics.obj
-c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\vc141.idb
+c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\alice_cuda.pdb
+c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\cuda_kernels.cu.cache
+c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\cuda_kernels.cu.obj
 c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\alice_cuda.tlog\alice_cuda.write.1u.tlog
 c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\alice_cuda.tlog\cl.command.1.tlog
 c:\users\federico.b\documents\source\repos\alice2018_zspace\alice_platform\x64\release\alice_cuda.tlog\cl.read.1.tlog

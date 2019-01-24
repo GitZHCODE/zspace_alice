@@ -14,14 +14,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <CudaCompile Include="src_cuda\kernel_test.cu" />
+    <ClCompile Include="src_cuda\CUDA\Sketch_CUDA.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src_cuda\kernel_test.cuh" />
+    <CudaCompile Include="src_cuda\CUDA\CUDA_Kernels.cu" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src_cuda\Main.cpp" />
-    <ClCompile Include="src_cuda\sketch_Empty.cpp" />
+    <ClInclude Include="src_cuda\CUDA\CUDA_Funcs.cuh" />
+    <ClInclude Include="src_cuda\CUDA\CUDA_Funcs.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}</ProjectGuid>
@@ -64,12 +64,12 @@
     <ClCompile>
       <WarningLevel>TurnOffAllWarnings</WarningLevel>
       <PreprocessorDefinitions>WIN32;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>src/zSpace;src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories);%(AdditionalIncludeDirectories)./;$(CudaToolkitDir)/include;src_cuda/common/inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:/Users/Federico.B/Documents/Source/Repos/zSpace_v001/;src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories);%(AdditionalIncludeDirectories)./;$(CudaToolkitDir)/include;src_cuda/common/inc</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;zSpace.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>src/zSpace;src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;src/freeglut;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>cudart_static.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Federico.B\Documents\Source\Repos\zSpace_v001\depends\SQLITE\lib;src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;src/freeglut;%(AdditionalLibraryDirectories);$(CudaToolkitLibDir)</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
     </Link>
     <CudaCompile>
@@ -99,7 +99,7 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <CudaCompile>
