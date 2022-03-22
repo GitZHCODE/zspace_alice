@@ -18,8 +18,22 @@
     <Filter Include="MVC">
       <UniqueIdentifier>{363452be-02d7-4398-854d-90ea253cf8b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sketches">
+      <UniqueIdentifier>{42e9bdea-f426-477b-9649-d4fdaa1c0525}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="\\zaha-hadid.com\Data\Projects\1453_CODE\1453___research\res_federico\Research\C++\Caustics\sketch_Caustics.cpp" />
+    <ClCompile Include="src\userSrc\sketch_empty.cpp">
+      <Filter>Sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp">
+      <Filter>Sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_Robot.cpp">
+      <Filter>Sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_Planarise.cpp">
+      <Filter>Sketches</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

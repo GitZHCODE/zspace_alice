@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros">
+    <zspacecoreDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_core</zspacecoreDir>
+    <zspacetoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_toolsets</zspacetoolsetDir>
+    <rhinoDir>C:\Program Files\Rhino 7 SDK</rhinoDir>
+    <mayaDir>C:\Program Files\Autodesk\Maya2018</mayaDir>
+    <zspacemodulesDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_modules</zspacemodulesDir>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <BuildMacro Include="zspacecoreDir">
+      <Value>$(zspacecoreDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="zspacetoolsetDir">
+      <Value>$(zspacetoolsetDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="rhinoDir">
+      <Value>$(rhinoDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="mayaDir">
+      <Value>$(mayaDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="zspacemodulesDir">
+      <Value>$(zspacemodulesDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

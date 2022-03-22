@@ -1,16 +1,16 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
 #include "main.h"
 
-#include <headers/include/zCore.h>
-#include <headers/include/zGeometry.h>
-#include <headers/include/zDisplay.h>
-#include <headers/include/zData.h>
-#include <headers/include/zIO.h> 
-
-using namespace zSpace;
+//#include <headers/include/zCore.h>
+//#include <headers/include/zGeometry.h>
+//#include <headers/include/zDisplay.h>
+//#include <headers/include/zData.h>
+//#include <headers/include/zIO.h> 
+//
+//using namespace zSpace;
 
 ////////////////////////////////////////////////////////////////////////// General
 

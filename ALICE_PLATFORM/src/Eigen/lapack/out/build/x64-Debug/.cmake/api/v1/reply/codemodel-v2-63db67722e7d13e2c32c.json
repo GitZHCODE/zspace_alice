@@ -1,0 +1,74 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"hasInstallRule" : true,
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "EigenLapack",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "eigen_lapack::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-eigen_lapack-Debug-8b9ebe5ff740433b6a36.json",
+					"name" : "eigen_lapack",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "eigen_lapack_static::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-eigen_lapack_static-Debug-1490ec26d339f02cc821.json",
+					"name" : "eigen_lapack_static",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "lapack::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-lapack-Debug-2cf50e9a72504edda7ce.json",
+					"name" : "lapack",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/vishu.b/source/repos/GitZHCODE/Alice2018_zSpace/ALICE_PLATFORM/src/Eigen/lapack/out/build/x64-Debug",
+		"source" : "C:/Users/vishu.b/source/repos/GitZHCODE/Alice2018_zSpace/ALICE_PLATFORM/src/Eigen/lapack"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 2
+	}
+}
