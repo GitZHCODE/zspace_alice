@@ -62,7 +62,7 @@ void setup()
 
 	////////////////////////////////////////////////////////////////////////// ZSPACE
 	// initialise model
-	model = zModel(2000000);
+	model = zModel(200000);
 
 	// zROBOT import
 

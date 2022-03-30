@@ -34,7 +34,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\userSrc\sketch_empty.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspaceModule_Planarise.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspaceModule_KMeans.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Planarise.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Robot.cpp" />
   </ItemGroup>
@@ -220,7 +222,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(zspacecoreDir)/cpp/depends;$(zspacecoreDir)/cpp;$(zspacetoolsetDir)/cpp;src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(zspacecoreDir)/cpp/depends;$(zspacecoreDir)/cpp;$(zspacemodulesDir)/cpp;$(zspacetoolsetDir)/cpp;src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <FloatingPointModel>Fast</FloatingPointModel>

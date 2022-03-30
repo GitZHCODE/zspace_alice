@@ -93,6 +93,7 @@ zUtilsCore core;
 
 		 }
 
+		
 		 // edge length constraint
 		 if (minEdgeConstraint)
 		 {
