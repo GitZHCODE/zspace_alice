@@ -35,5 +35,11 @@
     <ClCompile Include="src\userSrc\sketch_zspace_Planarise.cpp">
       <Filter>Sketches</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_usd.cpp">
+      <Filter>Sketches</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

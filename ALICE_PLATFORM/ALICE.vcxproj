@@ -37,6 +37,10 @@
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Planarise.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Robot.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspace_usd.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{523591A1-85D6-4C6F-9283-4989B0011977}</ProjectGuid>
@@ -220,7 +224,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(zspacecoreDir)/cpp/depends;$(zspacecoreDir)/cpp;$(zspacetoolsetDir)/cpp;src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\cesar.fragachan\AppData\Local\Programs\Python\Python310\include;C:\Users\cesar.fragachan\Documents\Repos\USD\include\;$(zspacecoreDir)/cpp/depends;$(zspacecoreDir)/cpp;$(zspacetoolsetDir)/cpp;src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -235,9 +239,9 @@
       <PreprocessorDefinitions>ZSPACE_DYNAMIC_LIBRARY;;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>zSpace_Core.lib;zSpace_Interface.lib; zSpace_Toolsets.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zSpace_Core.lib;zSpace_Interface.lib;zSpace_Toolsets.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;python310.lib;boost_python310-vc142-mt-x64-1_70.lib;usd_sdf.lib;usd_usdGeom.lib;usd_usd.lib;usd_tf.lib;usd_gf.lib;usd_vt.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;src/freeglut;$(OutDir)EXE\; $(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib; $(zspacecoreDir)/cpp/Depends/freeglut;;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Users\cesar.fragachan\Documents\Repos\USD\lib;C:\Users\cesar.fragachan\AppData\Local\Programs\Python\Python310\libs;src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;src/freeglut;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;C:\Program Files (x86)\Intel\oneAPI\tbb\2021.5.0\lib\intel64\vc14_uwd;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -284,5 +288,20 @@
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="packages\intelopenmp.redist.win.2022.0.0.3663\build\native\intelopenmp.redist.win.targets" Condition="Exists('packages\intelopenmp.redist.win.2022.0.0.3663\build\native\intelopenmp.redist.win.targets')" />
+    <Import Project="packages\intelopenmp.devel.win.2022.0.0.3663\build\native\intelopenmp.devel.win.targets" Condition="Exists('packages\intelopenmp.devel.win.2022.0.0.3663\build\native\intelopenmp.devel.win.targets')" />
+    <Import Project="packages\inteltbb.redist.win.2021.1.1.133\build\native\nuget\inteltbb.redist.win.targets" Condition="Exists('packages\inteltbb.redist.win.2021.1.1.133\build\native\nuget\inteltbb.redist.win.targets')" />
+    <Import Project="packages\inteltbb.devel.win.2021.1.1.133\build\native\nuget\inteltbb.devel.win.targets" Condition="Exists('packages\inteltbb.devel.win.2021.1.1.133\build\native\nuget\inteltbb.devel.win.targets')" />
+    <Import Project="packages\intelmkl.static.win-x64.2022.0.3.171\build\native\intelmkl.static.win-x64.targets" Condition="Exists('packages\intelmkl.static.win-x64.2022.0.3.171\build\native\intelmkl.static.win-x64.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('packages\intelopenmp.redist.win.2022.0.0.3663\build\native\intelopenmp.redist.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\intelopenmp.redist.win.2022.0.0.3663\build\native\intelopenmp.redist.win.targets'))" />
+    <Error Condition="!Exists('packages\intelopenmp.devel.win.2022.0.0.3663\build\native\intelopenmp.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\intelopenmp.devel.win.2022.0.0.3663\build\native\intelopenmp.devel.win.targets'))" />
+    <Error Condition="!Exists('packages\inteltbb.redist.win.2021.1.1.133\build\native\nuget\inteltbb.redist.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\inteltbb.redist.win.2021.1.1.133\build\native\nuget\inteltbb.redist.win.targets'))" />
+    <Error Condition="!Exists('packages\inteltbb.devel.win.2021.1.1.133\build\native\nuget\inteltbb.devel.win.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\inteltbb.devel.win.2021.1.1.133\build\native\nuget\inteltbb.devel.win.targets'))" />
+    <Error Condition="!Exists('packages\intelmkl.static.win-x64.2022.0.3.171\build\native\intelmkl.static.win-x64.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\intelmkl.static.win-x64.2022.0.3.171\build\native\intelmkl.static.win-x64.targets'))" />
+  </Target>
 </Project>
