@@ -8,7 +8,7 @@
 #include <headers/zApp/include/zFnSets.h>
 #include <headers/zApp/include/zViewer.h>
 
-#include <headers/zSpace_Planarise.h>
+#include <headers/zModules/projectionsolver/zSpace_PlanariseSolver.h>
 
 using namespace zSpace;
 using namespace std;
@@ -26,7 +26,7 @@ bool display = true;
 
 double background = 0.35;
 
-float planarityTol = 0.00001;
+float planarityTol = 0.000001;
 
 double dT = 1.0;
 zIntergrationType intType = zRK4;
@@ -51,7 +51,6 @@ zObjParticleArray o_Particles;
 
 /*!< container of particle function set  */
 vector<zFnParticle> fnParticles;
-
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 
@@ -99,17 +98,16 @@ void setup()
 		for (int j = 0; j < fTriangles[i].size(); j++)
 		{
 			triConnects.push_back(fTriangles[i][j]);
-			printf("\n %i ", fTriangles[i][j]);
+			//printf("\n %i ", fTriangles[i][j]);
 		}
 	}
 
 	out_vPositions.assign(fnMesh.numVertices() * 3, double());
 	out_deviations.assign(fnMesh.numPolygons(), double());
 
-	planarise(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0], fnMesh.numVertices(), fnMesh.numPolygons(), true, 1, 0.001, &out_vPositions[0], &out_deviations[0]);
+	planariseSolver_initialise(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0],fnMesh.numVertices(), fnMesh.numPolygons(), true, &out_deviations[0]);
 
-	//quadPlanarise(&vPositions[0], &pCounts[0], &pConnects[0], fnMesh.numVertices(), fnMesh.numPolygons(), true, 1, planarityTol, &out_vPositions[0], &out_deviations[0]);
-
+	
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -119,6 +117,7 @@ void setup()
 	// set display element booleans
 	o_Mesh.setDisplayElements(false, true, false);
 	o_inMesh.setDisplayElements(false, true, false);
+
 
 	////////////////////////////////////////////////////////////////////////// Sliders
 
@@ -144,7 +143,9 @@ void update(int value)
 	{	
 		zFnMesh fnMesh(o_Mesh);
 
-		planarise(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0], fnMesh.numVertices(), fnMesh.numPolygons(), false, 1, 0.001, &out_vPositions[0], &out_deviations[0]);
+		planariseSolver_compute(1, planarityTol, &out_vPositions[0], &out_deviations[0]);
+
+		//planarise(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0], fnMesh.numVertices(), fnMesh.numPolygons(), false, 1, 0.001, &out_vPositions[0], &out_deviations[0]);
 
 		//quadPlanarise(&vPositions[0], &pCounts[0], &pConnects[0], fnMesh.numVertices(), fnMesh.numPolygons(), false, 1, planarityTol, &out_vPositions[0], &out_deviations[0]);
 
@@ -158,10 +159,10 @@ void update(int value)
 			positions[i].z = out_vPositions[i * 3 + 2];
 		}
 
-		/*for (int i = 0; i < fnMesh.numPolygons(); i++)
+		for (int i = 0; i < fnMesh.numPolygons(); i++)
 		{
-			printf("\n %1.2f ", out_deviations[i]);
-		}*/
+			printf("\n %1.7f ", out_deviations[i]);
+		}
 		
 		compute = !compute;
 	}
@@ -181,6 +182,7 @@ void draw()
 		model.draw();
 		
 	}
+	
 
 	//////////////////////////////////////////////////////////
 

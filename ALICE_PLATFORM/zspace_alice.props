@@ -2,11 +2,19 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <zspacecoreDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_core</zspacecoreDir>
-    <zspacetoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_toolsets</zspacetoolsetDir>
+    <zspacecoreDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_core\cpp</zspacecoreDir>
+    <zspacetoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_toolsets\cpp</zspacetoolsetDir>
     <rhinoDir>C:\Program Files\Rhino 7 SDK</rhinoDir>
     <mayaDir>C:\Program Files\Autodesk\Maya2018</mayaDir>
-    <zspacemodulesDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_modules</zspacemodulesDir>
+    <zspacemodulesDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_modules\cpp</zspacemodulesDir>
+    <usdIncludeDir>src\zspace\depends\USD\headers</usdIncludeDir>
+    <usdLibDir>src\zspace\depends\USD\lib</usdLibDir>
+    <zspaceLibDir>src\zspace\lib</zspaceLibDir>
+    <zspaceIncludeDir>src\zspace</zspaceIncludeDir>
+    <iglIncludeDir>src\zspace\depends\igl\headers</iglIncludeDir>
+    <iglBuildDir>src\zspace\depends\igl\build</iglBuildDir>
+    <pythonLibDir>src\zspace\depends\Python\lib</pythonLibDir>
+    <pythonIncludeDir>src\zspace\depends\Python\include</pythonIncludeDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -29,6 +37,38 @@
     </BuildMacro>
     <BuildMacro Include="zspacemodulesDir">
       <Value>$(zspacemodulesDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="usdIncludeDir">
+      <Value>$(usdIncludeDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="usdLibDir">
+      <Value>$(usdLibDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="zspaceLibDir">
+      <Value>$(zspaceLibDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="zspaceIncludeDir">
+      <Value>$(zspaceIncludeDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="iglIncludeDir">
+      <Value>$(iglIncludeDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="iglBuildDir">
+      <Value>$(iglBuildDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="pythonLibDir">
+      <Value>$(pythonLibDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="pythonIncludeDir">
+      <Value>$(pythonIncludeDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

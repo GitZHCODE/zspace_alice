@@ -47,5 +47,14 @@
     <ClCompile Include="src\userSrc\sketch_zspace_Robot.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_USD_Base.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_toStad.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspaceModule_CurvatureDirections.cpp">
+      <Filter>Sketches\zspace_module_sketches</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

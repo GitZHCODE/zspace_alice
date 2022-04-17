@@ -8,12 +8,16 @@
 #include <headers/zApp/include/zFnSets.h>
 #include <headers/zApp/include/zViewer.h>
 
+//#include <headers/zApp/include/zTsStatics.h>
 
 using namespace zSpace;
 using namespace std;
 /*!<Objects*/
 
 zUtilsCore core;
+
+zTransform transform;
+
 
 ////////////////////////////////////////////////////////////////////////// CUSTOM METHODS 
  bool planariseMesh(zObjMesh &o_inMesh, zObjParticleArray &o_inparticles, vector<zFnParticle> &fn_inParticles, zDomainFloat& deviation, float dT, zIntergrationType type, float tolerance, int numIterations, bool printInfo, bool minEdgeConstraint, float minEdgeLen)
@@ -45,11 +49,19 @@ zUtilsCore core;
 		 }
 
 		 // Fix some vertices if needed
-		 //for (zItMeshVertex v(o_inMesh); !v.end(); v++)
-		 //{
-			// //if (v.onBoundary()) fn_inParticles[v.getId()].setFixed(true);
-			// if (v.checkValency(2)) fn_inParticles[v.getId()].setFixed(true);
-		 //}
+		 for (zItMeshVertex v(o_inMesh); !v.end(); v++)
+		 {
+			 //if (v.onBoundary()) fn_inParticles[v.getId()].setFixed(true);
+			 //if (v.checkValency(2)) fn_inParticles[v.getId()].setFixed(true);
+		 }
+
+		 //zIntArray free = {1,2,3,4,5,6,7,19,20,21,22,23,24,25};
+		/* for (int i = 0; i < free.size(); i++)
+		 {
+			 fn_inParticles[free[i]].setFixed(false);
+		 }*/
+
+		 //printf("\n %i ", fn_inParticles.size());
 	 }
 
 	 // update
@@ -161,6 +173,8 @@ zUtilsCore core;
 		 if (fVolumes[i] < tolerance) f.setColor(colDomain.min);
 		 else f.setColor(colDomain.max);
 
+		 printf("\n %1.7f ", fVolumes[i]);
+
 	 }
 
 	 if (printInfo) printf("\n planarity tolerance : %1.7f minDeviation : %1.7f , maxDeviation: %1.7f ", tolerance, deviation.min, deviation.max);
@@ -184,7 +198,7 @@ bool display = true;
 
 double background = 0.35;
 
-float planarityTol = 0.001;
+float planarityTol = 0.0001;
 
 double dT = 1.0;
 zIntergrationType intType = zRK4;
@@ -222,7 +236,8 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh(o_Mesh);
-	fnMesh.from("data/testPlanarise.obj", zOBJ);
+	fnMesh.from("data/distort_cube.obj", zOBJ);
+
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -256,14 +271,20 @@ void update(int value)
 		zDomainFloat deviation;
 		bool out = planariseMesh(o_Mesh, o_Particles, fnParticles, deviation, dT, intType, planarityTol, 1, true, false,3.0);
 		
-		compute = !out;
+		/*if (out)
+		{
+			zFnMesh fnMesh(o_Mesh);
+			fnMesh.to("data/outMesh.obj", zOBJ);
+		}*/
+
+		compute = !compute;
 	}
 }
 
 void draw()
 {
 	backGround(background);
-	drawGrid(50);
+	//drawGrid(50);
 
 	S.draw();
 	B.draw();

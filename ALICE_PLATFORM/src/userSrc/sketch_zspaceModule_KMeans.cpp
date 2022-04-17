@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -8,7 +8,8 @@
 #include <headers/zApp/include/zFnSets.h>
 #include <headers/zApp/include/zViewer.h>
 
-#include<headers/zSpace_kMeans.h>
+#include<headers/zModules/data/zSpace_kMeans.h>
+
 
 
 using namespace zSpace;
