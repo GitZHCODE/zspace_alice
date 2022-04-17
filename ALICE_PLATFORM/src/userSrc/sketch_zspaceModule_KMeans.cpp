@@ -1,4 +1,4 @@
-//#define _MAIN_
+#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -8,11 +8,45 @@
 #include <headers/zApp/include/zFnSets.h>
 #include <headers/zApp/include/zViewer.h>
 
-#include<headers/zApp/include/zTsStatics.h>
+#include<headers/zSpace_kMeans.h>
 
 
 using namespace zSpace;
 using namespace std;
+
+/*!<Objects*/
+zUtilsCore core;
+
+////////////////////////////////////////////////////////////////////////// CUSTOM METHODS 
+bool readData(string path,int numDataPoints, int data_stride, zDoubleArray & outDataPoints)
+{
+	ifstream myfile;
+	myfile.open(path.c_str());
+
+	if (myfile.fail())
+	{
+		cout << " error in opening file  " << path.c_str() << endl;
+		return false;
+	}
+
+	int counter = 0; 
+
+	outDataPoints.clear();
+	outDataPoints.assign(numDataPoints* data_stride, double());
+
+	while (!myfile.eof())
+	{
+		string str;
+		getline(myfile, str);
+		
+		outDataPoints[counter ] = atof(str.c_str());
+		counter++;
+	
+	}
+
+
+	return true;
+}
 
 ////////////////////////////////////////////////////////////////////////// General
 
@@ -27,18 +61,14 @@ double background = 0.35;
 zModel model;
 
 /*!<Objects*/
+zDoubleArray kMeans_data;
 
-zUtilsCore core;
-
-zObjMesh oMesh;
-zObjGraph oGraph;
-
-zPointArray positions;
-
-float* myarray;
+int numData = 19450;
+int dataStride = 11;
 
 ////// --- GUI OBJECTS ----------------------------------------------------
-
+double nClusters = 5;
+double nIterations = 100;
 
 void setup()
 {
@@ -52,24 +82,24 @@ void setup()
 	// initialise model
 	model = zModel(100000);
 
-	// read mesh
-	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/cube.obj", zOBJ);
+	// read data
+	
+	bool chk = readData("data/PanelData.txt", numData, dataStride, kMeans_data);
+	
+	printf("\n Input Data : ");
 
-	zFnGraph fnGraph(oGraph);
-	fnGraph.from("data/testGraph.json", zJSON);
+	for (int j = 0; j < dataStride; j++)
+		printf(" %1.4f ", kMeans_data[0 * dataStride + j]);
 
-	positions.push_back(zPoint(1, 1, 0));
-	positions.push_back(zPoint(2, 1, 0));
+
+	
 	
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
-	model.addObject(oMesh);
-	model.addObject(oGraph);
+	
 
 	// set display element booleans
-	oMesh.setDisplayElements(true, true, true);
-	oGraph.setDisplayElements(true, true);
+	
 
 	////////////////////////////////////////////////////////////////////////// Sliders
 
@@ -77,6 +107,12 @@ void setup()
 	
 	S.addSlider(&background, "background");
 	S.sliders[0].attachToVariable(&background, 0, 1);
+
+	S.addSlider(&nClusters, "numClusters");
+	S.sliders[1].attachToVariable(&nClusters, 0, 100);
+
+	S.addSlider(&nIterations, "nIterations");
+	S.sliders[2].attachToVariable(&nIterations, 1, 1000);
 
 	////////////////////////////////////////////////////////////////////////// Buttons
 
@@ -92,10 +128,31 @@ void setup()
 void update(int value)
 {
 	if (compute)
-	{
-		zFnMesh fnMesh(oMesh);
-		fnMesh.smoothMesh(1);
-		fnMesh.to("data/outMesh.json", zJSON);;
+	{		
+		zIntArray outClusters;
+		outClusters.assign(numData, int());
+
+		zDoubleArray outMeans;
+		outMeans.assign(nClusters * dataStride, double());
+
+		kMeansClustering(&kMeans_data[0], numData, dataStride, nClusters, nIterations, &outClusters[0], &outMeans[0]);
+
+		vector<int> clusterSize;
+		clusterSize.assign(nClusters, 0);
+
+		for (int i = 0; i < numData; i++)
+		{
+			clusterSize[outClusters[i]] += 1;
+		}
+
+		printf("\n \n");
+		for (int i = 0; i < nClusters; i++)
+		{
+			printf("\n size : %i  " , clusterSize[i]);
+
+			for (int j = 0; j < dataStride; j++)
+				printf(" %1.4f ", outMeans[i * dataStride + j]);
+		}
 
 		compute = !compute;	
 	}
@@ -116,7 +173,7 @@ void draw()
 		
 	}
 
-	for(auto &p : positions) model.displayUtils.drawPoint(p);
+	
 
 	
 

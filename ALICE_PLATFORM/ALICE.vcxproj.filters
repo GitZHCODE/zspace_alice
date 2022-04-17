@@ -21,19 +21,31 @@
     <Filter Include="Sketches">
       <UniqueIdentifier>{42e9bdea-f426-477b-9649-d4fdaa1c0525}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sketches\zspace_module_sketches">
+      <UniqueIdentifier>{70c7892c-9071-413a-966b-dadd30879b20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\zspace_sketches">
+      <UniqueIdentifier>{44310b44-b2f8-4576-850b-6a4b02351788}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\userSrc\sketch_empty.cpp">
       <Filter>Sketches</Filter>
     </ClCompile>
-    <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp">
-      <Filter>Sketches</Filter>
+    <ClCompile Include="src\userSrc\sketch_zspaceModule_Planarise.cpp">
+      <Filter>Sketches\zspace_module_sketches</Filter>
     </ClCompile>
-    <ClCompile Include="src\userSrc\sketch_zspace_Robot.cpp">
-      <Filter>Sketches</Filter>
+    <ClCompile Include="src\userSrc\sketch_zspaceModule_KMeans.cpp">
+      <Filter>Sketches\zspace_module_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
     <ClCompile Include="src\userSrc\sketch_zspace_Planarise.cpp">
-      <Filter>Sketches</Filter>
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_Robot.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
