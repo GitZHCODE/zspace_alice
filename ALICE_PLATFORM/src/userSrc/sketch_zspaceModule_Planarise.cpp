@@ -46,6 +46,8 @@ zIntArray pCounts, pConnects;
 zDoubleArray vPositions;
 zIntArray triCounts, triConnects;
 
+MatrixXd V;
+
 /*!< container of  particle objects  */
 zObjParticleArray o_Particles;
 
@@ -106,8 +108,7 @@ void setup()
 	out_deviations.assign(fnMesh.numPolygons(), double());
 
 	planariseSolver_initialise(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0],fnMesh.numVertices(), fnMesh.numPolygons(), true, &out_deviations[0]);
-
-	
+		
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object

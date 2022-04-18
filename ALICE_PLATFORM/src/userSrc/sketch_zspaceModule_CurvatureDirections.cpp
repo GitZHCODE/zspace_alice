@@ -8,9 +8,7 @@
 #include <headers/zApp/include/zFnSets.h>
 #include <headers/zApp/include/zViewer.h>
 
-#include<headers/zModules/geometryprocessing/zSpace_CurvatureDirections.h>
-
-
+#include<headers/zModules/geometryprocessing/zSpace_Curvatures.h>
 
 using namespace zSpace;
 using namespace std;
@@ -37,10 +35,11 @@ zModel model;
 zObjMesh oMesh;
 
 int nV, nF;
-zDoubleArray out_pD1, out_pD2;
+zDoubleArray out_pD1, out_pD2 , out_pV1, out_pV2;
 
 zIntArray pCounts, pConnects;
 zDoubleArray vPositions;
+zIntArray triCounts, triConnects;
 
 zVectorArray pDir1, pDir2;
 
@@ -82,21 +81,45 @@ void setup()
 		vPositions[i * 3 + 2] = positions[i].z;
 	}
 
+	zInt2DArray fTriangles;
+	fnMesh.getMeshTriangles(fTriangles);
+
+	
+	int nTrisTotal = 0;
+	for (int i = 0; i < fTriangles.size(); i++)
+	{
+		int nTris = floor(fTriangles[i].size() / 3);
+		triCounts.push_back(nTris);
+
+		for (int j = 0; j < fTriangles[i].size(); j++)
+		{
+			triConnects.push_back(fTriangles[i][j]);
+			//printf("\n %i ", fTriangles[i][j]);
+		}
+
+		nTrisTotal += nTris;
+	}
+	
+	printf("\n nTris %i ", nTrisTotal);
+
 	out_pD1.assign(fnMesh.numVertices() * 3, double());
 	out_pD2.assign(fnMesh.numVertices() * 3, double());
+	out_pV1.assign(fnMesh.numVertices(), double());
+	out_pV2.assign(fnMesh.numVertices(), double());
 	
 	nV = fnMesh.numVertices();
 	nF = fnMesh.numPolygons();
 
-	pDir1.assign(nV, zVector());
-	pDir2.assign(nV, zVector());
+	pDir1.assign(2 * nV, zVector());
+	pDir2.assign(2 * nV, zVector());
+
 	
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
 	model.addObject(oMesh);
 
 	// set display element booleans
-	oMesh.setDisplayElements(true, true, false);
+	oMesh.setDisplayElements(false, true, false);
 
 	////////////////////////////////////////////////////////////////////////// Sliders
 
@@ -121,18 +144,25 @@ void update(int value)
 {
 	if (compute)
 	{		
-		trimesh_curvaturedirections(&vPositions[0], &pCounts[0], &pConnects[0], nV, nF, &out_pD1[0], &out_pD2[0]);
+		curvatureDirections(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0],  nV, nF, &out_pV1[0], &out_pV2[0], &out_pD1[0], &out_pD2[0]);
 
 		for (int i = 0; i < nV; i++)
 		{
-			pDir1[i].x = out_pD1[i * 3 + 0];
-			pDir1[i].y = out_pD1[i * 3 + 1];
-			pDir1[i].z = out_pD1[i * 3 + 2];			
+			pDir1[i * 2].x = out_pD1[i * 3 + 0];
+			pDir1[i * 2].y = out_pD1[i * 3 + 1];
+			pDir1[i * 2].z = out_pD1[i * 3 + 2];
 
-			pDir2[i].x = out_pD2[i * 3 + 0];
-			pDir2[i].y = out_pD2[i * 3 + 1];
-			pDir2[i].z = out_pD2[i * 3 + 2];
+			pDir1[i * 2 + 1] = pDir1[i * 2] * -1;
+		
+			pDir2[i * 2].x = out_pD2[i * 3 + 0];
+			pDir2[i * 2].y = out_pD2[i * 3 + 1];
+			pDir2[i * 2].z = out_pD2[i * 3 + 2];
+
+			pDir2[i * 2 + 1] = pDir2[i * 2] * -1;
+			
 		}
+
+	
 
 		display = true;
 
@@ -154,12 +184,17 @@ void draw()
 		for (int i = 0; i < nV; i++)
 		{
 			zPoint p0 = positions[i];
-			zPoint p1 = p0 + pDir1[i];
-			zPoint p2 = p0 + pDir2[i];
+			zPoint p1 = p0 + pDir1[i * 2 + 0];
+			zPoint p2 = p0 + pDir1[i * 2 + 1];
+
+			zPoint p3 = p0 + pDir2[i * 2 + 0];
+			zPoint p4 = p0 + pDir2[i * 2 + 1];
 
 			
 			model.displayUtils.drawLine(p0, p1, RED);
-			model.displayUtils.drawLine(p0, p2, BLUE);
+			model.displayUtils.drawLine(p0, p2, RED);
+			model.displayUtils.drawLine(p0, p3, BLUE);
+			model.displayUtils.drawLine(p0, p4, BLUE);
 		}
 		
 	}
