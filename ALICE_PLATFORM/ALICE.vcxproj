@@ -303,7 +303,7 @@
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <OmitFramePointers>true</OmitFramePointers>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>$(pythonIncludeDir);$(usdIncludeDir);$(usdIncludeDir)/boost-1_70;$(zspacecoreDir)/depends;$(zspacecoreDir);$(zspacemodulesDir);$(zspacetoolsetDir);src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(zspaceIncludeDir)\depends\freeglut;$(pythonIncludeDir);$(usdIncludeDir);$(usdIncludeDir)/boost-1_70;$(zspacecoreDir)/depends;$(zspacecoreDir);$(zspacemodulesDir);$(zspacetoolsetDir);src/algLib/;src/libGizmo/include;src/gl2ps;src/Eigen;src/polyClipper;src/freeglut;src/alice;src/glew/include;src/;src/userSrc;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <FloatingPointModel>Fast</FloatingPointModel>
@@ -320,7 +320,7 @@
     <Link>
       <AdditionalDependencies>usd_sdf.lib;usd_usdGeom.lib;usd_usd.lib;usd_tf.lib;boost_python310-vc142-mt-x64-1_70.lib;python310.lib;$(zspaceLibDir)/zSpace_Core.lib;$(zspaceLibDir)/zSpace_Interface.lib;$(zspaceLibDir)/zSpace_Toolsets.lib; $(zspaceLibDir)/zSpace_Modules.lib;$(zspaceLibDir)/zSpace_Modules.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(pythonLibDir);$(usdLibDir);src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;src/freeglut;$(OutDir)EXE\; $(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib; $(zspacecoreDir)/cpp/Depends/freeglut;;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(zspaceIncludeDir)\depends\freeglut\;$(pythonLibDir);$(usdLibDir);src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;src/freeglut;$(OutDir)EXE\; $(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib; $(zspacecoreDir)/cpp/Depends/freeglut;;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
