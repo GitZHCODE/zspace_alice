@@ -35,6 +35,7 @@
   <ItemGroup>
     <ClCompile Include="src\userSrc\sketch_empty.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspaceModule_CurvatureDirections.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspaceModule_MinimiseArea.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspaceModule_Planarise.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspaceModule_KMeans.cpp" />

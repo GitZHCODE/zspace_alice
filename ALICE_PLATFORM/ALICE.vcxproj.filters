@@ -56,5 +56,8 @@
     <ClCompile Include="src\userSrc\sketch_zspaceModule_CurvatureDirections.cpp">
       <Filter>Sketches\zspace_module_sketches</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspaceModule_MinimiseArea.cpp">
+      <Filter>Sketches\zspace_module_sketches</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -19,7 +19,7 @@ using namespace std;
 zUtilsCore core;
 
 ////////////////////////////////////////////////////////////////////////// CUSTOM METHODS 
-bool readData(string path,int numDataPoints, int data_stride, zDoubleArray & outDataPoints)
+bool readData(string path,int &numDataPoints, int &data_stride, zDoubleArray & outDataPoints)
 {
 	ifstream myfile;
 	myfile.open(path.c_str());
@@ -35,16 +35,62 @@ bool readData(string path,int numDataPoints, int data_stride, zDoubleArray & out
 	outDataPoints.clear();
 	outDataPoints.assign(numDataPoints* data_stride, double());
 
+	int linedata = 0;
 	while (!myfile.eof())
 	{
 		string str;
 		getline(myfile, str);
+
+		zStringArray data = core.splitString(str, ",");
+
+		for (int i = 0; i < data.size(); i++)
+		{
+			outDataPoints[counter] = atof(data[i].c_str());
+			counter++;
+		}	
 		
-		outDataPoints[counter ] = atof(str.c_str());
-		counter++;
+		linedata++;
 	
 	}
 
+	myfile.close();
+
+	numDataPoints = linedata;
+	int datastride = 11;
+	vector<zDomainFloat> minMax;
+	vector<zDomainInt> minMaxIndex;
+	minMax.assign(datastride, zDomainFloat());
+	minMaxIndex.assign(datastride, zDomainInt());
+
+	for (int j = 0; j < datastride; j++)
+	{
+		minMax[j].min = std::numeric_limits<float>::max();
+		minMax[j].max = std::numeric_limits<float>::min();
+	}
+
+	for (int i = 0; i < linedata; i++)
+	{
+		for (int j = 0; j < datastride; j++)
+		{
+			if (outDataPoints[i * datastride + j] < minMax[j].min)
+			{
+				minMax[j].min = outDataPoints[i * datastride + j];
+				minMaxIndex[j].min = i;
+			}
+
+			if (outDataPoints[i * datastride + j] > minMax[j].max)
+			{
+				minMax[j].max = outDataPoints[i * datastride + j];
+				minMaxIndex[j].max = i;
+			}
+		}
+
+	}
+
+	for (int j = 0; j < datastride; j++)
+	{
+		printf("\n %1.6f %1.6f | %i %i ", minMax[j].min, minMax[j].max, minMaxIndex[j].min, minMaxIndex[j].max);
+	}
 
 	return true;
 }
@@ -64,12 +110,13 @@ zModel model;
 /*!<Objects*/
 zDoubleArray kMeans_data;
 
-int numData = 19450;
+int numData = 170;
 int dataStride = 11;
 
 ////// --- GUI OBJECTS ----------------------------------------------------
-double nClusters = 5;
-double nIterations = 100;
+double nClusters = 10;
+double nIterations = 200;
+double seed = 1;
 
 void setup()
 {
@@ -85,7 +132,7 @@ void setup()
 
 	// read data
 	
-	bool chk = readData("data/PanelData.txt", numData, dataStride, kMeans_data);
+	bool chk = readData("data/jinan2.csv", numData, dataStride, kMeans_data);
 	
 	printf("\n Input Data : ");
 
@@ -115,6 +162,9 @@ void setup()
 	S.addSlider(&nIterations, "nIterations");
 	S.sliders[2].attachToVariable(&nIterations, 1, 1000);
 
+	S.addSlider(&seed, "seed");
+	S.sliders[3].attachToVariable(&seed, 1, 1000);
+
 	////////////////////////////////////////////////////////////////////////// Buttons
 
 	B = *new ButtonGroup(Alice::vec(50, 450, 0));
@@ -136,7 +186,7 @@ void update(int value)
 		zDoubleArray outMeans;
 		outMeans.assign(nClusters * dataStride, double());
 
-		kMeansClustering(&kMeans_data[0], numData, dataStride, nClusters, nIterations, &outClusters[0], &outMeans[0]);
+		kMeansClustering(&kMeans_data[0], numData, dataStride, nClusters, nIterations, (int)seed, true, &outClusters[0], &outMeans[0]);
 
 		vector<int> clusterSize;
 		clusterSize.assign(nClusters, 0);
