@@ -73,11 +73,11 @@ void setup()
 
 	// read mesh
 	zFnMesh fnInMesh(o_inMesh);
-	fnInMesh.from("data/meanCurvature_test.obj", zOBJ);
+	fnInMesh.from("data/fdm_test.obj", zOBJ);
 	fnInMesh.setEdgeColor(zColor(1, 0, 0, 1));
 
 	zFnMesh fnMesh(o_Mesh);
-	fnMesh.from("data/meanCurvature_test.obj", zOBJ);
+	fnMesh.from("data/fdm_test.obj", zOBJ);
 
 	fnMesh.getPolygonData(pConnects, pCounts);
 
@@ -120,7 +120,11 @@ void setup()
 	zIntArray fixedVertices;
 	for (zItMeshVertex v(o_inMesh); !v.end(); v++)
 	{
-		if (v.onBoundary()) fixedVertices.push_back(v.getId());
+		if (v.onBoundary())
+		{
+			printf("\n %i ", v.getId());
+			fixedVertices.push_back(v.getId());
+		}
 	}
 
 	msSolver_setFixed(&fixedVertices[0], fixedVertices.size());
