@@ -65,7 +65,7 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/iglCurvature_test.obj", zOBJ);
+	fnMesh.from("data/test_minSrf _kangaroo.obj", zOBJ);
 	
 	//fnMesh.triangulate();
 
@@ -101,6 +101,8 @@ void setup()
 	}
 	
 	printf("\n nTris %i ", nTrisTotal);
+	computeMesh_initialise(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0], fnMesh.numVertices(), fnMesh.numPolygons());
+
 
 	out_pD1.assign(fnMesh.numVertices() * 3, double());
 	out_pD2.assign(fnMesh.numVertices() * 3, double());
@@ -113,6 +115,7 @@ void setup()
 	pDir1.assign(2 * nV, zVector());
 	pDir2.assign(2 * nV, zVector());
 
+	
 	
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -144,7 +147,7 @@ void update(int value)
 {
 	if (compute)
 	{		
-		curvatureDirections(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0],  nV, nF, &out_pV1[0], &out_pV2[0], &out_pD1[0], &out_pD2[0]);
+		curvatureDirections(&out_pV1[0], &out_pV2[0], &out_pD1[0], &out_pD2[0]);
 
 		for (int i = 0; i < nV; i++)
 		{
@@ -162,7 +165,37 @@ void update(int value)
 			
 		}
 
-	
+		zDoubleArray out_HN, out_HV;
+		zFnMesh fnMesh(oMesh);
+		out_HN.assign(fnMesh.numVertices() * 3, double());
+		out_HV.assign(fnMesh.numVertices(), double());
+
+		meanCurvature(&out_HV[0], &out_HN[0]);
+
+
+
+		zDomainFloat mCurvature(100000, -100000);
+		zDomainFloat mCurvature1(100000, -100000);
+
+		for (zItMeshVertex v(oMesh); !v.end(); v++)
+		{
+			int i = v.getId();
+
+			if (!v.onBoundary())
+			{
+				float H = (out_pV1[i] + out_pV2[i]) * 0.5;
+				if (H < mCurvature.min) mCurvature.min = H;
+				if (H > mCurvature.max) mCurvature.max = H;
+
+				if (out_HV[i] < mCurvature1.min) mCurvature1.min = out_HV[i];
+				if (out_HV[i] > mCurvature1.max) mCurvature1.max = out_HV[i];
+
+			}
+
+		}
+
+		printf("\n mean curv %1.6f  %1.6f \n", mCurvature.min, mCurvature.max);
+		printf("\n mean curv1 %1.6f  %1.6f \n", mCurvature1.min, mCurvature1.max);
 
 		display = true;
 

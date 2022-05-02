@@ -26,9 +26,9 @@ bool display = true;
 
 double background = 0.35;
 
-float tol = 0.000001;
+double tol = 0.001;
 
-double dT = 1.0;
+//double dT = 1.0;
 zIntergrationType intType = zRK4;
 
 ////// --- zSpace Objects --------------------------------------------------
@@ -73,11 +73,11 @@ void setup()
 
 	// read mesh
 	zFnMesh fnInMesh(o_inMesh);
-	fnInMesh.from("data/fdm_test.obj", zOBJ);
+	fnInMesh.from("data/test_minSrf.obj", zOBJ);
 	fnInMesh.setEdgeColor(zColor(1, 0, 0, 1));
 
 	zFnMesh fnMesh(o_Mesh);
-	fnMesh.from("data/fdm_test.obj", zOBJ);
+	fnMesh.from("data/test_minSrf.obj", zOBJ);
 
 	fnMesh.getPolygonData(pConnects, pCounts);
 
@@ -109,25 +109,38 @@ void setup()
 	out_vPositions.assign(fnMesh.numVertices() * 3, double());
 	out_deviations.assign(fnMesh.numVertices(), double());
 
-	msSolver_initialise(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0],fnMesh.numVertices(), fnMesh.numPolygons(), &out_deviations[0]);
+	computeMesh_initialise(&vPositions[0], &pCounts[0], &pConnects[0], &triCounts[0], &triConnects[0],fnMesh.numVertices(), fnMesh.numPolygons());
 	
-	for (zItMeshVertex v(o_inMesh); !v.end(); v++)
-	{
-		if (!v.onBoundary()) printf("\n %1.7f ", out_deviations[v.getId()]);
-	}
-
 	// fixed vertices
 	zIntArray fixedVertices;
-	for (zItMeshVertex v(o_inMesh); !v.end(); v++)
+	zIntArray cVertexIDs;
+	zIntArray cVertsCount;
+
+	for (zItMeshVertex v(o_Mesh); !v.end(); v++)
 	{
 		if (v.onBoundary())
 		{
-			printf("\n %i ", v.getId());
+			//printf("\n %i ", v.getId());
 			fixedVertices.push_back(v.getId());
 		}
+
+		zIntArray cVs;
+		v.getConnectedVertices(cVs);
+		
+		cVertsCount.push_back(cVs.size());
+		for (auto vId : cVs) cVertexIDs.push_back(vId);
+
 	}
 
-	msSolver_setFixed(&fixedVertices[0], fixedVertices.size());
+	computeMesh_setFixed(&fixedVertices[0], fixedVertices.size());
+
+	// connected vertices
+	computeMesh_setCVertices(&cVertexIDs[0], &cVertsCount[0], fnMesh.numVertices());
+
+
+	cout << endl << "dT : " <<dT ;
+	computeMesh_setDT(0.1);
+	cout << endl << "dT : " << dT;
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -162,30 +175,53 @@ void update(int value)
 	if (compute)
 	{	
 		zFnMesh fnMesh(o_Mesh);
-
-		msSolver_compute(1, tol, &out_vPositions[0], &out_deviations[0]);
+		bool out;
+		out = computeMesh_minSrf(100, true, tol, &out_vPositions[0], &out_deviations[0]);
 
 		zPoint* positions = fnMesh.getRawVertexPositions();
+
+		zDomainFloat mCurvature(100000, -100000);
 		
-		for (int i = 0; i < fnMesh.numVertices(); i++)
+		for (zItMeshVertex v(o_Mesh); !v.end(); v++)
 		{
+			int i = v.getId();
 			positions[i].x = out_vPositions[i * 3 + 0];
 			positions[i].y = out_vPositions[i * 3 + 1];
 			positions[i].z = out_vPositions[i * 3 + 2];
+
+			if (!v.onBoundary())
+			{
+				if (out_deviations[i] < mCurvature.min) mCurvature.min = out_deviations[i];
+				if (out_deviations[i] > mCurvature.max) mCurvature.max = out_deviations[i];
+
+			}
+			
 		}
 
-		zPointArray fCenters;
-		fnMesh.getCenters(zFaceData, fCenters);
+		/*zColorArray vCols;
+		zDomainColor colDomain(zColor(0, 1, 0, 1), zColor(1, 0, 0, 1));
+		for (zItMeshVertex v(o_Mesh); !v.end(); v++)
+		{
+			int i = v.getId();
+			if (!v.onBoundary())
+			{
+				zColor col = core.blendColor(out_deviations[i], mCurvature, colDomain, zHSV);
+				vCols.push_back(col);
+			}
+			else
+			{
+				vCols.push_back(zColor());
+			}
+			
+		}
 
-		zPointArray eCenters;
-		fnMesh.getCenters(zHalfEdgeData, eCenters);
+		fnMesh.setVertexColors(vCols, true);*/
 
-		zFloatArray vAreas;
-		float totAr = fnMesh.getVertexAreas(fCenters, eCenters, vAreas);
+		printf("\n mean curv %1.6f  %1.6f \n", mCurvature.min, mCurvature.max);
 
-		printf("\n Area %1.7f  \n", totAr);
 		
-		compute = !compute;
+		
+		compute = !out;
 	}
 }
 
@@ -219,6 +255,13 @@ void draw()
 void keyPress(unsigned char k, int xm, int ym)
 {
 	if (k == 'p')compute = true;;
+
+	if (k == 'e')
+	{
+		//export
+		zFnMesh fnMesh(o_Mesh);
+		fnMesh.to("data/outMinSrf.obj", zOBJ);
+	}
 }
 
 void mousePress(int b, int s, int x, int y)

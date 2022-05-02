@@ -64,11 +64,11 @@ void setup()
 
 	// read mesh
 	zFnMesh fnInMesh(o_inMesh);
-	fnInMesh.from("data/meanCurvature_test.obj", zOBJ);
+	fnInMesh.from("data/MinimalSurface-Kangaroo.obj", zOBJ);
 	fnInMesh.setEdgeColor(zColor(1, 0, 0, 1));
 
 	zFnMesh fnMesh(o_Mesh);
-	fnMesh.from("data/meanCurvature_test.obj", zOBJ);
+	fnMesh.from("data/meanCurvature_test_1.obj", zOBJ);
 
 	fnMesh.getPolygonData(pConnects, pCounts);
 
@@ -104,10 +104,10 @@ void setup()
 	
 
 	// set FD very high for Minimal surface
-	vForceDensities.assign(fnMesh.numVertices(), 30);
+	vForceDensities.assign(fnMesh.numVertices(), 5000);
 
 	// set vMass very low for Minimal surfaces
-	vMass.assign(fnMesh.numVertices(), 0.001);
+	vMass.assign(fnMesh.numVertices(), 0.000001);
 
 	// fixed vertices
 	zIntArray fixedVertices;

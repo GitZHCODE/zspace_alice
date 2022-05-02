@@ -216,7 +216,7 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/toSTAD/toSTAD.json", zJSON);
+	fnMesh.from("data/toSTAD/toStad_2804.json", zJSON);
 
 	//  supports
 	//supports = zIntArray{ 2,3,5,9,13,15,17,21,23,25,29,31,33,37,39,41,45,47,49,53,55,896,899,900,902,903,905,906,907,909,911,912,914,915,916 };
