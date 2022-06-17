@@ -62,5 +62,26 @@
     <ClCompile Include="src\userSrc\sketch_zspaceModule_MinimiseArea_FDM.cpp">
       <Filter>Sketches\zspace_module_sketches</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_GLTF.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_SunVectorTransform.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_Striatus_Slicer.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zSpace_Striatus_IO.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zSpace_Striatus_Block.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_Striatus_Slicer.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_SDFSlicer.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

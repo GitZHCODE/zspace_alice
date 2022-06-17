@@ -65,7 +65,7 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/test_minSrf _kangaroo.obj", zOBJ);
+	fnMesh.from("data/outMinSrf.obj", zOBJ);
 	
 	//fnMesh.triangulate();
 

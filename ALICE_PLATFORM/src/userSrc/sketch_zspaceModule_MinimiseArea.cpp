@@ -1,8 +1,9 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
 #include "main.h"
+#include <chrono>
 
 #include <headers/zApp/include/zObjects.h>
 #include <headers/zApp/include/zFnSets.h>
@@ -141,6 +142,42 @@ void setup()
 	cout << endl << "dT : " <<dT ;
 	computeMesh_setDT(0.1);
 	cout << endl << "dT : " << dT;
+
+
+	// Start measuring time
+	vector<double> sortVals = vPositions;
+	auto begin = std::chrono::high_resolution_clock::now();
+
+	
+	std::sort(sortVals.begin(), sortVals.end());
+	
+	// Stop measuring time and calculate the elapsed time
+	auto end = std::chrono::high_resolution_clock::now();
+	auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
+
+	printf("\n STD Sort Time measured: %.7f seconds.", elapsed.count() * 1e-9);
+	printf("\n min %1.2f max %1.2f.\n", sortVals[0], sortVals[sortVals.size() -1]);
+	
+	vector<double> sortVals1 = vPositions;
+	auto begin1 = std::chrono::high_resolution_clock::now();
+	double temp = 0;
+	for (int i = 0; i < sortVals1.size(); i++)
+	{
+		for (int j = 0; j < sortVals1.size(); j++)
+		{
+			if (sortVals1[i] < sortVals1[j])
+			{
+				swap(sortVals1[i], sortVals1[j]);
+			}
+		}
+	}
+
+	// Stop measuring time and calculate the elapsed time
+	auto end1 = std::chrono::high_resolution_clock::now();
+	auto elapsed1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - begin1);
+
+	printf("\n Sort Time measured: %.7f seconds.\n", elapsed1.count() * 1e-9);
+	printf(" min %1.2f max %1.2f.\n", sortVals1[0], sortVals1[sortVals.size() - 1]);
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object

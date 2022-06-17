@@ -8,8 +8,6 @@
 #include <headers/zApp/include/zFnSets.h>
 #include <headers/zApp/include/zViewer.h>
 
-#include<headers/zApp/include/zTsStatics.h>
-
 
 using namespace zSpace;
 using namespace std;
@@ -33,6 +31,8 @@ zUtilsCore core;
 zObjMesh oMesh;
 zObjGraph oGraph;
 
+zObjComputeMesh oCompMesh;
+
 zPointArray positions;
 
 float* myarray;
@@ -54,22 +54,18 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/cube.obj", zOBJ);
+	fnMesh.from("data/Striatus/tozha.json", zJSON);
 
-	zFnGraph fnGraph(oGraph);
-	fnGraph.from("data/testGraph.json", zJSON);
-
-	positions.push_back(zPoint(1, 1, 0));
-	positions.push_back(zPoint(2, 1, 0));
+	zFnComputeMesh fnCompMesh(oCompMesh);
 	
+
+		
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
 	model.addObject(oMesh);
-	model.addObject(oGraph);
 
 	// set display element booleans
 	oMesh.setDisplayElements(true, true, true);
-	oGraph.setDisplayElements(true, true);
 
 	////////////////////////////////////////////////////////////////////////// Sliders
 
@@ -116,8 +112,6 @@ void draw()
 		
 	}
 
-	for(auto &p : positions) model.displayUtils.drawPoint(p);
-
 	
 
 
@@ -126,8 +120,6 @@ void draw()
 	setup2d();
 
 	glColor3f(0, 0, 0);
-	drawString("Vectors #:" + to_string(12), Alice::vec(winW - 350, winH - 500, 0));
-
 	restore3d();
 
 }
