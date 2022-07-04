@@ -16,9 +16,12 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////// General
 
-bool compute = false;
-bool computeMap = false;
+bool computeFRAMES = false;
+bool computeSDF = false;
 bool display = true;
+
+bool computeTRANSFORM = false;
+bool toLOCAL = true;
 
 double background = 0.35;
 
@@ -30,19 +33,23 @@ zModel model;
 
 zUtilsCore core;
 
-int blockStride = 3;
+int blockStride = 4;
 int braceStride = 1;
 
-zDomainFloat neopreneOffset(0.005, 0.005);
+int blockID = 3;
+
+zDomainFloat neopreneOffset(0.000, 0.000);
 
 bool deckBlock = true;
-zDomain<zPoint> bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.6, -0.35, 0), zPoint(0.6, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.35, 0), zPoint(1.5, 0.15, 0));
+zDomain<zPoint> bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.6, -0.35, 0), zPoint(0.6, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
 
 int resX = 512;
 int resY = 512;
 
-string filePath = "data/striatus/out_Block_1.json";
-string exportBRGPath = "data/striatus/out_PrintBlock_1.json";
+string fileDir = "data/striatus/100_Draft/";
+
+string filePath = "data/striatus/100_Draft/deck_3.json";
+string exportBRGPath = "data/striatus/out_PrintBlock_3.json";
 
 string exportINC3DPath = "C:/Users/vishu.b/Desktop/Striatus_IO/test/blocks";
 
@@ -60,7 +67,7 @@ bool exportContours = false;
 bool displayAllGraphs = false;
 int currentGraphId = 0;
 
-float printPlaneSpace = 0.01;
+float printPlaneSpace = 0.0115;
 float printLayerWidth = 0.04;
 float raftLayerWidth = 0.04;
 
@@ -83,8 +90,8 @@ void setup()
 	model = zModel(100000);
 
 	// read mesh
-	mySlicer.setFromJSON(filePath, blockStride, braceStride);
-	
+	//mySlicer.setFromJSON(filePath, blockStride, braceStride);
+	mySlicer.setFromJSON(fileDir, blockID);
 
 	//--- FIELD
 	mySlicer.createFieldMesh(bb, resX, resY);
@@ -117,8 +124,8 @@ void setup()
 
 	B = *new ButtonGroup(Alice::vec(50, 450, 0));
 
-	B.addButton(&compute, "compute");
-	B.buttons[0].attachToVariable(&compute);
+	B.addButton(&computeFRAMES, "computeFRAMES");
+	B.buttons[0].attachToVariable(&computeFRAMES);
 
 	B.addButton(&display, "display");
 	B.buttons[1].attachToVariable(&display);
@@ -153,11 +160,26 @@ void update(int value)
 {
 	
 
-	if (compute)
+	if (computeFRAMES)
 	{
-		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, neopreneOffset,true,true);
+		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, neopreneOffset,true,false);
 
-		compute = !compute;	
+		computeFRAMES = !computeFRAMES;
+	}
+
+	if (computeSDF)
+	{
+		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, neopreneOffset, false, true);
+
+		computeSDF = !computeSDF;
+	}
+
+	if (computeTRANSFORM)
+	{
+		mySlicer.setTransforms(toLOCAL);
+		toLOCAL = !toLOCAL;
+
+		computeTRANSFORM = !computeTRANSFORM;
 	}
 
 	if (exportContours)
@@ -175,7 +197,7 @@ void update(int value)
 void draw()
 {
 	backGround(background);
-	//drawGrid(50);
+	drawGrid(50);
 
 	S.draw();
 	B.draw();
@@ -186,6 +208,10 @@ void draw()
 		model.draw();
 		
 	}
+
+	int numMinPts =0;
+	zPoint* minPts = mySlicer.getRawCriticalPoints(true, numMinPts);
+	for (int i = 0; i < numMinPts; i++) model.displayUtils.drawPoint(minPts[i], zColor(1,0,1,0),3);
 
 	if (dSliceMesh_Left)
 	{
@@ -298,7 +324,9 @@ void draw()
 
 void keyPress(unsigned char k, int xm, int ym)
 {
-	if (k == 'p') compute = true;;
+	if (k == 'p') computeFRAMES = true;;
+	if (k == 'o') computeSDF = true;;
+	if (k == 't') computeTRANSFORM = true;;
 
 	if (k == 'w') currentGraphId++;;
 	if (k == 's')

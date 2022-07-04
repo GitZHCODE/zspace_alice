@@ -1,5 +1,4 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1091,5): warning MSB8027: Two or more files with the name of sketch_zspace_Striatus_Slicer.cpp will produce outputs to the same location. This can lead to an incorrect build result.  The files involved are src\userSrc\sketch_zspace_Striatus_Slicer.cpp, src\userSrc\sketch_zspace_Striatus_Slicer.cpp.
-  sketch_zspace_Base.cpp
   sketch_zspace_Striatus_Slicer.cpp
   sketch_zspace_Striatus_Slicer.cpp
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1363,5): warning MSB8012: TargetPath(C:\Users\vishu.b\source\repos\GitZHCODE\Alice2018_zSpace\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.exe) does not match the Linker's OutputFile property value (C:\Users\vishu.b\source\repos\GitZHCODE\Alice2018_zSpace\ALICE_PLATFORM\x64\Release\EXE\ALICE_PLATFORM.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).

@@ -76,7 +76,7 @@ string filePath = "data/striatus/center_s2.json";
 string filePath_thick = "data/striatus/thickness_s2.json";
 
 string exportBRGPath = "data/striatus/out_BRG.json";
-string importBRGPath = "data/striatus/tozha.json";
+string importBRGPath = "data/striatus/tozha_220622.json";
 
 
 ////// --- GUI OBJECTS ----------------------------------------------------
@@ -109,11 +109,11 @@ void setup()
 	model = zModel(100000);
 
 	zFnMesh fnGuideMesh(o_guideMesh);
-	fnGuideMesh.from(filePath, zJSON);
+	//fnGuideMesh.from(filePath, zJSON);
 	mySDF.setGuideMesh(o_guideMesh);
 
 	zFnMesh fnGuidetThickMesh(o_guideThickMesh);
-	fnGuidetThickMesh.from(filePath_thick, zJSON);
+	//fnGuidetThickMesh.from(filePath_thick, zJSON);
 	mySDF.setThickGuideMesh(o_guideThickMesh);
 	
 
@@ -169,13 +169,12 @@ void update(int value)
 
 	if (importMesh)
 	{
-		zPointArray vThickness;
-		mySDF.fromBRGJSON(importBRGPath, points_brg, norms_brg, vThickness);
-		
-
 		zFnMesh fnGuideMesh(o_guideMesh);
 		fnGuideMesh.clear();
 		fnGuideMesh.from(importBRGPath, zJSON);
+
+		zPointArray vThickness;
+		mySDF.fromBRGJSON(importBRGPath, points_brg, norms_brg, vThickness);
 
 		zFnMesh fnGuideThickMesh(o_guideThickMesh);
 		fnGuideThickMesh.clear();
@@ -194,40 +193,13 @@ void update(int value)
 			pCounts.push_back(fVerts.size());
 			for (auto& v : fVerts) pConnects.push_back(v * 2 + 1);
 		}
+		
 
 		fnGuideThickMesh.create(vThickness, pCounts, pConnects);
 		
-		/*zFnMesh fnGuideThickMesh(o_guideThickMesh);
-		zPoint* positions = fnGuideThickMesh.getRawVertexPositions();
-
-		zColorArray vCol;
-		vCol.assign(fnGuideMesh.numVertices(), zColor());
-
-		noInfoPts.clear();
-
-		for (zItMeshVertex vIt(o_guideMesh); !vIt.end(); vIt++)
-		{
-			int i = vIt.getId();
-
-			if (vThickness[(i * 2) + 0] == zVector())
-			{			
-
-				vIt.setColor(zColor(1, 0, 0, 1));
-
-				noInfoPts.push_back(positions[i]);
-			
-			}
-			else
-			{
-				positions[i] = vThickness[(i * 2) + 0];
-
-				positions[i + fnGuideMesh.numVertices()] = vThickness[(i * 2) + 1];
-
-				vIt.setColor(zColor(0, 0, 0, 1));
-			}
-			
-		}*/
-
+		
+		fnGuideMesh.to("data/striatus/fromBRG_center.json", zJSON);
+		fnGuideThickMesh.to("data/striatus/fromBRG_thickness.json", zJSON);
 
 		
 		importMesh = !importMesh;

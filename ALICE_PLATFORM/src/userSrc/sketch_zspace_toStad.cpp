@@ -43,6 +43,11 @@ void computeValley(zObjMesh& o_Mesh)
 		if (eVerts[0].getColor() == RED && eVerts[1].getColor() == BLACK) eColors[e.getId()] = ORANGE;
 		if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == RED) eColors[e.getId()] = ORANGE;
 		if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == BLACK) eColors[e.getId()] = ORANGE;
+
+		if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == GREEN) eColors[e.getId()] = YELLOW;
+		if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == BLACK) eColors[e.getId()] = YELLOW;
+		if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == GREEN) eColors[e.getId()] = YELLOW;
+
 	}
 
 	fnMesh.setEdgeColors(eColors, false);
@@ -188,7 +193,7 @@ void computeUV_Funnel(zObjMesh& o_Mesh, int start_eV0 , int start_eV1)
 
 				if (V_currentHE == V_startHE) exitV = true;
 
-				if (V_currentHE.getStartVertex().getColor() == RED)
+				if (V_currentHE.getStartVertex().getColor() == RED || V_currentHE.getStartVertex().getColor() == GREEN)
 				{
 					V_currentHE = V_currentHE.getNext().getSym().getNext();
 					V_currentHE = V_currentHE.getNext().getSym().getNext();
@@ -255,6 +260,7 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 
 	//MEMBER INCIDENCES
 	zIntArray members_150;
+	zIntArray members_150_b;
 	zIntArray members_65_U;
 	zIntArray members_100_V;
 	zIntArray members_125_V;
@@ -276,6 +282,9 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 		if (eVerts[0].getColor() == RED && eVerts[1].getColor() == RED) members_150.push_back(id + 1);
 		else if (eVerts[0].getColor() == RED && eVerts[1].getColor() == BLACK) members_150.push_back(id + 1);
 		else if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == RED) members_150.push_back(id + 1);
+		else if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == GREEN) members_150_b.push_back(id + 1);
+		else if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == BLACK) members_150_b.push_back(id + 1);
+		else if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == GREEN) members_150_b.push_back(id + 1);
 		else
 		{
 			if (e.getColor() == CYAN)
@@ -424,6 +433,12 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 	for (int id : members_150)
 	{
 		myfile << " " << id ;
+	}
+	myfile << " TABLE ST 165.1X5.4RHS \n";
+
+	for (int id : members_150_b)
+	{
+		myfile << " " << id;
 	}
 	myfile << " TABLE ST 165.1X5.4RHS \n";
 	
@@ -617,7 +632,7 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/toSTAD/toStad_1106.json", zJSON);
+	fnMesh.from("data/toSTAD/toStad_2606.json", zJSON);
 
 	
 	zFnMesh fnMesh_cap(oMesh_cap);
@@ -627,6 +642,7 @@ void setup()
 	//supports = zIntArray{ 2,3,5,9,13,15,17,21,23,25,29,31,33,37,39,41,45,47,49,53,55,896,899,900,902,903,905,906,907,909,911,912,914,915,916 };
 	int redCounter = 0;
 	int blueCounter = 0;
+	int greenCounter = 0;
 	for (zItMeshVertex v(oMesh); !v.end(); v++)
 	{
 		if (v.getColor() == BLACK)
@@ -636,10 +652,11 @@ void setup()
 
 		if (v.getColor() == RED)redCounter++;
 		if (v.getColor() == BLUE)blueCounter++;
+		if (v.getColor() == GREEN)greenCounter++;
 	}
 	
 	printf("\n num supports %i ", supports.size());
-	printf("\n red %i blue %i ", redCounter, blueCounter);
+	printf("\n red %i blue %i green %i ", redCounter, blueCounter, greenCounter);
 
 	fnMesh.setEdgeColor(CYAN, false);
 
