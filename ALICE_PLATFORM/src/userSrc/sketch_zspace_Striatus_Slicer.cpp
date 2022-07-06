@@ -36,12 +36,15 @@ zUtilsCore core;
 int blockStride = 4;
 int braceStride = 1;
 
-int blockID = 3;
+int blockID = 32;
 
-zDomainFloat neopreneOffset(0.000, 0.000);
+int SDFFunc_Num = 4;
+
+
+zDomainFloat neopreneOffset(0.000, 0.001);
 
 bool deckBlock = true;
-zDomain<zPoint> bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.6, -0.35, 0), zPoint(0.6, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
+zDomain<zPoint> bb;
 
 int resX = 512;
 int resY = 512;
@@ -66,6 +69,8 @@ bool exportContours = false;
 
 bool displayAllGraphs = false;
 int currentGraphId = 0;
+int totalGraphs = 0;
+bool frameCHECKS = false;
 
 float printPlaneSpace = 0.0115;
 float printLayerWidth = 0.04;
@@ -92,6 +97,10 @@ void setup()
 	// read mesh
 	//mySlicer.setFromJSON(filePath, blockStride, braceStride);
 	mySlicer.setFromJSON(fileDir, blockID);
+
+	deckBlock = mySlicer.onDeckBlock();
+	bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.6, -0.35, 0), zPoint(0.6, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
+
 
 	//--- FIELD
 	mySlicer.createFieldMesh(bb, resX, resY);
@@ -162,14 +171,16 @@ void update(int value)
 
 	if (computeFRAMES)
 	{
-		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, neopreneOffset,true,false);
+		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, SDFFunc_Num, neopreneOffset,true,false);
+
+		frameCHECKS = mySlicer.checkPrintLayerHeights();
 
 		computeFRAMES = !computeFRAMES;
 	}
 
 	if (computeSDF)
 	{
-		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, neopreneOffset, false, true);
+		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, SDFFunc_Num, neopreneOffset, false, true);
 
 		computeSDF = !computeSDF;
 	}
@@ -210,8 +221,8 @@ void draw()
 	}
 
 	int numMinPts =0;
-	zPoint* minPts = mySlicer.getRawCriticalPoints(true, numMinPts);
-	for (int i = 0; i < numMinPts; i++) model.displayUtils.drawPoint(minPts[i], zColor(1,0,1,0),3);
+	zObjPointCloud* o_minPts = mySlicer.getRawCriticalPoints(true);
+	o_minPts->draw();
 
 	if (dSliceMesh_Left)
 	{
@@ -241,6 +252,8 @@ void draw()
 	{
 		int numGraphs = 0;
 		zObjGraphPointerArray graphs = mySlicer.getBlockSectionGraphs(numGraphs);
+
+		totalGraphs = (deckBlock) ? floor(numGraphs * 0.5) : numGraphs;
 
 		if (displayAllGraphs)
 		{
@@ -318,6 +331,26 @@ void draw()
 	setup2d();
 
 	glColor3f(0, 0, 0);
+	
+	drawString("Total Layers #:" + to_string(totalGraphs), vec(winW - 350, winH - 800, 0));
+	drawString("Current Layer #:" + to_string(currentGraphId), vec(winW - 350, winH - 775, 0));
+
+	string frameText = (frameCHECKS) ? "TRUE" : "FALSE";
+	drawString("Frame CHECKS:" + frameText, vec(winW - 350, winH - 750, 0));
+	
+
+
+	drawString("KEY Press", vec(winW - 350, winH - 600, 0));
+	drawString("p - Compute Frames", vec(winW - 350, winH - 575, 0));
+	drawString("o - Compute SDF", vec(winW - 350, winH - 550, 0));
+	drawString("t - Transform", vec(winW - 350, winH - 525, 0));
+
+	drawString("w - increment Current Graph ID", vec(winW - 350, winH - 500, 0));
+	drawString("s - decrement Current Graph ID", vec(winW - 350, winH - 475, 0));
+	drawString("d - display all graphs", vec(winW - 350, winH - 450, 0));
+
+	drawString("e - export graphs", vec(winW - 350, winH - 425, 0));
+
 	restore3d();
 
 }
@@ -328,7 +361,10 @@ void keyPress(unsigned char k, int xm, int ym)
 	if (k == 'o') computeSDF = true;;
 	if (k == 't') computeTRANSFORM = true;;
 
-	if (k == 'w') currentGraphId++;;
+	if (k == 'w')
+	{
+		if(currentGraphId < totalGraphs - 1)currentGraphId++;;
+	}
 	if (k == 's')
 	{
 		if(currentGraphId > 0)currentGraphId--;;

@@ -52,6 +52,7 @@
     <ClCompile Include="src\userSrc\sketch_zspace_Striatus_Slicer.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_SunVectorTransform.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_toStad.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspace_toStad2.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_USD_Base.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
