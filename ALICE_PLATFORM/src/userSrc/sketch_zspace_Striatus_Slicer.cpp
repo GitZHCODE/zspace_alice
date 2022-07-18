@@ -36,9 +36,12 @@ zUtilsCore core;
 int blockStride = 4;
 int braceStride = 1;
 
-int blockID = 32;
+int blockID = 37;
 
-int SDFFunc_Num = 4;
+int SDFFunc_Num = 5;
+
+int numSDFLayers = 3;
+bool allSDFLayers = true;
 
 
 zDomainFloat neopreneOffset(0.000, 0.001);
@@ -63,6 +66,7 @@ bool dMedialGraph = true;
 bool dPrintPlane = false;
 bool dSectionGraphs = true;
 bool dContourGraphs = false;
+bool dTrimGraphs = false;
 bool dField = false;
 
 bool exportContours = false;
@@ -72,9 +76,11 @@ int currentGraphId = 0;
 int totalGraphs = 0;
 bool frameCHECKS = false;
 
-float printPlaneSpace = 0.0115;
+float printPlaneSpace = 0.008;
 float printLayerWidth = 0.04;
 float raftLayerWidth = 0.04;
+
+zDomainFloat printHeightDomain(0.006, 0.012);
 
 /*!<Tool sets*/
 zTsSDFSlicer mySlicer;
@@ -160,8 +166,11 @@ void setup()
 	B.addButton(&dContourGraphs, "dContourGraphs");
 	B.buttons[8].attachToVariable(&dContourGraphs);
 
+	B.addButton(&dTrimGraphs, "dTrimGraphs");
+	B.buttons[9].attachToVariable(&dTrimGraphs);
+
 	B.addButton(&dField, "dField");
-	B.buttons[9].attachToVariable(&dField);
+	B.buttons[10].attachToVariable(&dField);
 	
 }
 
@@ -171,16 +180,28 @@ void update(int value)
 
 	if (computeFRAMES)
 	{
-		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, SDFFunc_Num, neopreneOffset,true,false);
+		printf("\n ----------- \n BlockID %i \n", blockID);
+		for (float printPlaneSpace = printHeightDomain.min; printPlaneSpace <= printHeightDomain.max; printPlaneSpace+= 0.0005)
+		{
+			printf("\n printPlaneSpace %1.4f ", printPlaneSpace);
+						
+			mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, neopreneOffset, true, false);
 
-		frameCHECKS = mySlicer.checkPrintLayerHeights();
+			frameCHECKS = mySlicer.checkPrintLayerHeights();
+
+			if (frameCHECKS) break;
+
+			printf("\n");
+		}
+
+		
 
 		computeFRAMES = !computeFRAMES;
 	}
 
 	if (computeSDF)
 	{
-		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, SDFFunc_Num, neopreneOffset, false, true);
+		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, neopreneOffset, false, true);
 
 		computeSDF = !computeSDF;
 	}
@@ -311,6 +332,34 @@ void draw()
 
 				if (deckBlock)graphs[i + end]->draw();
 				
+			}
+
+		}
+	}
+
+	if (dTrimGraphs)
+	{
+		int numGraphs = 0;
+		zObjGraphPointerArray graphs = mySlicer.getBlockTrimGraphs(numGraphs);
+
+		if (displayAllGraphs)
+		{
+			for (auto& g : graphs)
+			{
+				g->draw();
+			}
+		}
+		else
+		{
+			int i = currentGraphId;
+			int  end = (deckBlock) ? floor(numGraphs * 0.5) : numGraphs;
+
+			if (numGraphs > 0 && i >= 0 & i < numGraphs)
+			{
+				graphs[i]->draw();
+
+				if (deckBlock)graphs[i + end]->draw();
+
 			}
 
 		}

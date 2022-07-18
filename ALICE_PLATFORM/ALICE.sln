@@ -5,8 +5,12 @@ VisualStudioVersion = 16.0.32126.315
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALICE_PLATFORM", "ALICE.vcxproj", "{523591A1-85D6-4C6F-9283-4989B0011977}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ALICE_CUDA", "ALICE_CUDA.vcxproj", "{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
 		Release_USD|x64 = Release_USD|x64
 		Release_USD|x86 = Release_USD|x86
 		Release_zSpaceDLL|x64 = Release_zSpaceDLL|x64
@@ -17,6 +21,10 @@ Global
 		Template|x86 = Template|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{523591A1-85D6-4C6F-9283-4989B0011977}.Debug|x64.ActiveCfg = Release|x64
+		{523591A1-85D6-4C6F-9283-4989B0011977}.Debug|x64.Build.0 = Release|x64
+		{523591A1-85D6-4C6F-9283-4989B0011977}.Debug|x86.ActiveCfg = Release|Win32
+		{523591A1-85D6-4C6F-9283-4989B0011977}.Debug|x86.Build.0 = Release|Win32
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Release_USD|x64.ActiveCfg = Release_USD|x64
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Release_USD|x64.Build.0 = Release_USD|x64
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Release_USD|x86.ActiveCfg = Release_USD|Win32
@@ -26,11 +34,28 @@ Global
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Release_zSpaceDLL|x86.ActiveCfg = Release_zSpaceDLL|Win32
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Release_zSpaceDLL|x86.Build.0 = Release_zSpaceDLL|Win32
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Release|x64.ActiveCfg = Release|x64
-		{523591A1-85D6-4C6F-9283-4989B0011977}.Release|x64.Build.0 = Release|x64
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Release|x86.ActiveCfg = Release|Win32
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Release|x86.Build.0 = Release|Win32
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Template|x64.ActiveCfg = Release_zSpaceDLL|x64
 		{523591A1-85D6-4C6F-9283-4989B0011977}.Template|x86.ActiveCfg = Release_zSpaceDLL|Win32
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Debug|x64.ActiveCfg = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Debug|x64.Build.0 = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Debug|x86.ActiveCfg = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_USD|x64.ActiveCfg = Release|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_USD|x64.Build.0 = Release|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_USD|x86.ActiveCfg = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_USD|x86.Build.0 = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_zSpaceDLL|x64.ActiveCfg = Release|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_zSpaceDLL|x64.Build.0 = Release|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_zSpaceDLL|x86.ActiveCfg = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_zSpaceDLL|x86.Build.0 = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release|x64.ActiveCfg = Release|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release|x64.Build.0 = Release|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release|x86.ActiveCfg = Release|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Template|x64.ActiveCfg = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Template|x64.Build.0 = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Template|x86.ActiveCfg = Debug|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Template|x86.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

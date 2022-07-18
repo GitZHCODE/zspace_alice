@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Sketches">
+      <UniqueIdentifier>{ec0acf34-153b-4313-bd3b-fa8589e74bbf}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\userSrc\zspace_cuda\sketch_zspaceCuda_solar.cpp">
+      <Filter>Sketches</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CudaCompile Include="src\userSrc\zspace_cuda\zspaceCuda_solar.cu">
+      <Filter>Sketches</Filter>
+    </CudaCompile>
+  </ItemGroup>
+</Project>
