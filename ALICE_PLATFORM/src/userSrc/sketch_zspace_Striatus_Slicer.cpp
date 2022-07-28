@@ -36,15 +36,16 @@ zUtilsCore core;
 int blockStride = 4;
 int braceStride = 1;
 
-int blockID = 37;
+int blockID = 33;
 
 int SDFFunc_Num = 5;
+bool SDFFunc_NumSmooth = 2;
 
 int numSDFLayers = 3;
-bool allSDFLayers = true;
+bool allSDFLayers = false;
 
 
-zDomainFloat neopreneOffset(0.000, 0.001);
+zDomainFloat neopreneOffset(0.000, 0.000);
 
 bool deckBlock = true;
 zDomain<zPoint> bb;
@@ -57,7 +58,7 @@ string fileDir = "data/striatus/100_Draft/";
 string filePath = "data/striatus/100_Draft/deck_3.json";
 string exportBRGPath = "data/striatus/out_PrintBlock_3.json";
 
-string exportINC3DPath = "C:/Users/vishu.b/Desktop/Striatus_IO/test/blocks";
+string exportINC3DPath = "C:/Users/vishu.b/Desktop/Striatus_IO/test/blockTest";
 
 bool dGuideMesh = true;
 bool dSliceMesh_Left = true;
@@ -85,7 +86,19 @@ zDomainFloat printHeightDomain(0.006, 0.012);
 /*!<Tool sets*/
 zTsSDFSlicer mySlicer;
 
-////// --- GUI OBJECTS ----------------------------------------------------
+////// --- CUSTOM METHODS ----------------------------------------------------
+
+bool dirExists(const std::string& dirName_in)
+{
+	DWORD ftyp = GetFileAttributesA(dirName_in.c_str());
+	if (ftyp == INVALID_FILE_ATTRIBUTES)
+		return false;  //something is wrong with your path!
+
+	if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+		return true;   // this is a directory!
+
+	return false;    // this is not a directory!
+}
 
 
 void setup()
@@ -98,7 +111,7 @@ void setup()
 
 	////////////////////////////////////////////////////////////////////////// ZSPACE
 	// initialise model
-	model = zModel(100000);
+	model = zModel(100000);	
 
 	// read mesh
 	//mySlicer.setFromJSON(filePath, blockStride, braceStride);
@@ -181,27 +194,15 @@ void update(int value)
 	if (computeFRAMES)
 	{
 		printf("\n ----------- \n BlockID %i \n", blockID);
-		for (float printPlaneSpace = printHeightDomain.min; printPlaneSpace <= printHeightDomain.max; printPlaneSpace+= 0.0005)
-		{
-			printf("\n printPlaneSpace %1.4f ", printPlaneSpace);
-						
-			mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, neopreneOffset, true, false);
-
-			frameCHECKS = mySlicer.checkPrintLayerHeights();
-
-			if (frameCHECKS) break;
-
-			printf("\n");
-		}
-
-		
+		mySlicer.computePrintBlocks(printHeightDomain, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, neopreneOffset, true, false);
+			
 
 		computeFRAMES = !computeFRAMES;
 	}
 
 	if (computeSDF)
 	{
-		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, neopreneOffset, false, true);
+		mySlicer.computePrintBlocks(printHeightDomain, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, neopreneOffset, false, true);
 
 		computeSDF = !computeSDF;
 	}
@@ -216,11 +217,21 @@ void update(int value)
 
 	if (exportContours)
 	{
+		bool chkDir = dirExists(exportINC3DPath);
+		if(!chkDir) _mkdir(exportINC3DPath.c_str());
 
 		string filename = exportINC3DPath;
 		filename += (!deckBlock) ? "/Balustrade" : "/Deck";
 
-		mySlicer.exportJSON(filePath, filename,"3dp_block", printLayerWidth, raftLayerWidth);
+		bool chkSubDir = dirExists(filename);
+		if (!chkSubDir) _mkdir(filename.c_str());
+
+		string currentPath = fileDir;
+		currentPath += (deckBlock) ? "deck_" : "balustrade_";
+		currentPath += to_string(blockID);
+		currentPath += ".json";
+
+		mySlicer.exportJSON(currentPath, filename,"3dp_block", printLayerWidth, raftLayerWidth);
 
 		exportContours = !exportContours;
 	}
@@ -384,8 +395,8 @@ void draw()
 	drawString("Total Layers #:" + to_string(totalGraphs), vec(winW - 350, winH - 800, 0));
 	drawString("Current Layer #:" + to_string(currentGraphId), vec(winW - 350, winH - 775, 0));
 
-	string frameText = (frameCHECKS) ? "TRUE" : "FALSE";
-	drawString("Frame CHECKS:" + frameText, vec(winW - 350, winH - 750, 0));
+	//string frameText = (frameCHECKS) ? "TRUE" : "FALSE";
+	//drawString("Frame CHECKS:" + frameText, vec(winW - 350, winH - 750, 0));
 	
 
 

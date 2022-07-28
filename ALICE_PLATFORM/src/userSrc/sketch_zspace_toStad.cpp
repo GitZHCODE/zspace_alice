@@ -229,6 +229,41 @@ void computeUV_Funnel(zObjMesh& o_Mesh, int start_eV0 , int start_eV1)
 
 }
 
+void computeUV_Loop(zObjMesh& o_Mesh)
+{
+
+
+	zFnMesh fnMesh(o_Mesh);
+	//fnMesh.setEdgeColor(CYAN);
+
+	zColorArray eColors;
+	fnMesh.getEdgeColors(eColors);
+
+	//printf("\n % i ", eColors.size());
+
+	for (zItMeshEdge e(o_Mesh); !e.end(); e++)
+	{
+		int id = e.getId();
+
+		zItMeshVertexArray eVerts;
+		e.getVertices(eVerts);
+
+		if (e.getColor() == CYAN && !e.onBoundary())
+		{
+			zPoint v0 = eVerts[0].getPosition();
+			zPoint v1 = eVerts[1].getPosition();
+
+			v0.z = v1.z = 0;
+			float dist = v0.distanceTo(v1);
+
+			if (dist > 0.830 && dist < 0.860) eColors[e.getId()] = MAGENTA;
+		}
+	}
+
+	fnMesh.setEdgeColors(eColors, false);
+
+}
+
 bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supports, float &totalArea)
 {
 	ofstream myfile;
@@ -279,43 +314,47 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 		myfile << "\n " << (e.getId() + 1) << " " << (eVerts[0].getId() + 1) << " " << (eVerts[1].getId() + 1) << ";";
 			
 
-		if (eVerts[0].getColor() == RED && eVerts[1].getColor() == RED) members_150.push_back(id + 1);
-		else if (eVerts[0].getColor() == RED && eVerts[1].getColor() == BLACK) members_150.push_back(id + 1);
-		else if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == RED) members_150.push_back(id + 1);
-		else if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == GREEN) members_150_b.push_back(id + 1);
-		else if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == BLACK) members_150_b.push_back(id + 1);
-		else if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == GREEN) members_150_b.push_back(id + 1);
-		else
-		{
-			if (e.getColor() == CYAN)
-			{
-				/*if (eVerts[0].getColor() == RED || eVerts[1].getColor() == RED)
-				{
-					members_88_ValleyConnect_U.push_back(id + 1);
-					e.setColor(GREEN);
-				}
-				else members_88_U.push_back(id + 1);*/
+		if (e.getColor() == CYAN) members_100_V.push_back(id + 1);
+		else if (e.getColor() == ORANGE) members_150.push_back(id + 1);
+		else if (e.getColor() == MAGENTA) members_65_U.push_back(id + 1); 
 
-				members_65_U.push_back(id + 1);
-			}
-			/*else
-			{
-				if (eVerts[0].getColor() == RED || eVerts[1].getColor() == RED)
-				{
-					members_88_ValleyConnect_V.push_back(id + 1);
-					e.setColor(YELLOW);
-				}
-				else
-				{
-					members_88_V.push_back(id + 1);
-				}
-			}*/
+		//if (eVerts[0].getColor() == RED && eVerts[1].getColor() == RED) members_150.push_back(id + 1);
+		//else if (eVerts[0].getColor() == RED && eVerts[1].getColor() == BLACK) members_150.push_back(id + 1);
+		//else if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == RED) members_150.push_back(id + 1);
+		//else if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == GREEN) members_150_b.push_back(id + 1);
+		//else if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == BLACK) members_150_b.push_back(id + 1);
+		//else if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == GREEN) members_150_b.push_back(id + 1);
+		//else
+		//{
+		//	if (e.getColor() == CYAN)
+		//	{
+		//		/*if (eVerts[0].getColor() == RED || eVerts[1].getColor() == RED)
+		//		{
+		//			members_88_ValleyConnect_U.push_back(id + 1);
+		//			e.setColor(GREEN);
+		//		}
+		//		else members_88_U.push_back(id + 1);*/
 
-			else if ((e.getColor() == BLUE)) members_125_V.push_back(id + 1);
-			
-			else members_100_V.push_back(id + 1);
-		
-		}
+		//		members_65_U.push_back(id + 1);
+		//	}
+		//	/*else
+		//	{
+		//		if (eVerts[0].getColor() == RED || eVerts[1].getColor() == RED)
+		//		{
+		//			members_88_ValleyConnect_V.push_back(id + 1);
+		//			e.setColor(YELLOW);
+		//		}
+		//		else
+		//		{
+		//			members_88_V.push_back(id + 1);
+		//		}
+		//	}*/
+
+		//	else if ((e.getColor() == BLUE)) members_125_V.push_back(id + 1);
+		//	
+		//	else members_100_V.push_back(id + 1);
+		//
+		//}
 	}
 
 	zFnMesh fnMesh(o_Mesh);
@@ -434,31 +473,31 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 	{
 		myfile << " " << id ;
 	}
-	myfile << " TABLE ST 165.1X5.4RHS \n";
+	if(members_150.size() > 0) myfile << " TABLE ST 165.1X5.4RHS \n";
 
 	for (int id : members_150_b)
 	{
 		myfile << " " << id;
 	}
-	myfile << " TABLE ST 165.1X5.4RHS \n";
+	if (members_150_b.size() > 0) myfile << " TABLE ST 165.1X5.4RHS \n";
 	
 	for (int id : members_65_U)
 	{
 		myfile << " " << id;
 	}
-	myfile << " TABLE ST 76.1X4.5CHS \n";
+	if (members_65_U.size() > 0) myfile << " TABLE ST 76.1X4.5CHS \n";
 
 	for (int id : members_100_V)
 	{
 		myfile << " " << id;
 	}
-	myfile << " TABLE ST 114.3X5.4CHS \n";
+	if (members_100_V.size() > 0) myfile << " TABLE ST 114.3X5.4CHS \n";
 
 	for (int id : members_125_V)
 	{
 		myfile << " " << id;
 	}
-	myfile << " TABLE ST 114.3X5.4CHS \n";
+	if (members_125_V.size() > 0) myfile << " TABLE ST 114.3X5.4CHS \n";
 
 	//for (int id : members_88_ValleyConnect_V)
 	//{
@@ -476,7 +515,7 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 	{
 		myfile << " " << id;
 	}
-	myfile << " TABLE ST 114.3X5.4CHS \n";
+	if (members_100.size() > 0) myfile << " TABLE ST 114.3X5.4CHS \n";
 
 	//CONSTANTS
 	myfile << "\nCONSTANTS ";
@@ -632,11 +671,11 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/toSTAD/toStad_2606.json", zJSON);
+	fnMesh.from("data/toSTAD/toStad_2707.json", zJSON);
 
 	
 	zFnMesh fnMesh_cap(oMesh_cap);
-	fnMesh_cap.from("data/toSTAD/maya_quadgrid_cap_1106.obj", zOBJ);
+	fnMesh_cap.from("data/toSTAD/maya_cap_2707.obj", zOBJ);
 
 	//  supports
 	//supports = zIntArray{ 2,3,5,9,13,15,17,21,23,25,29,31,33,37,39,41,45,47,49,53,55,896,899,900,902,903,905,906,907,909,911,912,914,915,916 };
@@ -660,9 +699,10 @@ void setup()
 
 	fnMesh.setEdgeColor(CYAN, false);
 
-	computeUV_Funnel(oMesh, 2471, 403);
-	computeUV_Shell(oMesh, 1737, 18);
+	//computeUV_Funnel(oMesh, 2471, 403);
+	//computeUV_Shell(oMesh, 1737, 18);
 	computeValley(oMesh);
+	computeUV_Loop(oMesh);
 	
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object

@@ -93,5 +93,11 @@
     <ClCompile Include="src\userSrc\sketch_zspace_Striatus_Slicer.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_GraphMesh.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_GraphLoftMesh.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

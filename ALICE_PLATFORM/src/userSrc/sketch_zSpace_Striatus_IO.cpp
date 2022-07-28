@@ -75,6 +75,9 @@ int nF = 0;
 string filePath = "data/striatus/center_s2.json";
 string filePath_thick = "data/striatus/thickness_s2.json";
 
+string filePath_transform = "data/striatus/Transform.txt";
+zTransform bridgeTransform;
+
 string exportBRGPath = "data/striatus/out_BRG.json";
 string importBRGPath = "data/striatus/tozha_220622.json";
 
@@ -90,6 +93,92 @@ string printfile;
 
 ////////////////////////////////////////////////////////////////////////// MAIN PROGRAM : MVC DESIGN PATTERN  ----------------------------------------------------
 
+bool readTransform(string path, zTransformationMatrix& transMat)
+{
+	ifstream myfile;
+	myfile.open(path.c_str());
+
+	if (myfile.fail())
+	{
+		cout << " error in opening file  " << path.c_str() << endl;
+		return false;
+	}
+
+	transMat = zTransformationMatrix();
+
+	zFloat4 translation = {0,0,0,0};
+	zFloat4 rotation = { 0,0,0,0 };
+	zFloat4 scale = { 1,1,1,1 };
+
+	while (!myfile.eof())
+	{
+		string str;
+		getline(myfile, str);
+
+		vector<string> perlineData = core.splitString(str, " ");
+
+		if (perlineData.size() > 0)
+		{
+			// Translation
+			if (perlineData[0] == "TranslateX")
+			{
+				translation[0] = atof(perlineData[1].c_str());				
+			}
+
+			if (perlineData[0] == "TranslateY")
+			{
+				translation[1] = atof(perlineData[1].c_str());
+			}
+
+			if (perlineData[0] == "TranslateZ")
+			{
+				translation[2] = atof(perlineData[1].c_str());
+			}
+
+			// Rotation
+			if (perlineData[0] == "RotateX")
+			{
+				rotation[0] = atof(perlineData[1].c_str());
+			}
+
+			if (perlineData[0] == "RotateY")
+			{
+				rotation[1] = atof(perlineData[1].c_str());
+			}
+
+			if (perlineData[0] == "RotateZ")
+			{
+				rotation[2] = atof(perlineData[1].c_str());
+			}
+
+			// Scale
+			if (perlineData[0] == "ScaleX")
+			{
+				scale[0] = atof(perlineData[1].c_str());
+			}
+
+			if (perlineData[0] == "ScaleY")
+			{
+				scale[1] = atof(perlineData[1].c_str());
+			}
+
+			if (perlineData[0] == "ScaleZ")
+			{
+				scale[2] = atof(perlineData[1].c_str());
+			}
+
+		}
+
+
+	}
+
+	myfile.close();
+
+	transMat.setTranslation(translation);
+	transMat.setRotation(rotation);
+	transMat.setScale(scale);
+
+}
 
 
 
@@ -108,12 +197,18 @@ void setup()
 	//////////////////////////////////////////////////////////////////////////
 	model = zModel(100000);
 
+	zTransformationMatrix transMAT;
+	readTransform(filePath_transform, transMAT);
+	bridgeTransform = transMAT.asMatrix();
+
+	
 	zFnMesh fnGuideMesh(o_guideMesh);
-	//fnGuideMesh.from(filePath, zJSON);
+	fnGuideMesh.from(filePath, zJSON);	
+	
 	mySDF.setGuideMesh(o_guideMesh);
 
 	zFnMesh fnGuidetThickMesh(o_guideThickMesh);
-	//fnGuidetThickMesh.from(filePath_thick, zJSON);
+	fnGuidetThickMesh.from(filePath_thick, zJSON);	
 	mySDF.setThickGuideMesh(o_guideThickMesh);
 	
 
@@ -162,7 +257,9 @@ void update(int value)
 
 	if (exportMesh)
 	{
-		mySDF.toBRGJSON(exportBRGPath, points, norms, thickPoints);
+
+
+		mySDF.toBRGJSON(exportBRGPath, points, norms, thickPoints, bridgeTransform);
 
 		exportMesh = !exportMesh;
 	}
@@ -219,7 +316,7 @@ void draw()
 	
 
 	backGround(background);
-	//drawGrid(20.0);
+	drawGrid(20.0);
 
 	//glDisable(GL_CULL_FACE);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -252,7 +349,13 @@ void draw()
 	AL_drawString(jts, winW * 0.5, winH - 100);
 	AL_drawString(printfile.c_str(), winW * 0.5, winH - 125);
 	
-	
+	glColor3f(0, 0, 0);
+
+
+	drawString("KEY Press", vec(winW - 350, winH - 600, 0));
+	drawString("v - ExportJSON", vec(winW - 350, winH - 575, 0));
+	drawString("c - ImportJSON", vec(winW - 350, winH - 550, 0));
+
 
 	//int hts = 100;
 	//int wid = winW * 0.01;

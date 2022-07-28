@@ -83,6 +83,10 @@ void setup()
 	// initialise model
 	model = zModel(100000);
 
+	char* x = "mystring";
+	x = x + (char)10;
+	printf("\n x %s ", x);
+
 	// ---- check if cuda exists
 	GPU_COMPUTE = checkCudaExists(GPUString);
 	cout << "\n " << GPUString;

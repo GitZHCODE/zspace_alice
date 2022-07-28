@@ -41,6 +41,8 @@
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspaceModule_KMeans.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_GLTF.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspace_GraphLoftMesh.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspace_GraphMesh.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_gridshell.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_MeshColor_Guangdu.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Planarise.cpp" />
