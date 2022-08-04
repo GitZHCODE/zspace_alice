@@ -50,6 +50,7 @@
     <ClCompile Include="src\userSrc\sketch_zspace_SDFSlicer.cpp" />
     <ClCompile Include="src\userSrc\sketch_zSpace_Striatus_Block.cpp" />
     <ClCompile Include="src\userSrc\sketch_zSpace_Striatus_IO.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspace_Striatus_IO_ReadBlocks.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Striatus_Slicer.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_SunVectorTransform.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_toStad.cpp" />

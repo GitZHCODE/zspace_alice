@@ -37,7 +37,7 @@ zPointArray positions;
 zFloatArray positionsZ;
 
 int id = 1;
-string fileName = "data/toSTAD/TXT/3DPattern_External_2407_";
+string fileName = "data/toSTAD/TXT/3DPattern_Internal_0208_";
 string inFilePath = fileName + to_string(id) + ".txt ";
 string outFilePath = fileName + to_string(id) + ".json";
 

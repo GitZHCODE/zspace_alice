@@ -25,30 +25,62 @@ zColor YELLOW(1, 1, 0, 1);
 
 zUtilsCore core;
 
+void computeUV_Loop(zObjMesh& o_Mesh)
+{
+
+	zFnMesh fnMesh(o_Mesh);
+	fnMesh.setEdgeColor(CYAN);
+
+	zColorArray eColors;
+	fnMesh.getEdgeColors(eColors);	
+
+	for (zItMeshEdge e(o_Mesh); !e.end(); e++)
+	{
+		int id = e.getId();
+
+		zItMeshVertexArray eVerts;
+		e.getVertices(eVerts);
+
+		if (e.getColor() == CYAN && !e.onBoundary())
+		{
+			zPoint v0 = eVerts[0].getPosition();
+			zPoint v1 = eVerts[1].getPosition();
+
+			v0.z = v1.z = 0;
+			float dist = v0.distanceTo(v1);
+
+			if (dist > 0.830 && dist < 0.860) eColors[e.getId()] = MAGENTA;
+		}
+	}
+
+	fnMesh.setEdgeColors(eColors, false);
+
+}
+
 void computeValley(zObjMesh& o_Mesh)
 {
 
 
 	zFnMesh fnMesh(o_Mesh);
-	//fnMesh.setEdgeColor(CYAN);
+	fnMesh.setEdgeColor(ORANGE);
 
 	zColorArray eColors;
 	fnMesh.getEdgeColors(eColors);
 
+	zColor* vColors = fnMesh.getRawVertexColors();;		
+
 	for (zItMeshEdge e(o_Mesh); !e.end(); e++)
 	{
-		zItMeshVertexArray eVerts;
+		int id = e.getId();
+
+		zIntArray eVerts;
 		e.getVertices(eVerts);
-		if (eVerts[0].getColor() == RED && eVerts[1].getColor() == RED) eColors[e.getId()] = ORANGE;
-		if (eVerts[0].getColor() == RED && eVerts[1].getColor() == BLACK) eColors[e.getId()] = ORANGE;
-		if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == RED) eColors[e.getId()] = ORANGE;
-		if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == BLACK) eColors[e.getId()] = ORANGE;
 
-		if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == GREEN) eColors[e.getId()] = YELLOW;
-		if (eVerts[0].getColor() == GREEN && eVerts[1].getColor() == BLACK) eColors[e.getId()] = YELLOW;
-		if (eVerts[0].getColor() == BLACK && eVerts[1].getColor() == GREEN) eColors[e.getId()] = YELLOW;
-
+		if (vColors[eVerts[0]] == BLUE && vColors[eVerts[1]] == BLUE) eColors[e.getId()] = GREEN;	
+		if (vColors[eVerts[0]] == BLUE && vColors[eVerts[1]] == BLACK) eColors[e.getId()] = GREEN;
+		if (vColors[eVerts[0]] == BLACK && vColors[eVerts[1]] == BLUE) eColors[e.getId()] = GREEN;
 	}
+	
 
 	fnMesh.setEdgeColors(eColors, false);
 
@@ -268,10 +300,21 @@ void computeUV_Funnel(zObjMesh& o_Mesh, int start_eV0 , int start_eV1)
 
 }
 
-bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supports, float &totalArea)
+bool toSTAD(string path, zObjMesh& o_Mesh_Shell, zObjMesh& o_Mesh_Valley, zIntArray &supports, float &totalArea, zObjGraph& o_Graph_Stad, zVectorArray &forceVecs, zPointArray &forcePts, zDomainFloat &minMaxForce )
 {
 	ofstream myfile;
 	myfile.open(path.c_str());
+
+	zPointArray positions;
+	zIntArray eConnects;
+	zColorArray eColor;
+
+	zFnMesh fnMeshValley(o_Mesh_Valley);
+	zFnMesh fnMeshShell(o_Mesh_Shell);
+
+	forceVecs.clear();
+	forcePts.clear();
+	minMaxForce = zDomainFloat(10000, 0);
 
 	if (myfile.fail())
 	{
@@ -291,22 +334,67 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 	
 	// vertex positions
 	// 1 -0.771834 0 1.26659;
-	for (zItMeshVertex v(o_Mesh); !v.end(); v++ )
+	for (zItMeshVertex v(o_Mesh_Valley); !v.end(); v++ )
 	{
 		zPoint vPos = v.getPosition();		
 		myfile << "\n " << (v.getId() + 1) << " " << vPos.x << " " << vPos.z << " " << vPos.y << ";";
+
+		positions.push_back(vPos);
+	}
+
+	int currentVertexID = positions.size();
+	zIntArray shellVertexMap;
+	shellVertexMap.assign(fnMeshShell.numVertices(), 0);
+
+	zBoolArray use_shellVertex; 
+	use_shellVertex.assign(fnMeshShell.numVertices(), true);
+
+	for (zItMeshVertex v(o_Mesh_Shell); !v.end(); v++)
+	{
+		zPoint vPos = v.getPosition();
+		int v0_ID = -1;
+
+		if (v.onBoundary())
+		{			
+			bool chkV0 = core.checkRepeatVector(vPos, positions, v0_ID,2);
+			if (!chkV0)
+			{
+				printf("\n %i | %i", v.getId(), v0_ID);
+
+				myfile << "\n " << (currentVertexID + 1) << " " << vPos.x << " " << vPos.z << " " << vPos.y << ";";
+
+				v0_ID = positions.size();
+				positions.push_back(vPos);
+				currentVertexID++;
+			}
+			else use_shellVertex[v.getId()] = false;
+		}
+
+		else
+		{
+			
+			myfile << "\n " << (currentVertexID + 1) << " " << vPos.x << " " << vPos.z << " " << vPos.y << ";";
+
+			v0_ID = positions.size();
+			positions.push_back(vPos);
+			currentVertexID++;
+		}
+		
+		shellVertexMap[v.getId()] = v0_ID;
+
+		
 	}
 
 	//MEMBER INCIDENCES
 	zIntArray members_U;
 	zIntArray members_V;
 	zIntArray members_W;
-	zIntArray members_Valley;
-	zIntArray members_Cap;
+	zIntArray members_Valley_large;
+	zIntArray members_Valley_small;
 
 
 	myfile << "\nMEMBER INCIDENCES ";
-	for (zItMeshEdge e(o_Mesh); !e.end(); e++)
+	for (zItMeshEdge e(o_Mesh_Valley); !e.end(); e++)
 	{
 		int id = e.getId();
 
@@ -315,64 +403,139 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 
 		myfile << "\n " << (e.getId() + 1) << " " << (eVerts[0].getId() + 1) << " " << (eVerts[1].getId() + 1) << ";";
 			
+		eConnects.push_back(eVerts[0].getId());
+		eConnects.push_back(eVerts[1].getId());
 
-		if(e.getColor() == ORANGE) members_Valley.push_back(id + 1);
-		else if (e.getColor() == CYAN) members_V.push_back(id + 1);
-		else if (e.getColor() == YELLOW) members_U.push_back(id + 1);
-		else if (e.getColor() == GREEN) members_W.push_back(id + 1);
+		if (e.getColor() == ORANGE)
+		{
+			members_Valley_large.push_back(id + 1);
+			eColor.push_back(ORANGE);			
+		}
+		else if (e.getColor() == GREEN)
+		{
+			members_Valley_small.push_back(id + 1);
+			eColor.push_back(GREEN);		
+
+		}
+		else
+		{
+			eColor.push_back(BLACK);
+		}
 
 	}
 
-	zFnMesh fnMesh(o_Mesh);
-	int currentId = fnMesh.numEdges();
+
+	// VALLEY BRACING 	
+	int currentId = fnMeshValley.numEdges();
 
 	zPointArray pts;
-	fnMesh.getVertexPositions(pts);
+	fnMeshValley.getVertexPositions(pts);
 
-	for (zItMeshEdge e(o_Mesh_cap); !e.end(); e++)
+	zBoolArray vertVisited;
+	vertVisited.assign(fnMeshValley.numVertices(), false);
+
+	for (zItMeshVertex v(o_Mesh_Valley); !v.end(); v++)
 	{
-		bool addEdge = false;
-		if (e.onBoundary())
+		if (vertVisited[v.getId()]) continue;
+
+		//printf("\n %i " , v.getId());
+
+		if (v.getColor() == BLUE)
 		{
-			zItMeshVertexArray eVerts;
-			e.getVertices(eVerts);
+			zItMeshHalfEdgeArray cHEdges;
+			v.getConnectedHalfEdges(cHEdges);
 
-			if (eVerts[0].checkValency(2) && eVerts[1].checkValency(2))  addEdge = true;
-		}
-		else addEdge = true;
+			zItMeshHalfEdge he = (cHEdges[0].getVertex().getColor() == BLUE) ? cHEdges[1] : cHEdges[0];
 
-		if(addEdge)
-		{
-			int id = currentId;
+			int numVerts = positions.size();
+			zItMeshHalfEdge start = he;
+			
+			zIntArray tempIDs;
 
-			zItMeshVertexArray eVerts;
-			e.getVertices(eVerts);
-
-			int v0_ID, v1_ID;
-			bool chkV0 = core.checkRepeatVector(eVerts[0].getPosition(), pts, v0_ID);
-			bool chkV1 = core.checkRepeatVector(eVerts[1].getPosition(), pts, v1_ID);
-
-			//zItMeshVertex v0;
-			//bool chkV0 = fnMesh.vertexExists(eVerts[0].getPosition(), v0);
-
-			//zItMeshVertex v1;
-			//bool chkV1 = fnMesh.vertexExists(eVerts[1].getPosition(), v1);
-
-			if (chkV0 && chkV1)
+			do
 			{
-				myfile << "\n " << (id + 1) << " " << (v0_ID + 1) << " " << (v1_ID + 1) << ";";
+				if (he.getStartVertex().getColor() == BLUE)
+				{
+					tempIDs.push_back(he.getStartVertex().getId());
+					vertVisited[he.getStartVertex().getId()] = true;
+					
+				}
 
-				members_Cap.push_back(id + 1);
+				he = he.getNext().getSym().getNext();
 
+
+			} while (he != start);
+
+			if (tempIDs.size() == 3)
+			{
+				eConnects.push_back(tempIDs[0]);
+				eConnects.push_back(tempIDs[1]);
+
+				myfile << "\n " << (currentId + 1) << " " << (tempIDs[0] + 1) << " " << (tempIDs[1] + 1) << ";";
+				members_Valley_small.push_back(currentId + 1);
+				eColor.push_back(GREEN);			
+				currentId++;
+
+				// -------
+
+				eConnects.push_back(tempIDs[1]);
+				eConnects.push_back(tempIDs[2]);
+
+				myfile << "\n " << (currentId + 1) << " " << (tempIDs[1] + 1) << " " << (tempIDs[2] + 1) << ";";
+				members_Valley_small.push_back(currentId + 1);
+				eColor.push_back(GREEN);				
+				currentId++;
+
+				// --------
+
+				eConnects.push_back(tempIDs[2]);
+				eConnects.push_back(tempIDs[0]);
+
+				myfile << "\n " << (currentId + 1) << " " << (tempIDs[2] + 1) << " " << (tempIDs[0] + 1) << ";";
+				members_Valley_small.push_back(currentId + 1);
+				eColor.push_back(GREEN);				
 				currentId++;
 			}
-			else
-			{
-				printf("\n %i %i ", eVerts[0].getId(), eVerts[1].getId());
-			}
+		}
+	}
+
+	printf("\n total edges before shell %i ", currentId);
+
+	// SHELL EDGES
+
+	for (zItMeshEdge e(o_Mesh_Shell); !e.end(); e++)
+	{	
+		zItMeshVertexArray eVerts;
+		e.getVertices(eVerts);
+
+		if (!use_shellVertex[eVerts[0].getId()] && !use_shellVertex[eVerts[1].getId()]) continue;
+
+		int v0 = shellVertexMap[eVerts[0].getId()];
+		int v1 = shellVertexMap[eVerts[1].getId()];
+
+		myfile << "\n " << (currentId + 1) << " " << (v0 + 1) << " " << (v1 + 1) << ";";
+
+		eConnects.push_back(v0);
+		eConnects.push_back(v1);
+
+		if (e.getColor() == CYAN)
+		{
+			members_U.push_back(currentId + 1);
+			eColor.push_back(CYAN);
+		}
+		else if (e.getColor() == MAGENTA)
+		{
+			members_V.push_back(currentId + 1);
+			eColor.push_back(MAGENTA);
 
 		}
+		else
+		{
+			eColor.push_back(BLACK);
+		}
 		
+
+		currentId++;
 	}
 
 	printf("\n total edges %i ", currentId);
@@ -435,37 +598,29 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 	myfile << "\nMEMBER PROPERTY TATASTRUCTURA \n";
 
 	
-	for (int id : members_Valley)
+	for (int id : members_Valley_large)
 	{
 		myfile << " " << id ;
 	}
-	myfile << " TABLE ST 165.1X5.4RHS \n";
+	if (members_Valley_large.size() > 0) myfile << " TABLE ST 165.1X5.4RHS \n";
 
+	for (int id : members_Valley_small)
+	{
+		myfile << " " << id;
+	}
+	if (members_Valley_small.size() > 0) myfile << " TABLE ST 114.3X5.4CHS \n";
+	
 	for (int id : members_U)
 	{
 		myfile << " " << id;
 	}
-	myfile << " TABLE ST 114.3X5.4CHS \n";
-	
+	if (members_U.size() > 0) myfile << " TABLE ST 114.3X5.4CHS \n";
+
 	for (int id : members_V)
 	{
 		myfile << " " << id;
 	}
-	myfile << " TABLE ST 76.1X4.5CHS \n";
-
-	for (int id : members_W)
-	{
-		myfile << " " << id;
-	}
-	myfile << " TABLE ST 114.3X5.4CHS \n";
-
-	for (int id : members_Cap)
-	{
-		myfile << " " << id;
-	}
-	myfile << " TABLE ST 114.3X5.4CHS \n";
-
-	
+	if (members_V.size() > 0) myfile << " TABLE ST 114.3X5.4CHS \n";
 
 	//CONSTANTS
 	myfile << "\nCONSTANTS ";
@@ -492,24 +647,90 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 	//JOINT LOAD
 		
 	zPointArray fCenters;
-	fnMesh.getCenters(zFaceData, fCenters);
+	fnMeshValley.getCenters(zFaceData, fCenters);
 
 	zPointArray heCenters;
-	fnMesh.getCenters(zHalfEdgeData, heCenters);
+	fnMeshValley.getCenters(zHalfEdgeData, heCenters);
 
 	zFloatArray vAreas;
-	totalArea = fnMesh.getVertexAreas(fCenters, heCenters, vAreas);
+	totalArea = fnMeshValley.getVertexAreas(fCenters, heCenters, vAreas);
 	
 	
 	myfile << "\nJOINT LOAD ";
 
 	//	1 2 3 4 5 6 7 8 9 10 FY - 2.5
-	for (zItMeshVertex v(o_Mesh); !v.end(); v++)
+	for (zItMeshVertex v(o_Mesh_Valley); !v.end(); v++)
 	{
 		int id = v.getId();
-		if (v.getColor() == RED) myfile << "\n " << (id + 1) << " FY " << -3.5 * vAreas[id];
-		if (v.getColor() == BLUE)myfile << "\n " << (id + 1) << " FY " << -2.5 * vAreas[id];
+		forcePts.push_back(v.getPosition());
+
+		if (v.getColor() == RED)
+		{
+			float val = -3.5 * vAreas[id];
+			myfile << "\n " << (id + 1) << " FY " << val;
+
+			forceVecs.push_back(zVector(0, 0, val));			
+			minMaxForce.min = (val < minMaxForce.min) ? val : minMaxForce.min;
+			minMaxForce.max = (val > minMaxForce.max) ? val : minMaxForce.max;
+		}
+		else if (v.getColor() == BLUE)
+		{
+			float val = -2.5 * vAreas[id];
+			myfile << "\n " << (id + 1) << " FY " << val;
+
+			forceVecs.push_back(zVector(0, 0, val));			
+			minMaxForce.min = (val < minMaxForce.min) ? val : minMaxForce.min;
+			minMaxForce.max = (val > minMaxForce.max) ? val : minMaxForce.max;
+		}
+		else
+		{
+			forceVecs.push_back(zVector(0, 0, 0));
+		}
 	}
+
+
+	fCenters.clear();
+	heCenters.clear();
+	vAreas.clear();
+
+	fnMeshShell.getCenters(zFaceData, fCenters);
+	fnMeshShell.getCenters(zHalfEdgeData, heCenters);
+
+	totalArea += fnMeshShell.getVertexAreas(fCenters, heCenters, vAreas);
+
+
+	for (zItMeshVertex v(o_Mesh_Shell); !v.end(); v++)
+	{	
+
+		//if (!use_shellVertex[v.getId()]) continue;
+
+		int id = shellVertexMap[ v.getId()];
+		forcePts.push_back(v.getPosition());
+
+		if (v.getColor() == RED)
+		{
+			float val = -3.5 * vAreas[v.getId()];
+			myfile << "\n " << (id + 1) << " FY " << val;
+
+			forceVecs.push_back(zVector(0, 0, val));
+			minMaxForce.min = (val < minMaxForce.min) ? val : minMaxForce.min;
+			minMaxForce.max = (val > minMaxForce.max) ? val : minMaxForce.max;
+		}
+		else if (v.getColor() == BLUE)
+		{
+			float val = -2.5 * vAreas[v.getId()];
+			myfile << "\n " << (id + 1) << " FY " << val;
+
+			forceVecs.push_back(zVector(0, 0, val));
+			minMaxForce.min = (val < minMaxForce.min) ? val : minMaxForce.min;
+			minMaxForce.max = (val > minMaxForce.max) ? val : minMaxForce.max;
+		}
+		else
+		{
+			forceVecs.push_back(zVector(0, 0, 0));
+		}
+	}
+
 	
 	//PERFORM ANALYSIS
 	myfile << "\nPERFORM ANALYSIS ";
@@ -533,7 +754,20 @@ bool toSTAD(string path, zObjMesh& o_Mesh, zObjMesh& o_Mesh_cap, zIntArray &supp
 	myfile << "\nFINISH ";
 
 	myfile.close();
+
 	cout << endl << "STAD exported. File:   " << path.c_str() << endl;
+	// MAKE GRAPH
+
+	zFnGraph fnGraph(o_Graph_Stad);
+	fnGraph.create(positions, eConnects);
+	
+	//zColorArray eCols_temp;
+	//fnGraph.getEdgeColors(eCols_temp);
+
+	//printf("\n edgecolor %i %i ", eCols_temp.size(), eColor.size());
+	
+	fnGraph.setEdgeColors(eColor,false);
+
 }
 
 
@@ -590,6 +824,8 @@ bool fromSTAD(string path, zObjMesh& o_Mesh)
 bool compute = false;
 bool importSTAD = false;
 bool display = true;
+bool displayMESH = true;
+bool displayGRAPH = true;
 
 double background = 0.35;
 
@@ -599,10 +835,17 @@ zModel model;
 
 /*!<Objects*/
 
-zObjMesh oMesh;
-zObjMesh oMesh_cap;
+zObjMesh oMesh_shell;
+zObjMesh oMesh_valley;
+
+zObjGraph oGraph_stad;
 zIntArray supports;
 
+zVectorArray forceVecs;
+zPointArray forcePts;
+zDomainFloat minMaxForces;
+
+zDomainFloat mappedDomain(0.1, 1);
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 
@@ -620,54 +863,50 @@ void setup()
 	model = zModel(100000);
 
 	// read mesh
-	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/toSTAD/toStad_0507.json", zJSON);
+	zFnMesh fnMesh_shell(oMesh_shell);
+	fnMesh_shell.from("data/toSTAD/toStad_0308_shell.json", zJSON);
 
 	
-	zFnMesh fnMesh_cap(oMesh_cap);
-	fnMesh_cap.from("data/toSTAD/toStad_0507_Cap.obj", zOBJ);
+	zFnMesh fnMesh_valley(oMesh_valley);
+	fnMesh_valley.from("data/toSTAD/toStad_0308_valley_1.json", zJSON);
 
 	//  supports
 	//supports = zIntArray{ 2,3,5,9,13,15,17,21,23,25,29,31,33,37,39,41,45,47,49,53,55,896,899,900,902,903,905,906,907,909,911,912,914,915,916 };
 	int redCounter = 0;
 	int blueCounter = 0;
 	int greenCounter = 0;
-	for (zItMeshVertex v(oMesh); !v.end(); v++)
+	for (zItMeshVertex v(oMesh_valley); !v.end(); v++)
 	{
-		if (v.getColor() == BLACK)
+		if (v.onBoundary())
 		{
 			supports.push_back(v.getId());
-		}
+			v.setColor(BLACK);			
+		}	
 
 		if (v.getColor() == RED)redCounter++;
 		if (v.getColor() == BLUE)blueCounter++;
-		if (v.getColor() == GREEN)greenCounter++;
 	}
 	
 	printf("\n num supports %i ", supports.size());
 	printf("\n red %i blue %i green %i ", redCounter, blueCounter, greenCounter);
-
-	fnMesh.setEdgeColor(CYAN, false);
-
-	computeValley(oMesh);
-
-	zVector dir_U(-0.666292, 0.745691, 0);
-	computeDir(oMesh, dir_U, YELLOW);
-
-	zVector dir_W(0.037396, 0.999301, 0);
-	computeDir(oMesh, dir_W, GREEN);
-
-
 	
-	
+
+	computeUV_Loop(oMesh_shell);
+	computeValley(oMesh_valley);
+
+	// --- 
+		
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
-	model.addObject(oMesh);
-	model.addObject(oMesh_cap);
+	model.addObject(oMesh_shell);
+	model.addObject(oMesh_valley);
+	model.addObject(oGraph_stad);
 	
 	// set display element booleans
-	oMesh.setDisplayElements(true, true, false);
-	oMesh_cap.setDisplayElements(true, true, false);
+	oMesh_shell.setDisplayElements(true, true, false);
+	oMesh_valley.setDisplayElements(true, true, false);
+
+	oGraph_stad.setDisplayElements(true, true);
 	
 	
 	////////////////////////////////////////////////////////////////////////// Sliders
@@ -687,23 +926,37 @@ void setup()
 	B.addButton(&display, "display");
 	B.buttons[1].attachToVariable(&display);
 
+	B.addButton(&displayMESH, "displayMESH");
+	B.buttons[2].attachToVariable(&displayMESH);
+
+	B.addButton(&displayGRAPH, "displayGRAPH");
+	B.buttons[3].attachToVariable(&displayGRAPH);
+	
+
 }
 
 void update(int value)
 {
+	oMesh_valley.setDisplayObject(displayMESH);
+	oMesh_shell.setDisplayObject(displayMESH);
+
+	oGraph_stad.setDisplayObject(displayGRAPH);
+
 	if (compute)
 	{
 		float totalArea;
-		toSTAD("data/toSTAD/outTest.std", oMesh, oMesh_cap, supports, totalArea);
-
+		toSTAD("data/toSTAD/outTest.std", oMesh_shell, oMesh_valley, supports, totalArea, oGraph_stad, forceVecs, forcePts, minMaxForces);
 		printf("\n totalArea: %1.3f ", totalArea);
+
+		zFnGraph fnGraph(oGraph_stad);
+		fnGraph.to("data/toSTAD/stadGraph.json", zJSON);
 
 		compute = !compute;	
 	}
 
 	if (importSTAD)
 	{
-		fromSTAD("data/toSTAD/STAD_in_3005.txt", oMesh);
+		fromSTAD("data/toSTAD/STAD_in_3005.txt", oMesh_shell);
 
 		importSTAD = !importSTAD;
 	}
@@ -719,8 +972,24 @@ void draw()
 
 	if (display)
 	{		
-		model.draw();
+		int i = 0;
+		for (auto& f : forceVecs)
+		{
+			float len = f.length();
+			zVector tmp = f * -1;;
+			tmp.normalize();
+
+			float mLen = core.ofMap(len, minMaxForces, mappedDomain);
+			tmp *= mLen;
+
+			zPoint p0 = forcePts[i] + tmp;
+			model.displayUtils.drawLine(p0, forcePts[i], GREEN, 0.5);
+			model.displayUtils.drawPoint(forcePts[i], GREEN, 3);
+			i++;
+		}
 	}
+
+	model.draw();
 
 	//////////////////////////////////////////////////////////
 

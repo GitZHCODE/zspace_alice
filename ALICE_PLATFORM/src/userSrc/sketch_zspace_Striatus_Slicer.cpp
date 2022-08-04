@@ -16,6 +16,7 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////// General
 
+bool computeHEIGHTS_Folder = false;
 bool computeFRAMES = false;
 bool computeSDF = false;
 bool display = true;
@@ -32,17 +33,20 @@ zModel model;
 /*!<Objects*/
 
 zUtilsCore core;
+zObjMesh o_centerMesh;
 
 int blockStride = 4;
 int braceStride = 1;
 
-int blockID = 33;
+int blockID = 97;
 
 int SDFFunc_Num = 5;
 bool SDFFunc_NumSmooth = 2;
 
 int numSDFLayers = 3;
-bool allSDFLayers = false;
+bool allSDFLayers = true;
+
+
 
 
 zDomainFloat neopreneOffset(0.000, 0.000);
@@ -59,6 +63,8 @@ string filePath = "data/striatus/100_Draft/deck_3.json";
 string exportBRGPath = "data/striatus/out_PrintBlock_3.json";
 
 string exportINC3DPath = "C:/Users/vishu.b/Desktop/Striatus_IO/test/blockTest";
+
+string filePath_centerMesh = "data/striatus/out_BRG_220730.json";
 
 bool dGuideMesh = true;
 bool dSliceMesh_Left = true;
@@ -114,11 +120,38 @@ void setup()
 	model = zModel(100000);	
 
 	// read mesh
+	
+	zFnMesh fnCenterMesh(o_centerMesh);
+	fnCenterMesh.from(filePath_centerMesh, zJSON);
+
+	// get transform
+	json j;	
+
+	ifstream in_myfile;
+	in_myfile.open(filePath_centerMesh.c_str());
+	in_myfile >> j;
+	in_myfile.close();
+
+	zFloatArray bTransform_array = j["BridgeTransform"];
+	zTransform bTranform;
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			bTranform(i, j) = bTransform_array[i * 4 + j];
+		}
+		
+	}
+	
+
+	fnCenterMesh.setTransform(bTranform, true, true);
+
 	//mySlicer.setFromJSON(filePath, blockStride, braceStride);
 	mySlicer.setFromJSON(fileDir, blockID);
 
 	deckBlock = mySlicer.onDeckBlock();
-	bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.6, -0.35, 0), zPoint(0.6, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
+	bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.9, -0.35, 0), zPoint(0.9, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
 
 
 	//--- FIELD
@@ -140,6 +173,9 @@ void setup()
 
 	zObjMesh* rightMesh = mySlicer.getRawRightMesh();
 	rightMesh->setDisplayElements(false, true, false);
+
+	o_centerMesh.setDisplayElements(false, true, true);
+	model.addObject(o_centerMesh);
 
 	////////////////////////////////////////////////////////////////////////// Sliders
 
@@ -189,7 +225,12 @@ void setup()
 
 void update(int value)
 {
-	
+	if (computeHEIGHTS_Folder)
+	{
+
+		mySlicer.checkPrintLayerHeights_Folder(fileDir, printHeightDomain, neopreneOffset);
+		computeHEIGHTS_Folder = !computeHEIGHTS_Folder;
+	}
 
 	if (computeFRAMES)
 	{
@@ -305,6 +346,8 @@ void draw()
 				graphs[i]->setDisplayVertices(true);
 				graphs[i]->draw();
 
+				
+
 				if (deckBlock)
 				{
 					graphs[i + end]->setDisplayVertices(true);
@@ -400,7 +443,9 @@ void draw()
 	
 
 
-	drawString("KEY Press", vec(winW - 350, winH - 600, 0));
+	drawString("KEY Press", vec(winW - 350, winH - 625, 0));
+	
+	drawString("h - compute Heights_Folder", vec(winW - 350, winH - 600, 0));
 	drawString("p - Compute Frames", vec(winW - 350, winH - 575, 0));
 	drawString("o - Compute SDF", vec(winW - 350, winH - 550, 0));
 	drawString("t - Transform", vec(winW - 350, winH - 525, 0));
@@ -417,6 +462,7 @@ void draw()
 
 void keyPress(unsigned char k, int xm, int ym)
 {
+	if (k == 'h') computeHEIGHTS_Folder = true;;
 	if (k == 'p') computeFRAMES = true;;
 	if (k == 'o') computeSDF = true;;
 	if (k == 't') computeTRANSFORM = true;;

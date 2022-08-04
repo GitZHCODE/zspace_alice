@@ -36,9 +36,9 @@ zObjComputeMesh oCompMesh;
 zPointArray positions;
 zFloatArray positionsZ;
 
-int id = 8;
-string inFilePath = "data/toSTAD/TXT/3DPattern_2407_" + to_string(id) + ".txt ";
-string outFilePath = "data/toSTAD/TXT/3DPattern_2407_" + to_string(id) + ".json";
+int id = 1;
+string inFilePath = "data/toSTAD/TXT/3DPattern_0208_" + to_string(id) + ".txt ";
+string outFilePath = "data/toSTAD/TXT/3DPattern_0208_" + to_string(id) + ".obj";
 
 zColor BLACK(0, 0, 0, 1);
 zColor RED(1, 0, 0, 1);
@@ -103,10 +103,10 @@ bool readTXT(string path, zObjGraph& _o_Graph, zFloatArray& positions_Z)
 
 					bool onBoundary = (perlineData[4] == "True") ? true : false;
 
-					zPoint pos_factorised = core.factoriseVector(pos, 1);
+					zPoint pos_factorised = core.factoriseVector(pos, 2);
 
 					int vId = -1;
-					bool chk = core.checkRepeatVector(pos_factorised, positions, vId, 1);
+					bool chk = core.checkRepeatVector(pos_factorised, positions, vId, 2);
 
 					if (chk)
 					{
@@ -250,7 +250,7 @@ void createMesh(zObjGraph& o_inGraph, zObjMesh& o_outMesh, zVector graphNorm = z
 					counter++;
 
 					if (he == start) exit = true;
-					if (counter == 7)
+					if (counter == 9)
 					{
 						exit = true;
 						start.getEdge().setColor(MAGENTA);
@@ -270,7 +270,7 @@ void createMesh(zObjGraph& o_inGraph, zObjMesh& o_outMesh, zVector graphNorm = z
 					printf(" %i ", v.getId());					
 				}
 
-				if (counter >= 3 && counter < 7)
+				if (counter >= 3 && counter < 9)
 				{
 					for (auto &v : loopV) pConnects.push_back(v.getId());
 					pCounts.push_back(loopV.size());
@@ -377,7 +377,7 @@ void update(int value)
 	if (exportMesh)
 	{
 		zFnMesh fnMesh(oMesh);
-		fnMesh.to(outFilePath, zJSON);
+		fnMesh.to(outFilePath, zOBJ);
 
 		exportMesh = !exportMesh;
 	}
@@ -396,13 +396,13 @@ void draw()
 		// zspace model draw
 		model.draw();
 
-		/*zFnGraph fnGraph(oGraph);
+		zFnGraph fnGraph(oGraph);
 		zPoint* positions = fnGraph.getRawVertexPositions();
 
 		for (int i = 0; i < fnGraph.numVertices(); i++)
 		{
 			drawTextAtVec(to_string(i), positions[i]);
-		}*/
+		}
 		
 	}
 
