@@ -241,11 +241,7 @@ void update(int value)
 		bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.9, -0.35, 0), zPoint(0.9, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
 
 		//--- FIELD
-		if (bb_current.min == bb.min) 
-		{
-			// do nothing 
-		}
-		else
+		if (bb_current.min != bb.min)
 		{
 			bb_current = bb;
 			printf("\n bounds updated \n", blockID);
