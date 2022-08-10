@@ -82,26 +82,16 @@ void setup()
 	zFnMesh fnCenterMesh(o_centerMesh);
 	fnCenterMesh.from(filePath_centerMesh, zJSON);
 
-	// get transform
+	// get transform attribute
 	json j;
 
-	ifstream in_myfile;
-	in_myfile.open(filePath_centerMesh.c_str());
-	in_myfile >> j;
-	in_myfile.close();
+	bool chkFile = core.readJSON(filePath_centerMesh, j);
 
-	zFloatArray bTransform_array = j["BridgeTransform"];
-	zTransform bTranform;
+	zFloatArray bTransform_array;
+	bool chkAttr = core.readJSONAttribute(j, "BridgeTransform", bTransform_array);
 
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			bTranform(i, j) = bTransform_array[i * 4 + j];
-		}
-
-	}
-
+	zTransform bTranform = core.getTransformFromArray(bTransform_array);
+	
 
 	fnCenterMesh.setTransform(bTranform, true, true);
 

@@ -20,6 +20,7 @@ bool computeHEIGHTS_Folder = false;
 bool computeFRAMES = false;
 bool computeSDF = false;
 bool display = true;
+bool readBLOCK = false;
 
 bool computeTRANSFORM = false;
 bool toLOCAL = true;
@@ -38,12 +39,12 @@ zObjMesh o_centerMesh;
 int blockStride = 4;
 int braceStride = 1;
 
-int blockID = 97;
+double blockID = 62;
 
 int SDFFunc_Num = 5;
 bool SDFFunc_NumSmooth = 2;
 
-int numSDFLayers = 3;
+int numSDFLayers = 159;
 bool allSDFLayers = true;
 
 
@@ -53,6 +54,7 @@ zDomainFloat neopreneOffset(0.000, 0.000);
 
 bool deckBlock = true;
 zDomain<zPoint> bb;
+zDomain<zPoint> bb_current;
 
 int resX = 512;
 int resY = 512;
@@ -84,8 +86,8 @@ int totalGraphs = 0;
 bool frameCHECKS = false;
 
 float printPlaneSpace = 0.008;
-float printLayerWidth = 0.04;
-float raftLayerWidth = 0.04;
+float printLayerWidth = 0.048;
+float raftLayerWidth = 0.048;
 
 zDomainFloat printHeightDomain(0.006, 0.012);
 
@@ -148,14 +150,15 @@ void setup()
 	fnCenterMesh.setTransform(bTranform, true, true);
 
 	//mySlicer.setFromJSON(filePath, blockStride, braceStride);
-	mySlicer.setFromJSON(fileDir, blockID);
+	//mySlicer.setFromJSON(fileDir, blockID);
 
-	deckBlock = mySlicer.onDeckBlock();
-	bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.9, -0.35, 0), zPoint(0.9, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
+	//deckBlock = mySlicer.onDeckBlock();
+	//bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.9, -0.35, 0), zPoint(0.9, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
 
+	bb_current = zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
 
 	//--- FIELD
-	mySlicer.createFieldMesh(bb, resX, resY);
+	mySlicer.createFieldMesh(bb_current, resX, resY);
 		
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -183,6 +186,10 @@ void setup()
 	
 	S.addSlider(&background, "background");
 	S.sliders[0].attachToVariable(&background, 0, 1);
+
+	
+	S.addSlider(&background, "blockID");
+	S.sliders[1].attachToVariable(&blockID, 0, 110);
 
 	////////////////////////////////////////////////////////////////////////// Buttons
 
@@ -225,6 +232,31 @@ void setup()
 
 void update(int value)
 {
+	if (readBLOCK)
+	{
+		int bID = (int) blockID;
+		mySlicer.setFromJSON(fileDir, bID);
+
+		deckBlock = mySlicer.onDeckBlock();
+		bb = (!deckBlock) ? zDomain<zPoint>(zPoint(-0.9, -0.35, 0), zPoint(0.9, 1.5, 0)) : zDomain<zPoint>(zPoint(-1.5, -0.5, 0), zPoint(1.5, 0.5, 0));
+
+		//--- FIELD
+		if (bb_current.min == bb.min) 
+		{
+			// do nothing 
+		}
+		else
+		{
+			bb_current = bb;
+			printf("\n bounds updated \n", blockID);
+			mySlicer.createFieldMesh(bb_current, resX, resY);
+		}
+
+		toLOCAL = true;
+
+		readBLOCK = !readBLOCK;
+	}
+
 	if (computeHEIGHTS_Folder)
 	{
 
@@ -269,10 +301,26 @@ void update(int value)
 
 		string currentPath = fileDir;
 		currentPath += (deckBlock) ? "deck_" : "balustrade_";
-		currentPath += to_string(blockID);
+		currentPath += to_string((int) blockID);
 		currentPath += ".json";
 
+		bool chkTransform = false;
+
+		if (!toLOCAL)
+		{
+			mySlicer.setTransforms(toLOCAL);
+			toLOCAL = !toLOCAL;
+
+			chkTransform = true;
+		}
+
 		mySlicer.exportJSON(currentPath, filename,"3dp_block", printLayerWidth, raftLayerWidth);
+
+		if (chkTransform)
+		{
+			mySlicer.setTransforms(toLOCAL);
+			toLOCAL = !toLOCAL;
+		}
 
 		exportContours = !exportContours;
 	}
@@ -296,6 +344,15 @@ void draw()
 	int numMinPts =0;
 	zObjPointCloud* o_minPts = mySlicer.getRawCriticalPoints(true);
 	o_minPts->draw();
+
+	zTransform* tLeft = mySlicer.getRawBlockStartEnd(true);
+	zTransform* tRight = mySlicer.getRawBlockStartEnd(false);
+
+	for (int k = 0; k < 2; k++)
+	{
+		if(tLeft) model.displayUtils.drawTransform(tLeft[k], 0.5);
+		if(tRight) model.displayUtils.drawTransform(tRight[k], 0.5);
+	}
 
 	if (dSliceMesh_Left)
 	{
@@ -443,8 +500,9 @@ void draw()
 	
 
 
-	drawString("KEY Press", vec(winW - 350, winH - 625, 0));
+	drawString("KEY Press", vec(winW - 350, winH - 650, 0));
 	
+	drawString("r - read block", vec(winW - 350, winH - 625, 0));
 	drawString("h - compute Heights_Folder", vec(winW - 350, winH - 600, 0));
 	drawString("p - Compute Frames", vec(winW - 350, winH - 575, 0));
 	drawString("o - Compute SDF", vec(winW - 350, winH - 550, 0));
@@ -462,6 +520,8 @@ void draw()
 
 void keyPress(unsigned char k, int xm, int ym)
 {
+
+	if (k == 'r') readBLOCK = true;
 	if (k == 'h') computeHEIGHTS_Folder = true;;
 	if (k == 'p') computeFRAMES = true;;
 	if (k == 'o') computeSDF = true;;

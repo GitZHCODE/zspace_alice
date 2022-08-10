@@ -43,8 +43,11 @@
     <ClCompile Include="src\userSrc\sketch_zspace_GLTF.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_GraphLoftMesh.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_GraphMesh.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspace_Graph_relax.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_gridshell.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_MeshColor_Guangdu.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspace_PatternYate.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspace_PatternYate_automate.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Planarise.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Robot.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_SDFSlicer.cpp" />
