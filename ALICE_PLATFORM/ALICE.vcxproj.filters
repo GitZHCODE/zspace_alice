@@ -111,5 +111,8 @@
     <ClCompile Include="src\userSrc\sketch_zspace_Graph_relax.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_SpatialGraph.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
