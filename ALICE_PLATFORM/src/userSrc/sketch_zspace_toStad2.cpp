@@ -864,11 +864,11 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh_shell(oMesh_shell);
-	fnMesh_shell.from("data/toSTAD/toStad_0308_shell.json", zJSON);
+	fnMesh_shell.from("data/toSTAD/toStad_3108_shell.json", zJSON);
 
 	
 	zFnMesh fnMesh_valley(oMesh_valley);
-	fnMesh_valley.from("data/toSTAD/toStad_0308_valley_1.json", zJSON);
+	fnMesh_valley.from("data/toSTAD/toStad_3108_valley_3.json", zJSON);
 
 	//  supports
 	//supports = zIntArray{ 2,3,5,9,13,15,17,21,23,25,29,31,33,37,39,41,45,47,49,53,55,896,899,900,902,903,905,906,907,909,911,912,914,915,916 };

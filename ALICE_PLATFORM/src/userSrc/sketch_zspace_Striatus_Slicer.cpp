@@ -1,4 +1,4 @@
-//#define _MAIN_
+#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -39,7 +39,7 @@ zObjMesh o_centerMesh;
 int blockStride = 4;
 int braceStride = 1;
 
-double blockID = 62;
+double blockID = 77;
 
 int SDFFunc_Num = 5;
 bool SDFFunc_NumSmooth = 2;

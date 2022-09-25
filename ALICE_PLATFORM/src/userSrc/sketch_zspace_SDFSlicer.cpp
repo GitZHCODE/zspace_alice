@@ -16,7 +16,8 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////// General
 
-bool compute = false;
+bool computeFRAMES = false;
+bool computeSDF = false;
 bool computeMap = false;
 bool display = true;
 
@@ -37,21 +38,31 @@ zObjGraph oGuideGraph;
 zDomainFloat neopreneOffset(0, 0);
 
 zDomain<zPoint> bb(zPoint(-7, -7, 0), zPoint(7, 7, 0));
-int resX = 512;
-int resY = 512;
+int resX = 256;
+int resY = 256;
 
 bool dSliceMesh = true;
 bool dPrintPlane = false;
 bool dSectionGraphs = true;
 bool dContourGraphs = false;
 bool dField = false;
+bool exportSDF = false;
 
 bool displayAllGraphs = false;
 int currentGraphId = 0;
+int totalGraphs = 0;
 
-float printPlaneSpace = 2;
-float printLayerWidth = 0.02;
-float raftLayerWidth = 0.03;
+float printPlaneSpace = 0.1;
+float printLayerWidth = 0.08;
+
+zDomainFloat printHeightDomain(0.15, 0.15);
+
+
+int SDFFunc_Num = 1;
+bool SDFFunc_NumSmooth = 2;
+
+int numSDFLayers = 3;
+bool allSDFLayers = true;
 
 /*!<Tool sets*/
 zTsSDFSlicer mySlicer;
@@ -73,11 +84,23 @@ void setup()
 
 	// read mesh
 	zFnMesh fnSliceMesh(oSliceMesh);
-	fnSliceMesh.from("data/Slicer/printMesh.obj", zOBJ);
+	fnSliceMesh.from("data/Slicer/printMesh_1.json", zJSON);
 	fnSliceMesh.setEdgeColor(zColor(0.8, 0.8, 0.8, 1));
 
+	json j;
+	bool chk = core.readJSON("data/Slicer/printMesh_1.json", j);
+
+	zDoubleArray edgeCreases;
+	core.readJSONAttribute(j, "EdgeCreaseData", edgeCreases);
+
+	for (zItMeshEdge e(oSliceMesh); !e.end(); e++)
+	{
+		int eID = e.getId();
+		if (edgeCreases[eID] > 0) e.setColor(zColor(1, 0, 1, 1));
+	}
+
 	zFnMesh fnPrintPlaneMesh(oPrintPlaneMesh);
-	fnPrintPlaneMesh.from("data/Slicer/printPlanesMesh.obj", zOBJ);
+	fnPrintPlaneMesh.from("data/Slicer/printPlanesMesh_1.obj", zOBJ);
 
 	// compute planes
 	zVector tempY(0, 1, 0);
@@ -94,7 +117,9 @@ void setup()
 	X.normalize();
 	zVector Y = Z ^ X;
 	Y.normalize();	
-	zTransform sPlane = mySlicer.setTransformFromVectors(O, X, Y, Z);
+	zTransform sPlane = core.getTransformFromVectors(O, X, Y, Z);
+
+	cout << endl << sPlane;
 
 	Z = fNorms[1];
 	O = fCens[1];
@@ -102,7 +127,9 @@ void setup()
 	X.normalize();
 	Y = Z ^ X;
 	Y.normalize();
-	zTransform ePlane = mySlicer.setTransformFromVectors(O, X, Y, Z);
+	zTransform ePlane = core.getTransformFromVectors(O, X, Y, Z);
+
+	cout << endl << ePlane;
 
 	// make graph
 	zIntArray eConnects = { 0,1 };
@@ -110,9 +137,9 @@ void setup()
 	fnGraph.create(fCens, eConnects);
 
 	//set slicer
-	mySlicer.setSliceMesh(oSliceMesh);
-	mySlicer.setStartEndPlanes(sPlane, ePlane);
-	mySlicer.setGuideGraph(oGuideGraph);
+	mySlicer.setSliceMesh(oSliceMesh, true);
+	mySlicer.setStartEndPlanes(sPlane, ePlane, true);
+	mySlicer.setMedialGraph(oGuideGraph);
 
 	//--- FIELD
 	mySlicer.createFieldMesh(bb, resX, resY);
@@ -137,8 +164,8 @@ void setup()
 
 	B = *new ButtonGroup(Alice::vec(50, 450, 0));
 
-	B.addButton(&compute, "compute");
-	B.buttons[0].attachToVariable(&compute);
+	B.addButton(&computeFRAMES, "computeFRAMES");
+	B.buttons[0].attachToVariable(&computeFRAMES);
 
 	B.addButton(&display, "display");
 	B.buttons[1].attachToVariable(&display);
@@ -165,11 +192,51 @@ void update(int value)
 	oSliceMesh.setDisplayObject(dSliceMesh);
 	oPrintPlaneMesh.setDisplayObject(dPrintPlane);
 
-	if (compute)
+	if (computeFRAMES)
 	{
-		mySlicer.computePrintBlocks(printPlaneSpace, printLayerWidth, raftLayerWidth, neopreneOffset,true,true);
+		printf("\n ----------- \n Block \n");
+		mySlicer.computePrintBlock_Generic(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, true, false);
 
-		compute = !compute;	
+
+		computeFRAMES = !computeFRAMES;
+	}
+
+	if (computeSDF)
+	{
+		mySlicer.computePrintBlock_Generic(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, false, true);
+
+		computeSDF = !computeSDF;
+	}
+
+	if (exportSDF)
+	{
+
+		int numGraphs = 0;
+		zObjGraphPointerArray graphs = mySlicer.getBlockContourGraphs(numGraphs);
+		
+		string folderName = "data/Slicer/Contours";
+		for (const auto& entry : std::filesystem::directory_iterator(folderName)) std::filesystem::remove_all(entry.path());
+
+		int graphID = 0;
+		for (auto& g : graphs)
+		{
+			zFnGraph fnIsoGraph(*g);
+			if (fnIsoGraph.numVertices() == 0)
+			{
+				graphID++;
+				continue;
+			}
+
+			string outName1 = folderName + "/outContour_";
+			outName1 += to_string(graphID) + ".json";
+
+			fnIsoGraph.to(outName1, zJSON);
+			graphID++;
+			
+		}
+		
+		printf("\n %i graphs exported. ", graphID);
+		exportSDF = !exportSDF;
 	}
 }
 
@@ -192,6 +259,8 @@ void draw()
 	{
 		int numGraphs = 0;
 		zObjGraphPointerArray graphs = mySlicer.getBlockSectionGraphs(numGraphs);
+
+		totalGraphs = numGraphs;
 
 		if (displayAllGraphs)
 		{
@@ -256,21 +325,32 @@ void draw()
 	setup2d();
 
 	glColor3f(0, 0, 0);
+
+	drawString("Total Layers #:" + to_string(totalGraphs), vec(winW - 350, winH - 800, 0));
+	drawString("Current Layer #:" + to_string(currentGraphId), vec(winW - 350, winH - 775, 0));
+
+	
 	restore3d();
 
 }
 
 void keyPress(unsigned char k, int xm, int ym)
 {
-	if (k == 'p') compute = true;;
+	if (k == 'p') computeFRAMES = true;;
+	if (k == 'o') computeSDF = true;;
 
-	if (k == 'w') currentGraphId++;;
+	if (k == 'w')
+	{
+		if (currentGraphId < totalGraphs - 1)currentGraphId++;;
+	}
 	if (k == 's')
 	{
 		if(currentGraphId > 0)currentGraphId--;;
 	}
 
 	if (k == 'd') displayAllGraphs = !displayAllGraphs;
+
+	if (k == 'e') exportSDF = true;
 
 }
 
