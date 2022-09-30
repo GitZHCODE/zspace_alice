@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -15,6 +15,51 @@ using namespace zSpace;
 using namespace std;
 
 ////////////////////////////////////////////////////////////////////////// General
+
+
+void patternCurves( zObjMesh &oMesh , int startVID)
+{
+	zFnMesh fnMesh(oMesh);
+
+	zItMeshVertex v(oMesh, startVID);
+	zItMeshHalfEdgeArray cHEdges;
+
+	v.getConnectedHalfEdges(cHEdges);
+
+	zItMeshHalfEdge startHe;;
+
+	for (auto& cHE : cHEdges)
+	{
+		if (cHE.onBoundary()) startHe = cHE;
+	}
+
+	zItMeshHalfEdge he = startHe;
+
+	do
+	{
+	
+		zItMeshHalfEdge heU = he.getSym().getNext();
+
+		bool exit = false;
+		do
+		{
+			if (heU.getVertex().onBoundary()) exit = true;
+
+			heU.getEdge().setColor(zColor(1, 0, 1, 1));
+
+			heU = heU.getNext().getSym().getNext();
+
+		} while (!exit);
+
+		//he.getEdge().setColor(zColor(1, 1, 0, 1));
+
+		he = he.getNext();
+
+	} while (he != startHe);
+
+}
+
+////////
 
 bool computeFRAMES = false;
 bool computeSDF = false;
@@ -37,9 +82,9 @@ zObjGraph oGuideGraph;
 
 zDomainFloat neopreneOffset(0, 0);
 
-zDomain<zPoint> bb(zPoint(-7, -7, 0), zPoint(7, 7, 0));
-int resX = 256;
-int resY = 256;
+zDomain<zPoint> bb(zPoint(-10, -10, 0), zPoint(10, 10, 0));
+int resX = 128;
+int resY = 128;
 
 bool dSliceMesh = true;
 bool dPrintPlane = false;
@@ -58,7 +103,7 @@ float printLayerWidth = 0.08;
 zDomainFloat printHeightDomain(0.15, 0.15);
 
 
-int SDFFunc_Num = 1;
+int SDFFunc_Num = 4;
 bool SDFFunc_NumSmooth = 2;
 
 int numSDFLayers = 3;
@@ -84,10 +129,12 @@ void setup()
 
 	// read mesh
 	zFnMesh fnSliceMesh(oSliceMesh);
-	fnSliceMesh.from("data/Slicer/printMesh_1.json", zJSON);
+	fnSliceMesh.from("data/Slicer/printMesh_2.obj", zOBJ);
 	fnSliceMesh.setEdgeColor(zColor(0.8, 0.8, 0.8, 1));
 
-	json j;
+	patternCurves(oSliceMesh, 1);
+
+	/*json j;
 	bool chk = core.readJSON("data/Slicer/printMesh_1.json", j);
 
 	zDoubleArray edgeCreases;
@@ -97,10 +144,10 @@ void setup()
 	{
 		int eID = e.getId();
 		if (edgeCreases[eID] > 0) e.setColor(zColor(1, 0, 1, 1));
-	}
+	}*/
 
 	zFnMesh fnPrintPlaneMesh(oPrintPlaneMesh);
-	fnPrintPlaneMesh.from("data/Slicer/printPlanesMesh_1.obj", zOBJ);
+	fnPrintPlaneMesh.from("data/Slicer/printPlanesMesh_2.obj", zOBJ);
 
 	// compute planes
 	zVector tempY(0, 1, 0);
@@ -266,6 +313,7 @@ void draw()
 		{
 			for (auto& g : graphs)
 			{
+				g->setDisplayElements(true, true);
 				g->draw();
 			}
 		}

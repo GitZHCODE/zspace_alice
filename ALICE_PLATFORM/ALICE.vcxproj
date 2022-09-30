@@ -40,6 +40,7 @@
     <ClCompile Include="src\userSrc\sketch_zspaceModule_Planarise.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspaceModule_KMeans.cpp" />
+    <ClCompile Include="src\userSrc\sketch_zspace_Block_Slicer.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_GLTF.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_GraphLoftMesh.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_GraphMesh.cpp" />
