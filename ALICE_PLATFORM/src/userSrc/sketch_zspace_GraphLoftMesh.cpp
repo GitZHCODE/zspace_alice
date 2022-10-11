@@ -36,10 +36,10 @@ zObjComputeMesh oCompMesh;
 zPointArray positions;
 zFloatArray positionsZ;
 
-int id = 1;
-string fileName = "data/toSTAD/TXT/3DPattern_Internal_0208_";
+int id = 2;
+string fileName = "data/toSTAD/TXT/3DPattern_Valley_3108_";
 string inFilePath = fileName + to_string(id) + ".txt ";
-string outFilePath = fileName + to_string(id) + ".json";
+string outFilePath = fileName + to_string(id) + ".obj";
 
 zColor BLACK(0, 0, 0, 1);
 zColor RED(1, 0, 0, 1);
@@ -196,7 +196,7 @@ void update(int value)
 	if (exportMesh)
 	{
 		zFnMesh fnMesh(oMesh);
-		fnMesh.to(outFilePath, zJSON);
+		fnMesh.to(outFilePath, zOBJ);
 
 		exportMesh = !exportMesh;
 	}

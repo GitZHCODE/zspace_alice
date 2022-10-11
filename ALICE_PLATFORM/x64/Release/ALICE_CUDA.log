@@ -1,7 +1,74 @@
 ﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (x64/Release/) contains files shared from another project (ALICE_PLATFORM.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  sketch_zspaceCuda_solar.cpp
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1363,5): warning MSB8012: TargetPath(C:\Users\vishu.b\source\repos\GitZHCODE\Alice2018_zSpace\ALICE_PLATFORM\x64\Release\ALICE_CUDA.exe) does not match the Linker's OutputFile property value (C:\Users\vishu.b\source\repos\GitZHCODE\Alice2018_zSpace\ALICE_PLATFORM\x64\Release\EXE\ALICE_CUDA.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
-     Creating library C:\Users\vishu.b\source\repos\GitZHCODE\Alice2018_zSpace\ALICE_PLATFORM\x64\Release\ALICE_CUDA.lib and object C:\Users\vishu.b\source\repos\GitZHCODE\Alice2018_zSpace\ALICE_PLATFORM\x64\Release\ALICE_CUDA.exp
+  Compiling CUDA source file src\userSrc\zspace_cuda\zspaceCuda_solar.cu...
+  
+  C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM>"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\bin\nvcc.exe" -gencode=arch=compute_52,code=\"sm_52,compute_52\" --use-local-env -ccbin "C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64" -x cu   -I"C:\ProgramData\NVIDIA Corporation\CUDA Samples\v11.6\common" -IC:\Users\vishu.b\source\repos\GitZHCODE\zspace_core\cpp/depends -IC:\Users\vishu.b\source\repos\GitZHCODE\zspace_core\cpp -Isrc/algLib/ -Isrc/libGizmo/include -Isrc/gl2ps -Isrc/polyClipper -Isrc/alice -Isrc/glew/include -Isrc/ -Isrc/userSrc -Iinclude -Isrc\zspace\depends\igl\headers -I"src\zspace\depends\igl\build\_deps\eigen-src" -Isrc\zspace\depends\freeglut -IC:\Users\vishu.b\source\repos\GitZHCODE\zspace_cuda\cpp\ -I"C:\ProgramData\NVIDIA Corporation\CUDA Samples\v11.6\common" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\include" -I"C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v11.7\include"     --keep-dir x64\Release  -maxrregcount=0  --machine 64 --compile -cudart static -std=c++17 -Xcompiler "/std:c++17"   -DWIN32 -DWIN64 -D_MBCS -D_MBCS -Xcompiler "/EHsc /W0 /nologo /O2 /Fdx64/Release/vc142.pdb /FS   /MT " -o C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\zspaceCuda_solar.cu.obj "C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\src\userSrc\zspace_cuda\zspaceCuda_solar.cu" 
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(202): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(757): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(760): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(772): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(773): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(774): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(779): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(780): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(781): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1031): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1050): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1051): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1052): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1053): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1095): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1097): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1098): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1099): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1101): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1104): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1105): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1106): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1107): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1116): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1118): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1119): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1120): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1123): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1124): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_core/cpp\source/zCore/utilities/zUtilsCore.cpp(1125): warning #20014-D: calling a __host__ function from a __host__ __device__ function is not allowed
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_cuda/cpp/headers/zCudaToolsets/energy/zCdSolarOcclusion.cuh(298): warning #461-D: initial value of reference to non-const must be an lvalue
+  
+C:/Users/vishu.b/source/repos/GitZHCODE/zspace_cuda/cpp/headers/zCudaToolsets/energy/zCdSolarOcclusion.cuh(298): warning #461-D: initial value of reference to non-const must be an lvalue
+  
+  zspaceCuda_solar.cu
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1363,5): warning MSB8012: TargetPath(C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_CUDA.exe) does not match the Linker's OutputFile property value (C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\EXE\ALICE_CUDA.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+     Creating library C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_CUDA.lib and object C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_CUDA.exp
   Generating code
   Finished generating code
-  ALICE_CUDA.vcxproj -> C:\Users\vishu.b\source\repos\GitZHCODE\Alice2018_zSpace\ALICE_PLATFORM\x64\Release\ALICE_CUDA.exe
+  ALICE_CUDA.vcxproj -> C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_CUDA.exe

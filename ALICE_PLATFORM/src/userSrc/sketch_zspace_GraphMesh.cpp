@@ -37,8 +37,8 @@ zPointArray positions;
 zFloatArray positionsZ;
 
 int id = 1;
-string inFilePath = "data/toSTAD/TXT/3DPattern_0208_" + to_string(id) + ".txt ";
-string outFilePath = "data/toSTAD/TXT/3DPattern_0208_" + to_string(id) + ".obj";
+string inFilePath = "data/toSTAD/TXT/3DPattern_3108_" + to_string(id) + ".txt ";
+string outFilePath = "data/toSTAD/TXT/3DPattern_3108_" + to_string(id) + ".obj";
 
 zColor BLACK(0, 0, 0, 1);
 zColor RED(1, 0, 0, 1);
@@ -103,10 +103,22 @@ bool readTXT(string path, zObjGraph& _o_Graph, zFloatArray& positions_Z)
 
 					bool onBoundary = (perlineData[4] == "True") ? true : false;
 
-					zPoint pos_factorised = core.factoriseVector(pos, 2);
+					//zPoint pos_factorised = core.factoriseVector(pos, 3);
 
 					int vId = -1;
-					bool chk = core.checkRepeatVector(pos_factorised, positions, vId, 2);
+					//bool chk = core.checkRepeatVector(pos_factorised, positions, vId, 3);
+
+					bool chk = false;
+					for (int k = 0; k < positions.size(); k++)
+					{
+						if (positions[k].distanceTo(pos) < 0.0001)
+						{
+							vId = k;
+							chk = true;
+						}
+
+						if (chk) break;
+					}
 
 					if (chk)
 					{
@@ -292,7 +304,7 @@ void createMesh(zObjGraph& o_inGraph, zObjMesh& o_outMesh, zVector graphNorm = z
 		fnMesh.create(positions, pCounts, pConnects);
 
 		//printf("\n v %i %i  %i", positions.size(), pCounts.size(), pConnects.size());
-		printf("\n v %i e %i  p %i", fnMesh.numVertices(), fnMesh.numEdges(), fnMesh.numPolygons());
+		//printf("\n v %i e %i  p %i", fnMesh.numVertices(), fnMesh.numEdges(), fnMesh.numPolygons());
 
 	}
 
