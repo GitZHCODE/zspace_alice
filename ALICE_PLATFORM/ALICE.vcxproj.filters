@@ -42,5 +42,14 @@
     <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp">
       <Filter>Sketches\zspace_module_sketches</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_Block_Slicer.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_relaxation.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\sketch_zspace_StriatusGeneric_Slicer.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
