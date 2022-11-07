@@ -15,21 +15,21 @@ Optionally the library may also be pre-compiled into a statically  or dynamicall
 
 1. Download and follow the instructions to install Visual Studio 2019 from [Microsoft](#https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes).
 2. Open Visual Studio 2019 and click on "Clone a repository"
-   ![VS_1](assets\1_VS.png)
+   ![VS_1](https:\\github.com\GitZHCODE\zspace_alice\blob\master\assets\1_VS.png)
 3. Go to [GitZHCODE/zspace_alice](#https://github.com/GitZHCODE/zspace_alice). 
    - Click on "Code" button and copy HTTPS directory from the web page.
-     ![Git_3](assets\2_Git.png) 
+     ![Git_3](https:\\github.com\GitZHCODE\zspace_alice\blob\master\assets\2_Git.png) 
    - Paste the directory to the "Repository location" in Visual Studio.
    - Click on "Clone".
-     ![VS_4](assets\3_VS.png)
+     ![VS_4](https:\\github.com\GitZHCODE\zspace_alice\blob\master\assets\3_VS.png)
 
 # Launching
 1. Browse to "Users\name\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM", double click on "ALICE.sln" to open the solution.
-![Folder_5](assets\4_Folder.png)
+![Folder_5](https:\\github.com\GitZHCODE\zspace_alice\blob\master\assets\4_Folder.png)
 2. Change the "Solution Configurations" to "Release_zSpaceDLL". Click on "Local Windows Debugger" (play button) to launch Alice.
-![Alice_6](assets\5_VS.png)
+![Alice_6](https:\\github.com\GitZHCODE\zspace_alice\blob\master\assets\5_VS.png)
 3. If it successfully loaded, you should be able to see Alice viewer window and Console window pop up on your screen.
-![Alice_7](assets\6_Alice.png)
+![Alice_7](https:\\github.com\GitZHCODE\zspace_alice\blob\master\assets\6_Alice.png)
 
 # Citing
 If you use the library of ZSPACE in a project, please refer to the GitHub repository.
