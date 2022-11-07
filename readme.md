@@ -13,10 +13,10 @@ Optionally the library may also be pre-compiled into a statically  or dynamicall
 
 # Installation
 
-1. Download and follow the instructions to install Visual Studio 2019 from [Microsoft](#https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes).
+1. Download and follow the instructions to install Visual Studio 2019 from [Microsoft](https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes).
 2. Open Visual Studio 2019 and click on "Clone a repository"
    ![VS_1](https://github.com/GitZHCODE/zspace_alice/blob/master/assets/1_VS.png)
-3. Go to [GitZHCODE/zspace_alice](#https://github.com/GitZHCODE/zspace_alice). 
+3. Go to [GitZHCODE/zspace_alice](https://github.com/GitZHCODE/zspace_alice). 
    - Click on "Code" button and copy HTTPS directory from the web page.
      ![Git_3](https://github.com/GitZHCODE/zspace_alice/blob/master/assets/2_Git.png) 
    - Paste the directory to the "Repository location" in Visual Studio.
