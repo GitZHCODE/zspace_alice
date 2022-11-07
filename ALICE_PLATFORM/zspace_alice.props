@@ -2,11 +2,11 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <zspacecoreDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_core\cpp</zspacecoreDir>
-    <zspacetoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_toolsets\cpp</zspacetoolsetDir>
+    <zspacecoreDir>src\zspace\headers\zCore</zspacecoreDir>
+    <zspacetoolsetDir>src\zspace\headers\zToolsets</zspacetoolsetDir>
     <rhinoDir>C:\Program Files\Rhino 7 SDK</rhinoDir>
     <mayaDir>C:\Program Files\Autodesk\Maya2018</mayaDir>
-    <zspacemodulesDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_modules\cpp</zspacemodulesDir>
+    <zspacemodulesDir>src\zspace\headers\zspace_modules\cpp</zspacemodulesDir>
     <usdIncludeDir>src\zspace\depends\USD\headers</usdIncludeDir>
     <usdLibDir>src\zspace\depends\USD\lib</usdLibDir>
     <zspaceLibDir>src\zspace\lib</zspaceLibDir>
