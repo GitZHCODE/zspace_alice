@@ -16,10 +16,6 @@
   <ItemGroup>
     <CudaCompile Include="src\userSrc\zspace_cuda\zspaceCuda_solar.cu" />
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="src\userSrc\zspace_cuda\sketch_zspaceCuda_solar.cpp" />
-    <ClCompile Include="src\userSrc\zspace_cuda\sketch_zspaceCuda_solarOcclusion_clean.cpp" />
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}</ProjectGuid>
     <RootNamespace>simplePrintf_vs2017</RootNamespace>

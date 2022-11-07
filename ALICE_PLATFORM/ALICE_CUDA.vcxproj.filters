@@ -6,14 +6,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\userSrc\zspace_cuda\sketch_zspaceCuda_solar.cpp">
-      <Filter>Sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_cuda\sketch_zspaceCuda_solarOcclusion_clean.cpp">
-      <Filter>Sketches</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <CudaCompile Include="src\userSrc\zspace_cuda\zspaceCuda_solar.cu">
       <Filter>Sketches</Filter>
     </CudaCompile>

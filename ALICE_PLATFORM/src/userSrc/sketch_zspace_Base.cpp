@@ -1,4 +1,4 @@
-//#define _MAIN_
+#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -15,7 +15,6 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////// General
 
 bool compute = false;
-bool computeMap = false;
 bool display = true;
 
 double background = 0.35;
@@ -27,15 +26,8 @@ zModel model;
 /*!<Objects*/
 
 zUtilsCore core;
-
 zObjMesh oMesh;
-zObjGraph oGraph;
 
-zObjComputeMesh oCompMesh;
-
-zPointArray positions;
-
-float* myarray;
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 
@@ -54,11 +46,7 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/Striatus/tozha.json", zJSON);
-
-	zFnComputeMesh fnCompMesh(oCompMesh);
-	
-
+	fnMesh.from("data/cube.obj", zOBJ);
 		
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -89,10 +77,7 @@ void update(int value)
 {
 	if (compute)
 	{
-		zFnMesh fnMesh(oMesh);
-		fnMesh.smoothMesh(1);
-		fnMesh.to("data/outMesh.json", zJSON);;
-
+		
 		compute = !compute;	
 	}
 }
@@ -100,7 +85,7 @@ void update(int value)
 void draw()
 {
 	backGround(background);
-	//drawGrid(50);
+	drawGrid(50);
 
 	S.draw();
 	B.draw();
@@ -126,10 +111,7 @@ void draw()
 
 void keyPress(unsigned char k, int xm, int ym)
 {
-	if (k == 'p') compute = true;;
-
-	if (k == 'w') compute = true;;
-
+	if (k == 'p') compute = true;;	
 }
 
 void mousePress(int b, int s, int x, int y)

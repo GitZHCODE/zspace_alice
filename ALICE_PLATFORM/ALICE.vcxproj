@@ -34,32 +34,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\userSrc\sketch_empty.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspaceModule_CurvatureDirections.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspaceModule_MinimiseArea.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspaceModule_MinimiseArea_FDM.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspaceModule_Planarise.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspaceModule_KMeans.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_GLTF.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_GraphLoftMesh.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_GraphMesh.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_Graph_relax.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_gridshell.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_MeshColor_Guangdu.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_PatternYate.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_PatternYate_automate.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_Planarise.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_Robot.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_SDFSlicer.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_SpatialGraph.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zSpace_Striatus_Block.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zSpace_Striatus_IO.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_Striatus_IO_ReadBlocks.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_Striatus_Slicer.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_SunVectorTransform.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_toStad.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_toStad2.cpp" />
-    <ClCompile Include="src\userSrc\sketch_zspace_USD_Base.cpp" />
+    <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{523591A1-85D6-4C6F-9283-4989B0011977}</ProjectGuid>
