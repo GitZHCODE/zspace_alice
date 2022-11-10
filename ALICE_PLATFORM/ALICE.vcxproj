@@ -35,6 +35,7 @@
   <ItemGroup>
     <ClCompile Include="src\userSrc\sketch_empty.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp" />
+    <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_Tutorial_1.cpp" />
     <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

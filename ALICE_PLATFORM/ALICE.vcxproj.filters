@@ -35,20 +35,13 @@
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
-    <ClCompile Include="src\userSrc\sketch_zspace_Striatus_Slicer.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Striatus_Slicer.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
     <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp">
       <Filter>Sketches\zspace_module_sketches</Filter>
     </ClCompile>
-    <ClCompile Include="src\userSrc\sketch_zspace_Block_Slicer.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\sketch_zspace_relaxation.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\sketch_zspace_StriatusGeneric_Slicer.cpp">
+    <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_Tutorial_1.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
   </ItemGroup>
