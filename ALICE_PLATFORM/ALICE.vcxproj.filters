@@ -13,6 +13,9 @@
     <ClInclude Include="src\alice\object.h">
       <Filter>MVC</Filter>
     </ClInclude>
+    <ClInclude Include="src\userSrc\zspace_drl\VoxelSystem.h">
+      <Filter>Sketches\zspace_drl</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MVC">
@@ -27,6 +30,9 @@
     <Filter Include="Sketches\zspace_sketches">
       <UniqueIdentifier>{44310b44-b2f8-4576-850b-6a4b02351788}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sketches\zspace_drl">
+      <UniqueIdentifier>{ecdf8316-c9ac-4500-972c-c366ac0e4f25}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\userSrc\sketch_empty.cpp">
@@ -35,14 +41,14 @@
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
-    <ClCompile Include="src\userSrc\sketch_zspace_Striatus_Slicer.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
     <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp">
       <Filter>Sketches\zspace_module_sketches</Filter>
     </ClCompile>
     <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_Tutorial_1.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
+      <Filter>Sketches\zspace_drl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_VoxelSystem.cpp">
+      <Filter>Sketches\zspace_drl</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

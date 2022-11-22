@@ -31,11 +31,13 @@
     <ClInclude Include="src\alice\MODEL.h" />
     <ClInclude Include="src\alice\object.h" />
     <ClInclude Include="src\alice\utilities.h" />
+    <ClInclude Include="src\userSrc\zspace_drl\VoxelSystem.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\userSrc\sketch_empty.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp" />
     <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_Tutorial_1.cpp" />
+    <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_VoxelSystem.cpp" />
     <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
