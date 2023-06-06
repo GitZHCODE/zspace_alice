@@ -32,10 +32,10 @@ zObjGraph r_graphObj;
 zTransform robotTarget;
 zTransform robotEE;
 
-string robName = "ABB_IRB_4600";
+string robName = "ABB_IRB_4600_255";
 string Actions;
 
-string dirPath = "data/ABB_IRB_4600";
+string dirPath = "data/ABB_IRB_4600_255";
 vector<string> robotFile;
 
 
@@ -47,6 +47,8 @@ zTsRobot myRobot;
 bool zRobot_IMPORT = true;
 
 bool zRobot_IK = false;
+
+bool exportLocal_Meshes = false;
 
 
 ////// --- GUI OBJECTS ----------------------------------------------------
@@ -62,13 +64,13 @@ void setup()
 
 	////////////////////////////////////////////////////////////////////////// ZSPACE
 	// initialise model
-	model = zModel(200000);
+	model = zModel(400000);
 
 	// zROBOT import
 
 	core.getFilesFromDirectory(robotFile, dirPath, zJSON);
 
-	int nF = core.getNumfiles_Type(dirPath, zOBJ);
+	int nF = core.getNumfiles_Type((dirPath + "/meshes"), zOBJ);
 	if (nF < 8) nF = 8;
 
 	r_meshObjs.assign(nF, zObjMesh());
@@ -81,7 +83,7 @@ void setup()
 	//myRobot.createTargetsfromFile(dirPath + "/targets.txt", zTXT);
 	//printf("\n %i ", myRobot.robotTargets.size());
 
-	myRobot.createRobotJointMeshesfromFile(dirPath, zOBJ, true);
+	myRobot.createRobotJointMeshesfromFile((dirPath + "/meshes"), zOBJ, true);
 
 	/////////////////////
 
@@ -96,13 +98,25 @@ void setup()
 	// set EE transform
 	robotEE.setIdentity();
 
-	robotEE(0, 0) = 0; robotEE(0, 1) = 0; robotEE(0, 2) = -1;
+	/*robotEE(0, 0) = 0; robotEE(0, 1) = 0; robotEE(0, 2) = -1;
 	robotEE(1, 0) = 0; robotEE(1, 1) = 1; robotEE(1, 2) = 0;
 	robotEE(2, 0) = 1; robotEE(2, 1) = 0; robotEE(2, 2) = 0;
-	robotEE(3, 0) = -0.2; robotEE(3, 1) = 0; robotEE(3, 2) = -0.346;
+	robotEE(3, 0) = -0.2; robotEE(3, 1) = 0; robotEE(3, 2) = -0.346;*/
+
+	robotEE(0, 0) = 1; robotEE(0, 1) = 0; robotEE(0, 2) = 0;
+	robotEE(1, 0) = 0; robotEE(1, 1) = 1; robotEE(1, 2) = 0;
+	robotEE(2, 0) = 0; robotEE(2, 1) = 0; robotEE(2, 2) = 1;
+	robotEE(3, 0) = 0; robotEE(3, 1) = 0; robotEE(3, 2) = -0.994;
 
 
 	myRobot.setEndEffector(robotEE);
+
+	for (int i = 0; i < DOF; i++)
+	{
+		zTransform transform;
+		myRobot.fnMeshJoints[i + 1].getTransform(transform);
+		cout << endl <<  transform << endl;
+	}
 
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
@@ -159,6 +173,8 @@ void setup()
 	B.addButton(&zRobot_IMPORT, "Import");
 
 	B.addButton(&zRobot_IK, "IK");
+
+	B.addButton(&exportLocal_Meshes, "Local");
 		
 
 }
@@ -186,6 +202,14 @@ void update(int value)
 		model.displayUtils.bufferObj.updateVertexPositions(myRobot.fnMeshJoints[i].getRawVertexPositions(), myRobot.fnMeshJoints[i].numVertices(), myRobot.fnMeshJoints[i].getVBOVertexIndex());
 	}
 		
+
+	if (exportLocal_Meshes)
+	{
+
+		myRobot.exportRobotJointMeshes_local((dirPath + "/meshes/local"), zOBJ);
+
+		exportLocal_Meshes = !exportLocal_Meshes;
+	}
 		
 	
 }

@@ -5,4 +5,9 @@
     <LocalDebuggerWorkingDirectory>$(OutDir)EXE\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|x64'">
+    <LocalDebuggerCommand>$(OutDir)EXE\$(ProjectName).exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>$(OutDir)EXE\</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
 </Project>

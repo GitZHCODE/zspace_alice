@@ -34,6 +34,8 @@ void computeUV_Loop(zObjMesh& o_Mesh)
 	zColorArray eColors;
 	fnMesh.getEdgeColors(eColors);	
 
+	zVectorArray dirArray = { zVector(-0.757969,0.652291,0), zVector(0.399888,-0.916564,0), zVector(-0.467273,-0.884113,0), zVector(-0.982567,-0.185907,0 ), zVector(0.804601,0.593816,0),zVector(0.037396,0.999301,0), zVector(0.965925,-0.258824,0)};
+
 	for (zItMeshEdge e(o_Mesh); !e.end(); e++)
 	{
 		int id = e.getId();
@@ -47,9 +49,30 @@ void computeUV_Loop(zObjMesh& o_Mesh)
 			zPoint v1 = eVerts[1].getPosition();
 
 			v0.z = v1.z = 0;
-			float dist = v0.distanceTo(v1);
 
-			if (dist > 0.830 && dist < 0.860) eColors[e.getId()] = MAGENTA;
+			zVector eDir_1 = v1 - v0;
+			eDir_1.normalize();
+
+			zVector eDir_2 = v0 - v1;
+			eDir_2.normalize();
+
+			for (int i = 0; i < dirArray.size(); i++)
+			{
+				if (eDir_1.angle(dirArray[i]) < 0.2)
+				{
+					eColors[e.getId()] = MAGENTA;
+					break;
+				}
+
+				if (eDir_2.angle(dirArray[i]) < 0.2)
+				{
+					eColors[e.getId()] = MAGENTA;
+					break;
+				}
+			}
+
+			//float dist = v0.distanceTo(v1);
+			//if (dist > 0.830 && dist < 0.860) eColors[e.getId()] = MAGENTA;
 		}
 	}
 
@@ -436,67 +459,67 @@ bool toSTAD(string path, zObjMesh& o_Mesh_Shell, zObjMesh& o_Mesh_Valley, zIntAr
 
 	for (zItMeshVertex v(o_Mesh_Valley); !v.end(); v++)
 	{
-		if (vertVisited[v.getId()]) continue;
+		//if (vertVisited[v.getId()]) continue;
 
-		//printf("\n %i " , v.getId());
+		////printf("\n %i " , v.getId());
 
-		if (v.getColor() == BLUE)
-		{
-			zItMeshHalfEdgeArray cHEdges;
-			v.getConnectedHalfEdges(cHEdges);
+		//if (v.getColor() == BLUE)
+		//{
+		//	zItMeshHalfEdgeArray cHEdges;
+		//	v.getConnectedHalfEdges(cHEdges);
 
-			zItMeshHalfEdge he = (cHEdges[0].getVertex().getColor() == BLUE) ? cHEdges[1] : cHEdges[0];
+		//	zItMeshHalfEdge he = (cHEdges[0].getVertex().getColor() == BLUE) ? cHEdges[1] : cHEdges[0];
 
-			int numVerts = positions.size();
-			zItMeshHalfEdge start = he;
-			
-			zIntArray tempIDs;
+		//	int numVerts = positions.size();
+		//	zItMeshHalfEdge start = he;
+		//	
+		//	zIntArray tempIDs;
 
-			do
-			{
-				if (he.getStartVertex().getColor() == BLUE)
-				{
-					tempIDs.push_back(he.getStartVertex().getId());
-					vertVisited[he.getStartVertex().getId()] = true;
-					
-				}
+		//	do
+		//	{
+		//		if (he.getStartVertex().getColor() == BLUE)
+		//		{
+		//			tempIDs.push_back(he.getStartVertex().getId());
+		//			vertVisited[he.getStartVertex().getId()] = true;
+		//			
+		//		}
 
-				he = he.getNext().getSym().getNext();
+		//		he = he.getNext().getSym().getNext();
 
 
-			} while (he != start);
+		//	} while (he != start);
 
-			if (tempIDs.size() == 3)
-			{
-				eConnects.push_back(tempIDs[0]);
-				eConnects.push_back(tempIDs[1]);
+		//	if (tempIDs.size() == 3)
+		//	{
+		//		eConnects.push_back(tempIDs[0]);
+		//		eConnects.push_back(tempIDs[1]);
 
-				myfile << "\n " << (currentId + 1) << " " << (tempIDs[0] + 1) << " " << (tempIDs[1] + 1) << ";";
-				members_Valley_small.push_back(currentId + 1);
-				eColor.push_back(GREEN);			
-				currentId++;
+		//		myfile << "\n " << (currentId + 1) << " " << (tempIDs[0] + 1) << " " << (tempIDs[1] + 1) << ";";
+		//		members_Valley_small.push_back(currentId + 1);
+		//		eColor.push_back(GREEN);			
+		//		currentId++;
 
-				// -------
+		//		// -------
 
-				eConnects.push_back(tempIDs[1]);
-				eConnects.push_back(tempIDs[2]);
+		//		eConnects.push_back(tempIDs[1]);
+		//		eConnects.push_back(tempIDs[2]);
 
-				myfile << "\n " << (currentId + 1) << " " << (tempIDs[1] + 1) << " " << (tempIDs[2] + 1) << ";";
-				members_Valley_small.push_back(currentId + 1);
-				eColor.push_back(GREEN);				
-				currentId++;
+		//		myfile << "\n " << (currentId + 1) << " " << (tempIDs[1] + 1) << " " << (tempIDs[2] + 1) << ";";
+		//		members_Valley_small.push_back(currentId + 1);
+		//		eColor.push_back(GREEN);				
+		//		currentId++;
 
-				// --------
+		//		// --------
 
-				eConnects.push_back(tempIDs[2]);
-				eConnects.push_back(tempIDs[0]);
+		//		eConnects.push_back(tempIDs[2]);
+		//		eConnects.push_back(tempIDs[0]);
 
-				myfile << "\n " << (currentId + 1) << " " << (tempIDs[2] + 1) << " " << (tempIDs[0] + 1) << ";";
-				members_Valley_small.push_back(currentId + 1);
-				eColor.push_back(GREEN);				
-				currentId++;
-			}
-		}
+		//		myfile << "\n " << (currentId + 1) << " " << (tempIDs[2] + 1) << " " << (tempIDs[0] + 1) << ";";
+		//		members_Valley_small.push_back(currentId + 1);
+		//		eColor.push_back(GREEN);				
+		//		currentId++;
+		//	}
+		//}
 	}
 
 	printf("\n total edges before shell %i ", currentId);
@@ -864,11 +887,11 @@ void setup()
 
 	// read mesh
 	zFnMesh fnMesh_shell(oMesh_shell);
-	fnMesh_shell.from("data/toSTAD/toStad_3108_shell.json", zJSON);
+	fnMesh_shell.from("data/toSTAD/toStad_040623_shell.json", zJSON);
 
 	
 	zFnMesh fnMesh_valley(oMesh_valley);
-	fnMesh_valley.from("data/toSTAD/toStad_3108_valley_3.json", zJSON);
+	fnMesh_valley.from("data/toSTAD/toStad_040623_valley_2.json", zJSON);
 
 	//  supports
 	//supports = zIntArray{ 2,3,5,9,13,15,17,21,23,25,29,31,33,37,39,41,45,47,49,53,55,896,899,900,902,903,905,906,907,909,911,912,914,915,916 };

@@ -15,6 +15,7 @@ using namespace std;
 ////////////////////////////////////////////////////////////////////////// General
 
 bool compute = false;
+bool computeMesh = true;
 bool exportMesh = false;
 bool display = true;
 
@@ -31,14 +32,16 @@ zUtilsCore core;
 zObjMesh oMesh;
 zObjGraph oGraph;
 
+
+
 zObjComputeMesh oCompMesh;
 
 zPointArray positions;
 zFloatArray positionsZ;
 
 int id = 1;
-string inFilePath = "data/toSTAD/TXT/3DPattern_3108_" + to_string(id) + ".txt ";
-string outFilePath = "data/toSTAD/TXT/3DPattern_3108_" + to_string(id) + ".obj";
+string inFilePath = "data/toSTAD/TXT/3DPattern_040623_" + to_string(id) + ".txt ";
+string outFilePath = "data/toSTAD/TXT/3DPattern_040623_" + to_string(id) + ".obj";
 
 zColor BLACK(0, 0, 0, 1);
 zColor RED(1, 0, 0, 1);
@@ -111,7 +114,7 @@ bool readTXT(string path, zObjGraph& _o_Graph, zFloatArray& positions_Z)
 					bool chk = false;
 					for (int k = 0; k < positions.size(); k++)
 					{
-						if (positions[k].distanceTo(pos) < 0.0001)
+						if (positions[k].distanceTo(pos) < 0.01)
 						{
 							vId = k;
 							chk = true;
@@ -180,7 +183,7 @@ zPoint computeRefPoint(zItGraphVertexArray& vLoop)
 	return out;
 }
 
-void createMesh(zObjGraph& o_inGraph, zObjMesh& o_outMesh, zVector graphNorm = zVector(0,0,1))
+void createMesh(zObjGraph& o_inGraph, zObjMesh& o_outMesh,bool compMesh = false,  zVector graphNorm = zVector(0,0,1))
 {
 	zPointArray positions;
 	zIntArray pConnects, pCounts;
@@ -276,11 +279,15 @@ void createMesh(zObjGraph& o_inGraph, zObjMesh& o_outMesh, zVector graphNorm = z
 
 				} while (!exit);
 
-				printf("\n %i | %i | ", start.getId(), counter);
-				for (auto& v : loopV)
+				if (!compMesh)
 				{
-					printf(" %i ", v.getId());					
+					printf("\n %i | %i | ", start.getId(), counter);
+					for (auto& v : loopV)
+					{
+						printf(" %i ", v.getId());
+					}
 				}
+				
 
 				if (counter >= 3 && counter < 9)
 				{
@@ -301,10 +308,13 @@ void createMesh(zObjGraph& o_inGraph, zObjMesh& o_outMesh, zVector graphNorm = z
 		zFnMesh fnMesh(o_outMesh);
 
 
-		fnMesh.create(positions, pCounts, pConnects);
+		if (compMesh)
+		{
+			fnMesh.create(positions, pCounts, pConnects);
 
-		//printf("\n v %i %i  %i", positions.size(), pCounts.size(), pConnects.size());
-		//printf("\n v %i e %i  p %i", fnMesh.numVertices(), fnMesh.numEdges(), fnMesh.numPolygons());
+			//printf("\n v %i %i  %i", positions.size(), pCounts.size(), pConnects.size());
+			printf("\n v %i e %i  p %i", fnMesh.numVertices(), fnMesh.numEdges(), fnMesh.numPolygons());
+		}
 
 	}
 
@@ -365,7 +375,7 @@ void update(int value)
 {
 	if (compute)
 	{
-		createMesh(oGraph, oMesh);
+		createMesh(oGraph, oMesh, computeMesh);
 
 		// project to Z
 		zFnGraph fnGraph(oGraph);
@@ -433,6 +443,12 @@ void draw()
 void keyPress(unsigned char k, int xm, int ym)
 {
 	if (k == 'p') compute = true;;
+
+	if (k == 'c')
+	{
+		computeMesh = true;
+		compute = true;
+	}
 
 	if (k == 'e') exportMesh = true;;
 	

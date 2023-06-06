@@ -17,6 +17,14 @@
       <Configuration>Release_zSpaceDLL</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_zSpace_OV|Win32">
+      <Configuration>Release_zSpace_OV</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_zSpace_OV|x64">
+      <Configuration>Release_zSpace_OV</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -39,6 +47,24 @@
     <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_Tutorial_1.cpp" />
     <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_VoxelSystem.cpp" />
     <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp" />
+    <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_OV_Base.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_CCF.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphLoftMesh.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphMesh.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphPolyhedra_WIP.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_heat_slicer.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_HKBridge.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_HKBridge_TNA.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_PanelAnalysis.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_PanelSplit.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Parameterization.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_PlanarityCheck.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Robot.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_RobotFab.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer_Osaka.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Striatus_Slicer.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_toStad2.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{523591A1-85D6-4C6F-9283-4989B0011977}</ProjectGuid>
@@ -54,6 +80,12 @@
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpaceDLL|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
@@ -83,6 +115,15 @@
     <UseIntelIPP1A>false</UseIntelIPP1A>
     <UseILP64Interfaces1A>false</UseILP64Interfaces1A>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <UseInteloneMKL>No</UseInteloneMKL>
+    <UseIntelIPP1A>false</UseIntelIPP1A>
+    <UseILP64Interfaces1A>false</UseILP64Interfaces1A>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_USD|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v142</PlatformToolset>
@@ -99,6 +140,9 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpaceDLL|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_USD|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -107,6 +151,10 @@
     <Import Project="zspace_alice.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpaceDLL|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="zspace_alice.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="zspace_alice.props" />
   </ImportGroup>
@@ -126,6 +174,10 @@
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_USD|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
@@ -140,6 +192,15 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpaceDLL|x64'">
+    <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
+    <IntDir>$(SolutionDir)$(Platform)\Release\</IntDir>
+    <GenerateManifest>true</GenerateManifest>
+    <EmbedManifest>true</EmbedManifest>
+    <CodeAnalysisRuleSet>C:\Program Files (x86)\Microsoft Visual Studio 14.0\Team Tools\Static Analysis Tools\Rule Sets\NativeRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <RunCodeAnalysis>false</RunCodeAnalysis>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|x64'">
     <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
     <IntDir>$(SolutionDir)$(Platform)\Release\</IntDir>
     <GenerateManifest>true</GenerateManifest>
@@ -174,6 +235,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpaceDLL|Win32'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|Win32'">
     <ClCompile>
       <Optimization>MaxSpeed</Optimization>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -231,7 +308,7 @@
       <PreprocessorDefinitions> IGL_STATIC_LIBRARY;  _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;$(iglBuildDir)\lib\igl_copyleft_comiso.lib;$(iglBuildDir)\lib\CoMISo.lib;$(iglBuildDir)\_deps\comiso-src\lib\libopenblas.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;$(zspaceIncludeDir)\depends\freeglut\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -276,6 +353,48 @@
       <AdditionalDependencies>$(zspaceLibDir)/zSpace_Core.lib;$(zspaceLibDir)/zSpace_Interface.lib;$(zspaceLibDir)/zSpace_Toolsets.lib;$(zspaceLibDir)/zSpace_Modules.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;$(zspaceIncludeDir)\depends\freeglut\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX64</TargetMachine>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+      <StackReserveSize>8000000</StackReserveSize>
+      <HeapReserveSize>
+      </HeapReserveSize>
+    </Link>
+    <Xdcmake>
+      <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
+    </Xdcmake>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|x64'">
+    <Midl>
+      <TargetEnvironment>X64</TargetEnvironment>
+    </Midl>
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>Default</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>$(zspaceIncludeDir)/depends;$(zspaceIncludeDir);src/algLib/;src/libGizmo/include;src/gl2ps;src/polyClipper;src/alice;src/glew/include;src/;src/userSrc;include;$(iglIncludeDir);$(iglBuildDir)\_deps\eigen-src;$(zspaceIncludeDir)\depends\freeglut;$(ovConnectorIncludeDir)\_build\target-deps\python\include;$(ovConnectorIncludeDir)\_build\target-deps\usd\release\include;$(ovConnectorIncludeDir)\_build\target-deps\usd_ext_physics\release\include;$(ovConnectorIncludeDir)\_build\target-deps\omni_client_library\include;$(ovConnectorIncludeDir)\_build\target-deps\omni_usd_resolver\include;$(ovConnectorIncludeDir)\_build\target-deps\tinytoml\include;$(ovConnectorIncludeDir)\source\omniUtilsLib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FloatingPointModel>Fast</FloatingPointModel>
+      <WarningLevel>TurnOffAllWarnings</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <AdditionalOptions>/await %(AdditionalOptions)</AdditionalOptions>
+      <EnablePREfast>false</EnablePREfast>
+      <MinimalRebuild>false</MinimalRebuild>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <BufferSecurityCheck>true</BufferSecurityCheck>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <PreprocessorDefinitions>ZSPACE_DYNAMIC_LIBRARY;   ZSPACE_MODULES_DYNAMIC_LIBRARY; IGL_STATIC_LIBRARY;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(zspaceLibDir)/zSpace_Core.lib;$(zspaceLibDir)/zSpace_Interface.lib;$(zspaceLibDir)/zSpace_Toolsets.lib;$(zspaceLibDir)/zSpace_Modules.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;omniclient.lib;omni_usd_resolver.lib;python37.lib;boost_python37-vc141-mt-x64-1_68.lib;ar.lib;arch.lib;gf.lib;js.lib;kind.lib;pcp.lib;plug.lib;sdf.lib;tf.lib;trace.lib;usd.lib;usdGeom.lib;usdLux.lib;usdPhysics.lib;usdShade.lib;usdUtils.lib;vt.lib;work.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;$(zspaceIncludeDir)\depends\freeglut\;$(ovConnectorIncludeDir)\_build\target-deps\python\libs;$(ovConnectorIncludeDir)\_build\target-deps\usd\release\lib;$(ovConnectorIncludeDir)\_build\target-deps\usd_ext_physics\release\lib;$(ovConnectorIncludeDir)\_build\target-deps\omni_client_library\release;$(ovConnectorIncludeDir)\_build\target-deps\omni_usd_resolver\release;$(ovConnectorIncludeDir)\_build\target-deps;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

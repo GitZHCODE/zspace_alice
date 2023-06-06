@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -104,7 +104,7 @@ int totalGraphs = 0;
 float printPlaneSpace = 0.1;
 float printLayerWidth = 0.01;
 
-zDomainFloat printHeightDomain(0.1, 0.1);
+zDomainFloat printHeightDomain(0.15, 0.15);
 
 
 int SDFFunc_Num = 4;
@@ -133,13 +133,13 @@ void setup()
 
 	// read mesh
 	zFnMesh fnSliceMesh(oSliceMesh);
-	fnSliceMesh.from("data/Slicer/printMesh_v3_2.obj", zOBJ);
+	fnSliceMesh.from("data/Slicer/op_sliceMesh_0.obj", zOBJ);
 	fnSliceMesh.setEdgeColor(zColor(0.8, 0.8, 0.8, 1));
 
-	patternCurves(oSliceMesh, 11);
+	//patternCurves(oSliceMesh, 11);
 
 	zFnMesh fnPrintPlaneMesh(oPrintPlaneMesh);
-	fnPrintPlaneMesh.from("data/Slicer/printPlanesMesh_2.obj", zOBJ);
+	fnPrintPlaneMesh.from("data/Slicer/op_planes_0.obj", zOBJ);
 
 	// compute planes
 	zVector tempY(0, 1, 0);
@@ -173,33 +173,35 @@ void setup()
 	// make graph
 	zIntArray eConnects = { 0,1 };
 	zFnGraph fnGraph(oGuideGraph);
+
+	for (auto& p : fCens) p += zVector(0, 0, 0.05);
 	fnGraph.create(fCens, eConnects);
 
 	// graadient mesh
-	zFnMesh fnGradientMesh(oGradientMesh);
-	fnGradientMesh.from("data/Slicer/colorMesh_topo_v3_2.obj", zOBJ);
+	/*zFnMesh fnGradientMesh(oGradientMesh);
+	fnGradientMesh.from("data/Slicer/colorMesh_topo_v3_2.obj", zOBJ);*/
 
 	// read color
-	json j;
-	bool chk = core.readJSON("data/Slicer/colorMesh_v3_2.json", j);
+	//json j;
+	//bool chk = core.readJSON("data/Slicer/colorMesh_v3_2.json", j);
 
-	vector<zDoubleArray> faceAttributes;
-	core.readJSONAttribute(j, "FaceAttributes", faceAttributes);	
+	//vector<zDoubleArray> faceAttributes;
+	//core.readJSONAttribute(j, "FaceAttributes", faceAttributes);	
 
-	zColorArray fColors;
-	if (faceAttributes.size() > 0)
-	{
-		for (zItMeshFace f(oGradientMesh); !f.end(); f++)
-		{
-			int fID = f.getId();
-			if (faceAttributes[fID].size() > 0)
-			{
-				fColors.push_back(zColor(faceAttributes[fID][3], faceAttributes[fID][4], faceAttributes[fID][5], 1));
-			}
-		}
-	}
-	
-	fnGradientMesh.setFaceColors(fColors, true);
+	//zColorArray fColors;
+	//if (faceAttributes.size() > 0)
+	//{
+	//	for (zItMeshFace f(oGradientMesh); !f.end(); f++)
+	//	{
+	//		int fID = f.getId();
+	//		if (faceAttributes[fID].size() > 0)
+	//		{
+	//			fColors.push_back(zColor(faceAttributes[fID][3], faceAttributes[fID][4], faceAttributes[fID][5], 1));
+	//		}
+	//	}
+	//}
+	//
+	//fnGradientMesh.setFaceColors(fColors, true);
 
 	//set slicer
 	mySlicer.setSliceMesh(oSliceMesh, true);
@@ -209,7 +211,7 @@ void setup()
 	
 	mySlicer.setOffsetDomain(oDomain);
 
-	mySlicer.setGradientTriMesh(oGradientMesh);
+	//mySlicer.setGradientTriMesh(oGradientMesh);
 
 	
 
@@ -303,7 +305,7 @@ void update(int value)
 	{
 
 		int numGraphs = 0;
-		zObjGraphPointerArray graphs = mySlicer.getBlockContourGraphs(numGraphs);
+		zObjGraphPointerArray graphs = mySlicer.getBlockSectionGraphs(numGraphs);
 		
 		string folderName = "data/Slicer/out/contours";
 		for (const auto& entry : std::filesystem::directory_iterator(folderName)) std::filesystem::remove_all(entry.path());
@@ -326,7 +328,7 @@ void update(int value)
 			
 		}
 
-		folderName = "data/Slicer/out/trims";
+	/*	folderName = "data/Slicer/out/trims";
 		for (const auto& entry : std::filesystem::directory_iterator(folderName)) std::filesystem::remove_all(entry.path());
 
 		graphID = 0;
@@ -346,7 +348,7 @@ void update(int value)
 			fnIsoGraph.to(outName1, zJSON);
 			graphID++;
 
-		}
+		}*/
 		
 		printf("\n %i graphs exported. ", graphID);
 		exportSDF = !exportSDF;

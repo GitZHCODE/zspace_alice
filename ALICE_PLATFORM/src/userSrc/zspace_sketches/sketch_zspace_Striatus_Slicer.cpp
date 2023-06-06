@@ -39,11 +39,8 @@ zObjMesh o_centerMesh;
 int blockStride = 4;
 int braceStride = 1;
 
-<<<<<<< HEAD
-double blockID = 18;
-=======
-double blockID = 77;
->>>>>>> aeeee9627ea809d7f60a78e1bfa72e61749213bc
+
+double blockID = 3;
 
 int SDFFunc_Num = 5;
 bool SDFFunc_NumSmooth = 2;
@@ -65,7 +62,7 @@ int resY = 512;
 
 string fileDir = "data/striatus/100_Draft/";
 
-string filePath = "data/striatus/100_Draft/deck_3.json";
+string filePath = "data/striatus/test/deck_3.json";
 string exportBRGPath = "data/striatus/out_PrintBlock_3.json";
 
 string exportINC3DPath = "C:/Users/vishu.b/Desktop/Striatus_IO/test/blockTest";

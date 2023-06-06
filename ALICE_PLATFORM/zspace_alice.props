@@ -2,8 +2,8 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <zspacecoreDir>src\zspace\headers\zCore</zspacecoreDir>
-    <zspacetoolsetDir>src\zspace\headers\zToolsets</zspacetoolsetDir>
+    <zspacecoreDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_core\cpp</zspacecoreDir>
+    <zspacetoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_toolsets\cpp</zspacetoolsetDir>
     <rhinoDir>C:\Program Files\Rhino 7 SDK</rhinoDir>
     <mayaDir>C:\Program Files\Autodesk\Maya2018</mayaDir>
     <zspacemodulesDir>src\zspace\headers\zspace_modules\cpp</zspacemodulesDir>
@@ -17,6 +17,7 @@
     <pythonIncludeDir>src\zspace\depends\Python\include</pythonIncludeDir>
     <CudaCommonDir>C:\ProgramData\NVIDIA Corporation\CUDA Samples\v11.6\common</CudaCommonDir>
     <zspacecudatoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_cuda\cpp</zspacecudatoolsetDir>
+    <ovConnectorIncludeDir>C:\Users\vishu.b\AppData\Local\ov\pkg\connectsample-202.0.0</ovConnectorIncludeDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -79,6 +80,10 @@
     </BuildMacro>
     <BuildMacro Include="zspacecudatoolsetDir">
       <Value>$(zspacecudatoolsetDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="ovConnectorIncludeDir">
+      <Value>$(ovConnectorIncludeDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

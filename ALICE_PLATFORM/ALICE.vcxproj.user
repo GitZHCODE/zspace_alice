@@ -10,6 +10,11 @@
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\Release\EXE\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpace_OV|x64'">
+    <LocalDebuggerCommand>$(SolutionDir)$(Platform)\Release\EXE\$(ProjectName).exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\Release\EXE\</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_USD|x64'">
     <LocalDebuggerCommand>$(SolutionDir)$(Platform)\Release\EXE\$(ProjectName).exe</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\Release\EXE\</LocalDebuggerWorkingDirectory>

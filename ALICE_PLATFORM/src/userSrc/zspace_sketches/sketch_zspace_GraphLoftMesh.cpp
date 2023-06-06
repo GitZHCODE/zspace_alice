@@ -37,7 +37,7 @@ zPointArray positions;
 zFloatArray positionsZ;
 
 int id = 2;
-string fileName = "data/toSTAD/TXT/3DPattern_Valley_3108_";
+string fileName = "data/toSTAD/TXT/3DPattern_Valley_180323_";
 string inFilePath = fileName + to_string(id) + ".txt ";
 string outFilePath = fileName + to_string(id) + ".obj";
 

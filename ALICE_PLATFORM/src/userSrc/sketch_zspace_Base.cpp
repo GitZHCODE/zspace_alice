@@ -26,7 +26,7 @@ zModel model;
 /*!<Objects*/
 
 zUtilsCore core;
-zObjMesh oMesh;
+zObjMeshArray oMeshes;
 
 
 ////// --- GUI OBJECTS ----------------------------------------------------
@@ -45,15 +45,73 @@ void setup()
 	model = zModel(100000);
 
 	// read mesh
-	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/cube.obj", zOBJ);
+	
+
+	zStringArray fileMeshes;
+	core.getFilesFromDirectory(fileMeshes, "data/OV",zOBJ);
+	
+	oMeshes.assign(fileMeshes.size(), zObjMesh());
+
+	for (int i =0; i< fileMeshes.size(); i++)
+	{
+		zFnMesh fnMesh(oMeshes[i]);
+		cout << fileMeshes[i] << endl ;
+		fnMesh.from(fileMeshes[i], zOBJ);
+
+		for (zItMeshEdge e(oMeshes[i]); !e.end(); e++)
+		{
+			if (!e.onBoundary())
+			{
+				e.setColor(zColor(1, 0, 0, 1));
+				cout << "\n";
+				cout << e.getHalfEdge(0).getVector() << "\n";
+				cout << e.getHalfEdge(1).getVector() << "\n";
+			}
+		}
+
+		model.addObject(oMeshes[i]);
+		oMeshes[i].setDisplayElements(true, true, true);
+
+		zStringArray s = core.splitString(fileMeshes[i], ".");
+
+		fnMesh.to(s[0] + ".json", zJSON);
+
+		json j;
+		bool chk = core.readJSON(s[0] + ".json", j);
+		
+		zDoubleArray fabBase = { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1.7, -1, -0.8, 1 };
+		j["FabBase"] = fabBase;
+
+		zDoubleArray worldBase = { 1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1 };
+		j["WorldBase"] = worldBase;
+
+		// EXPORT	
+		ofstream myfile;
+		string f = s[0] + ".json";
+		myfile.open(f.c_str());		
+		
+		myfile << j.dump();
+		myfile.close();
+	}
+	
+
+	/*json j;
+	bool chk = core.readJSON("C:/Users/vishu.b/Desktop/test.json", j);*/
+
+	//vector<zDoubleArray> creaseData;
+	//core.readJSONAttribute(j, "FaceAttributes", creaseData);
+
+	//zTransform t;
+	//t.setIdentity();
+
+	//fnMesh.setTransform(t);
 		
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
-	model.addObject(oMesh);
+	
 
 	// set display element booleans
-	oMesh.setDisplayElements(true, true, true);
+	
 
 	////////////////////////////////////////////////////////////////////////// Sliders
 
