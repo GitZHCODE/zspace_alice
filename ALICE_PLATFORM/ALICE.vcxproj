@@ -62,6 +62,7 @@
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Robot.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_RobotFab.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer_BJ.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer_Osaka.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Striatus_Slicer.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_toStad2.cpp" />

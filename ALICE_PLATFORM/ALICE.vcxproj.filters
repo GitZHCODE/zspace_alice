@@ -107,5 +107,8 @@
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_CCF.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer_BJ.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

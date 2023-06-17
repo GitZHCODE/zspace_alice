@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -27,11 +27,17 @@ using namespace std;
 
 ////////////////////////////////////////////////////////////////////////// General
 
-bool compute = false;
+bool computePlanar = false;
+bool computeDev = false;
+bool computeCCF = false;
+bool exportMESH = false;
+
 bool d_inMesh = true;
 bool d_paramMesh = true;
 
 double background = 0.35;
+
+int numIterations = 1;
 
 ////// --- zSpace Objects --------------------------------------------------
 zUtilsCore core;
@@ -45,6 +51,16 @@ zObjMesh oMesh;
 zObjMesh oMesh_in;
 zFnMeshDynamics fnDyMesh;
 zTsMeshParam myMeshParam;
+
+double tol_dev = 0.000001;
+double tol_planar = 0.001;
+float dT = 0.1;
+
+zVectorArray forceDir_dev;
+zVectorArray forceDir_planar;
+
+zColor RED(1, 0, 0, 1);
+zColor BLUE(0, 0, 1, 1);
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 
@@ -63,17 +79,21 @@ void setup()
 
 	// read mesh
 
+	string path = "data/pSolver/ccf_corner.obj";
+	//string path = "data/pSolver/DF_Y_shape.obj";
+
 	zFnMesh fnMesh_in(oMesh_in);
-	fnMesh_in.from("data/pSolver/ccf_corner.obj", zOBJ);
+	fnMesh_in.from(path, zOBJ);
 	fnMesh_in.setEdgeColor(zColor(0.5, 0.5, 0.5, 1));
 
 	zFnMesh fnMesh(oMesh);
-	fnMesh.from("data/pSolver/ccf_corner.obj", zOBJ);
+	fnMesh.from(path, zOBJ);
 	
 
 	fnDyMesh.create(oMesh, false);
 
-	fnDyMesh.setVertexWeight(5);
+	zIntArray fixedVerts = { 0,1,5,6,7,8,9,12,14,15,16,17 };
+	fnDyMesh.setFixed(fixedVerts);
 		
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -84,7 +104,7 @@ void setup()
 	//zObjMesh* o_paramMesh = myMeshParam.getRawParamMesh();
 	//o_paramMesh->setDisplayElements(false, true, false);
 
-	oMesh.setDisplayElements(true, true, false);
+	oMesh.setDisplayElements(true, true, true);
 	oMesh_in.setDisplayElements(false, true, false);
 
 	////////////////////////////////////////////////////////////////////////// Sliders
@@ -98,94 +118,132 @@ void setup()
 
 	B = *new ButtonGroup(Alice::vec(50, 450, 0));
 
-	B.addButton(&compute, "compute");
-	B.buttons[0].attachToVariable(&compute);
-
+	
 	B.addButton(&d_inMesh, "d_inMesh");
-	B.buttons[1].attachToVariable(&d_inMesh);
+	B.buttons[0].attachToVariable(&d_inMesh);
 
 	B.addButton(&d_paramMesh, "d_paramMesh");
-	B.buttons[2].attachToVariable(&d_paramMesh);
+	B.buttons[1].attachToVariable(&d_paramMesh);
+
+	//B.addButton(&compute, "compute");
+	//B.buttons[2].attachToVariable(&compute);
 
 }
 
 void update(int value)
 {
-	if (compute)
+	
+
+	if (computePlanar)
 	{
-		//// Harmonic Parameterization
-		//myMeshParam.computeParam_Harmonic();
-
-		//// ARAP Parameterization
-		/*myMeshParam.computeParam_ARAP();
-
-		zObjMesh* o_paramMesh = myMeshParam.getRawParamMesh();
-
-		zObjMesh* o_inMesh = myMeshParam.getRawInMesh();
-
-		for (zItMeshEdge e(*o_paramMesh); !e.end(); e++)
-		{
-			int eID = e.getId();
-
-			zItMeshEdge e_inMesh(*o_inMesh, eID);
-
-			if (abs(e.getLength() - e_inMesh.getLength()) > 0.01)
-			{
-				e.setColor(zColor(1, 0, 0, 1));
-			}
-			else e.setColor(zColor(0, 1, 0, 1));
-		}*/
-
-
-		
-
-		double tol = 0.001;
+				
 		zDoubleArray devs_planarity;
 		bool exit_planar;
 			
-		/*fnDyMesh.addPlanarityForce(zVolumePlanar, tol, devs_planarity, exit_planar);
+		for (int i = 0; i < numIterations; i++)
+		{
+			fnDyMesh.addPlanarityForce(1.0, tol_planar, zVolumePlanar, devs_planarity, forceDir_planar, exit_planar);
 
+			fnDyMesh.update(dT, zRK4, true, true, true);
+			
+		}
+		
+		// Planar deviations
 		for (zItMeshFace f(oMesh); !f.end(); f++)
 		{
-			if (devs_planarity[f.getId()] < tol) f.setColor(zColor(0, 1, 0, 1));
+			if (devs_planarity[f.getId()] < tol_planar) f.setColor(zColor(0, 1, 0, 1));
 			else f.setColor(zColor(1, 0, 1, 1));
-		}*/
+		}
+
+		float fPlanar_max, fPlanar_min;
+		fPlanar_max = core.zMax(devs_planarity);
+		fPlanar_min = core.zMin(devs_planarity);
+		printf("\n planar devs : %1.6f %1.6f \n", fPlanar_max, fPlanar_min);
+		
+
+		computePlanar = !computePlanar;
+	}
+
+	if (computeDev)
+	{
 
 		bool exit_gaussian;
-		zDoubleArray devs_gaussian;
-		fnDyMesh.addGaussianForce(tol, devs_gaussian, exit_gaussian);
+		zDoubleArray devs_gaussian;		
 
+		for (int i = 0; i < numIterations; i++)
+		{
+			fnDyMesh.addDevelopabilityForce(0.1, tol_dev, devs_gaussian, forceDir_dev, exit_gaussian);			
+			fnDyMesh.update(dT, zRK4, true, true, true);
+			
+		}
+		
+		// Gaussian deviations
 		for (zItMeshVertex v(oMesh); !v.end(); v++)
 		{
-			if (devs_gaussian[v.getId()] < tol) v.setColor(zColor(1, 1, 1, 1));
-			else v.setColor(zColor(0, 0, 0, 1));
+			if (devs_gaussian[v.getId()] < tol_dev) v.setColor(zColor(0, 0, 1, 1));
+			else v.setColor(zColor(1, 0, 0, 1));
+
+			//if (!v.onBoundary())printf("\n %i %1.6f ", v.getId(), devs_gaussian[v.getId()]);
 		}
 
 		float vGauss_max, vGauss_min;
 		vGauss_max = core.zMax(devs_gaussian);
 		vGauss_min = core.zMin(devs_gaussian);
+		printf("\n gauss devs : %1.6f %1.6f \n", vGauss_max, vGauss_min);
+	
 
-		printf("\n gauss devs : %1.4f %1.4f ", vGauss_max, vGauss_min);
+		computeDev = !computeDev;
+	}
 
-		fnDyMesh.update(0.1,zRK4,true,true, true);
-		//fnMesh.ad
+	if (computeCCF)
+	{
+		bool exit_planar;
+		zDoubleArray devs_planarity;
+
+		bool exit_gaussian;
+		zDoubleArray devs_gaussian;
 
 
-		//zFnMesh fnParam(*o_paramMesh);
-		//fnParam.to("data/Parameterization/paramMesh.obj", zOBJ);
+		for (int i = 0; i < numIterations; i++)
+		{
+			fnDyMesh.addPlanarityForce(1.0, tol_planar, zVolumePlanar, devs_planarity, forceDir_planar, exit_planar);
+			fnDyMesh.addDevelopabilityForce(0.1, tol_dev, devs_gaussian, forceDir_dev, exit_gaussian);
 
-		// LSCM Parameterization
-		//myMeshParam.computeParam_LSCM();
+			fnDyMesh.update(dT, zRK4, true, true, true);
+		}
 
-		// N ROSY
-		//myMeshParam.compute_NRosy();
+		// Planar deviations
+		for (zItMeshFace f(oMesh); !f.end(); f++)
+		{
+			if (devs_planarity[f.getId()] < tol_planar) f.setColor(zColor(0, 1, 0, 1));
+			else f.setColor(zColor(1, 0, 1, 1));
+		}
 
-		// Geodesics heat method
-		/*zIntArray ids = { 0,5 };
-		zFloatArray geodesics;
-		myMeshParam.computeGeodesics_Heat(ids, geodesics);*/
+		float fPlanar_max, fPlanar_min;
+		fPlanar_max = core.zMax(devs_planarity);
+		fPlanar_min = core.zMin(devs_planarity);
+		printf("\n planar devs : %1.6f %1.6f \n", fPlanar_max, fPlanar_min);
 
-		compute = !compute;	
+		// Gaussian deviations
+		for (zItMeshVertex v(oMesh); !v.end(); v++)
+		{
+			if (devs_gaussian[v.getId()] < tol_dev) v.setColor(zColor(0, 0, 1, 1));
+			else v.setColor(zColor(1, 0, 0, 1));
+		}
+
+		float vGauss_max, vGauss_min;
+		vGauss_max = core.zMax(devs_gaussian);
+		vGauss_min = core.zMin(devs_gaussian);
+		printf("\n gauss devs : %1.6f %1.6f \n", vGauss_max, vGauss_min);
+
+		computeCCF = !computeCCF;
+	}
+
+	if (exportMESH)
+	{	
+		fnDyMesh.to("data/pSolver/ccf_corner_out.json", zJSON);		
+
+		exportMESH = !exportMESH;
 	}
 }
 
@@ -197,20 +255,20 @@ void draw()
 	S.draw();
 	B.draw();
 
-	/*if (d_inMesh)
+	
+	zPoint* vPositions = fnDyMesh.getRawVertexPositions();
+	
+	for (int i = 0; i < forceDir_planar.size(); i++)
 	{
-		zObjMesh* o_inMesh = myMeshParam.getRawInMesh();
-		o_inMesh->draw();
-		
+		zPoint v2 = vPositions[i] + (forceDir_planar[i] * 0.1);
+		model.displayUtils.drawLine(vPositions[i], v2, BLUE);
 	}
 
-	if (d_paramMesh)
+	for (int i = 0; i < forceDir_dev.size(); i++)
 	{
-		zObjMesh* o_paramMesh = myMeshParam.getRawParamMesh();
-		o_paramMesh->draw();
-
-	}*/
-	
+		zPoint v2 = vPositions[i] + (forceDir_dev[i] * 0.1);
+		model.displayUtils.drawLine(vPositions[i], v2, RED);
+	}
 	
 	model.draw();
 
@@ -226,7 +284,13 @@ void draw()
 
 void keyPress(unsigned char k, int xm, int ym)
 {
-	if (k == 'p') compute = true;;	
+	if (k == 'p') computePlanar = true;;	
+
+	if (k == 'd') computeDev = true;;
+
+	if (k == 'c') computeCCF = true;
+
+	if (k == 'e') exportMESH = true;
 }
 
 void mousePress(int b, int s, int x, int y)
