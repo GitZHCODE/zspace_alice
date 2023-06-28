@@ -48,6 +48,7 @@
     <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_VoxelSystem.cpp" />
     <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp" />
     <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_OV_Base.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_BJ_Mapper.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_CCF.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphLoftMesh.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphMesh.cpp" />
@@ -348,7 +349,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PreprocessorDefinitions>ZSPACE_DYNAMIC_LIBRARY;   ZSPACE_MODULES_DYNAMIC_LIBRARY; IGL_STATIC_LIBRARY;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>ZSPACE_DYNAMIC_LIBRARY;ZSPACE_TOOLSETS_DYNAMIC_LIBRARY;   ZSPACE_MODULES_DYNAMIC_LIBRARY; IGL_STATIC_LIBRARY;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>$(zspaceLibDir)/zSpace_Core.lib;$(zspaceLibDir)/zSpace_Interface.lib;$(zspaceLibDir)/zSpace_Toolsets.lib;$(zspaceLibDir)/zSpace_Modules.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;%(AdditionalDependencies)</AdditionalDependencies>

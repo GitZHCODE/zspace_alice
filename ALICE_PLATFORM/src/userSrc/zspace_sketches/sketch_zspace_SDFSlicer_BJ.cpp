@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -92,8 +92,8 @@ int currentGraphId = 0;
 int totalGraphs = 0;
 
 float printPlaneSpace = 0.004;
-float printLayerWidth = 0.008;
-//float printLayerWidth = 0.022; // 0.002 for verticals
+float printLayerWidth = 0.011;
+//float printLayerWidth = 0.032; // 0.002 for verticals
 
 zDomainFloat printHeightDomain(0.00175, 0.004);
 
@@ -105,6 +105,8 @@ bool SDFFunc_NumSmooth = 1;
 
 int numSDFLayers = 3;
 bool allSDFLayers = true;
+
+bool flipPlanes = false;
 
 vector<zTransform> startPlanes;
 vector<zTransform> endPlanes;
@@ -127,14 +129,32 @@ void setup()
 	// initialise model
 	model = zModel(100000);
 
+	int planeVal;
+
 	cout << "Please enter geometry location (top/ mid/ bottom/all): ";
 	cin >> geom_location;
 
 	cout << "Please enter block ID (0 -20): ";
 	cin >> blockID;
 
+	cout << "Please enter Print Width (in meters): ";
+	cin >> printLayerWidth;
+		
+	cout << "Please enter flipPlanes option (0 - false / 1 - true): ";
+	cin >> planeVal;
+
 	cout << "Please enter SDF Functions (0 - 3): ";
 	cin >> SDFFunc_Num;
+
+	cout << "Please enter SDF Smooth (0 - 2): ";
+	cin >> SDFFunc_NumSmooth;
+
+	
+
+	if (planeVal == 0) flipPlanes = false;
+	if (planeVal == 1) flipPlanes = true;
+
+	printf("\n flipPlanes %s", (flipPlanes) ? "true" : "false");
 
 	// read mesh
 	zFnMesh fnSliceMesh(oSliceMesh);
@@ -171,8 +191,17 @@ void setup()
 
 		//printf("\n %i %1.2f %1.7f ", i, sZ.angle(eZ), sZ *eZ);
 
-		startPlanes.push_back(sPlane);
-		endPlanes.push_back(ePlane);
+		if (flipPlanes)
+		{
+			startPlanes.push_back(ePlane);
+			endPlanes.push_back(sPlane);
+
+		}
+		else
+		{
+			startPlanes.push_back(sPlane);
+			endPlanes.push_back(ePlane);
+		}
 	}
 
 	
@@ -495,11 +524,15 @@ void update(int value)
 
 		bool chkDir = dirExists(currentPath);
 		if (!chkDir) _mkdir(currentPath.c_str());
+		else
+		{
+			for (const auto& entry : std::filesystem::directory_iterator(currentPath)) std::filesystem::remove_all(entry.path());
+		}
 
 		mySlicer.exportJSON_Generic(currentPath, "3dp_block", printLayerWidth);
 
 		//////------
-		int numGraphs = 0;
+		/*int numGraphs = 0;
 		zObjGraphPointerArray graphs = mySlicer.getBlockContourGraphs(numGraphs);
 		
 		string dir = "data/Slicer/out_BJ/contours/test";
@@ -521,7 +554,7 @@ void update(int value)
 			fnIsoGraph.to(outName1, zJSON);
 			graphID++;
 			
-		}
+		}*/
 
 
 	/*	folderName = "data/Slicer/out/trims";
