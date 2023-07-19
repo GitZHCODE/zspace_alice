@@ -5,6 +5,11 @@
     <LocalDebuggerWorkingDirectory>$(OutDir)EXE\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zspace_rhino|x64'">
+    <LocalDebuggerCommand>$(OutDir)EXE\$(ProjectName).exe</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>$(OutDir)EXE\</LocalDebuggerWorkingDirectory>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_zSpaceDLL|x64'">
     <LocalDebuggerCommand>$(SolutionDir)$(Platform)\Release\EXE\$(ProjectName).exe</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\Release\EXE\</LocalDebuggerWorkingDirectory>
