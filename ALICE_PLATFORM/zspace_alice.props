@@ -4,7 +4,7 @@
   <PropertyGroup Label="UserMacros">
     <zspacecoreDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_core\cpp</zspacecoreDir>
     <zspacetoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_toolsets\cpp</zspacetoolsetDir>
-    <rhinoDir>C:\Program Files\Rhino 7 SDK</rhinoDir>
+    <rhinoDir>C:\Program Files\Rhino 8 SDK</rhinoDir>
     <mayaDir>C:\Program Files\Autodesk\Maya2018</mayaDir>
     <zspacemodulesDir>src\zspace\headers\zspace_modules\cpp</zspacemodulesDir>
     <usdIncludeDir>src\zspace\depends\USD\headers</usdIncludeDir>

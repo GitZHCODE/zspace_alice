@@ -56,7 +56,7 @@
     <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_VoxelSystem.cpp" />
     <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp" />
     <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_OV_Base.cpp" />
-    <ClCompile Include="src\userSrc\zspace_rhino\sketch_zSpace_Tester_Rhino.cpp" />
+    <ClCompile Include="src\userSrc\zspace_rhino\sketch_zSpace_NurbsCurve.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_BJ_Mapper.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_CCF.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphLoftMesh.cpp" />
@@ -367,7 +367,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PreprocessorDefinitions> IGL_STATIC_LIBRARY  _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions> IGL_STATIC_LIBRARY;  _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;$(iglBuildDir)\lib\igl_copyleft_comiso.lib;$(iglBuildDir)\lib\CoMISo.lib;$(iglBuildDir)\_deps\comiso-src\lib\libopenblas.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -409,7 +409,7 @@
       <ExceptionHandling>Sync</ExceptionHandling>
       <BufferSecurityCheck>true</BufferSecurityCheck>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <PreprocessorDefinitions> IGL_STATIC_LIBRARY; ;ZSPACE_RHINO_INTEROP;WIN64;NDEBUG;_UNICODE ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions> IGL_STATIC_LIBRARY; ;ZSPACE_RHINO_INTEROP;ZSPACE_LOAD_RHINO;WIN64;NDEBUG;_UNICODE ;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;$(iglBuildDir)\lib\igl_copyleft_comiso.lib;$(iglBuildDir)\lib\CoMISo.lib;$(iglBuildDir)\_deps\comiso-src\lib\libopenblas.lib;opennurbs.lib;RhinoCore.lib;RhinoLibrary.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -423,7 +423,7 @@
       <StackReserveSize>8000000</StackReserveSize>
       <HeapReserveSize>
       </HeapReserveSize>
-      <DelayLoadDLLs>opennurbs.dll; RhinoCore.dll; RhinoLibrary.dll;</DelayLoadDLLs>
+      <DelayLoadDLLs> RhinoCore.dll; RhinoLibrary.dll;</DelayLoadDLLs>
     </Link>
     <Xdcmake>
       <DocumentLibraryDependencies>false</DocumentLibraryDependencies>
