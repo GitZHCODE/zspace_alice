@@ -1,5 +1,5 @@
 
-#define _MAIN_
+//#define _MAIN_
 #define _HAS_STD_BYTE 0
 
 #ifdef _MAIN_
@@ -32,15 +32,15 @@ using namespace std;
 //		glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, s[i]);
 //}
 
-bool ON_NurbsCurve_GetLength(
-	const ON_NurbsCurve& curve,
-	double* length,
-	double fractional_tolerance = 1.0e-8,
-	const ON_Interval* sub_domain = NULL
-)
-{
-	return curve.GetLength(length, fractional_tolerance, sub_domain);
-}
+//bool ON_NurbsCurve_GetLength(
+//	const ON_NurbsCurve& curve,
+//	double* length,
+//	double fractional_tolerance = 1.0e-8,
+//	const ON_Interval* sub_domain = NULL
+//)
+//{
+//	return curve.GetLength(length, fractional_tolerance, sub_domain);
+//}
 
 ////////////////////////////////////////////////////////////////////////// GLOBAL VARIABLES ----------------------------------------------------
 ////// --- MODEL OBJECTS ----------------------------------------------------

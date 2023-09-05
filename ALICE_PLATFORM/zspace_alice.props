@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ImportGroup Label="PropertySheets" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="src\zspace\propertySheets\OV_203.props" />
+  </ImportGroup>
   <PropertyGroup Label="UserMacros">
     <zspacecoreDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_core\cpp</zspacecoreDir>
     <zspacetoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_toolsets\cpp</zspacetoolsetDir>
-    <rhinoDir>C:\Program Files\Rhino 8 SDK</rhinoDir>
+    <rhinoDir>C:\Program Files\Rhino 7</rhinoDir>
+    <rhinoSDKDir>C:\Program Files\Rhino 7 SDK</rhinoSDKDir>
     <mayaDir>C:\Program Files\Autodesk\Maya2018</mayaDir>
     <zspacemodulesDir>src\zspace\headers\zspace_modules\cpp</zspacemodulesDir>
     <usdIncludeDir>src\zspace\depends\USD\headers</usdIncludeDir>
@@ -17,7 +20,6 @@
     <pythonIncludeDir>src\zspace\depends\Python\include</pythonIncludeDir>
     <CudaCommonDir>C:\ProgramData\NVIDIA Corporation\CUDA Samples\v11.6\common</CudaCommonDir>
     <zspacecudatoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_cuda\cpp</zspacecudatoolsetDir>
-    <ovConnectorIncludeDir>C:\Users\vishu.b\AppData\Local\ov\pkg\connectsample-202.0.0</ovConnectorIncludeDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
@@ -32,6 +34,10 @@
     </BuildMacro>
     <BuildMacro Include="rhinoDir">
       <Value>$(rhinoDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="rhinoSDKDir">
+      <Value>$(rhinoSDKDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
     <BuildMacro Include="mayaDir">
@@ -80,10 +86,6 @@
     </BuildMacro>
     <BuildMacro Include="zspacecudatoolsetDir">
       <Value>$(zspacecudatoolsetDir)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-    <BuildMacro Include="ovConnectorIncludeDir">
-      <Value>$(ovConnectorIncludeDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
   </ItemGroup>

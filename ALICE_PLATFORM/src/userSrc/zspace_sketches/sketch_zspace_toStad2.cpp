@@ -109,6 +109,83 @@ void computeValley(zObjMesh& o_Mesh)
 
 }
 
+void computeValley_1(zObjMesh& o_Mesh)
+{
+
+
+	zFnMesh fnMesh(o_Mesh);
+	fnMesh.setEdgeColor(ORANGE);
+
+	zColorArray eColors;
+	fnMesh.getEdgeColors(eColors);
+
+	zColor* vColors = fnMesh.getRawVertexColors();;
+
+	//for (zItMeshEdge e(o_Mesh); !e.end(); e++)
+	//{
+	//	int id = e.getId();
+
+	//	zIntArray eVerts;
+	//	e.getVertices(eVerts);
+
+	//	if (vColors[eVerts[0]] == BLUE && vColors[eVerts[1]] == BLUE) eColors[e.getId()] = GREEN;
+	//	if (vColors[eVerts[0]] == BLUE && vColors[eVerts[1]] == BLACK) eColors[e.getId()] = GREEN;
+	//	if (vColors[eVerts[0]] == BLACK && vColors[eVerts[1]] == BLUE) eColors[e.getId()] = GREEN;
+	//}
+
+	zItMeshEdgeArray boundaryEdges;
+
+	zBoolArray eVisited;
+	eVisited.assign(fnMesh.numEdges(), false);
+
+	for (zItMeshEdge e(o_Mesh); !e.end(); e++)
+	{
+		if (e.onBoundary())boundaryEdges.push_back(e);
+	}
+
+
+	for (int i = 0; i < boundaryEdges.size(); i++)
+	{
+		if (eVisited[boundaryEdges[i].getId()]) continue;
+
+		zItMeshHalfEdge heStart, he;
+
+		he = (boundaryEdges[i].getHalfEdge(0).onBoundary()) ? boundaryEdges[i].getHalfEdge(0) : boundaryEdges[i].getHalfEdge(1);
+		heStart = he;
+
+		bool exit1 = false;
+
+		do
+		{
+			//if (he.getSym().onBoundary()) exit1 = true;
+			//if(he.onBoundary())  he = he.getSym();
+
+			zItMeshHalfEdge he2 = he.getSym().getNext();
+			
+			bool exit2 = false;
+			
+			do
+			{
+				if (he2.getVertex().onBoundary()) exit2 = true;
+
+				eVisited[he2.getEdge().getId()] = true;
+				eColors[he2.getEdge().getId()] = GREEN;
+
+				he2 = he2.getNext().getSym().getNext();				
+
+			} while (!exit2);
+
+			eVisited[he.getEdge().getId()] = true;
+			he = he.getNext();
+			if(heStart == he) exit1 = true;
+
+		} while (!exit1);
+	}
+
+	fnMesh.setEdgeColors(eColors, false);
+
+}
+
 void computeDir(zObjMesh& o_Mesh, zVector& dir, zColor inCol)
 {
 	zFnMesh fnMesh(o_Mesh);
@@ -459,67 +536,67 @@ bool toSTAD(string path, zObjMesh& o_Mesh_Shell, zObjMesh& o_Mesh_Valley, zIntAr
 
 	for (zItMeshVertex v(o_Mesh_Valley); !v.end(); v++)
 	{
-		//if (vertVisited[v.getId()]) continue;
+		if (vertVisited[v.getId()]) continue;
 
-		////printf("\n %i " , v.getId());
+		//printf("\n %i " , v.getId());
 
-		//if (v.getColor() == BLUE)
-		//{
-		//	zItMeshHalfEdgeArray cHEdges;
-		//	v.getConnectedHalfEdges(cHEdges);
+		if (v.getColor() == BLUE)
+		{
+			zItMeshHalfEdgeArray cHEdges;
+			v.getConnectedHalfEdges(cHEdges);
 
-		//	zItMeshHalfEdge he = (cHEdges[0].getVertex().getColor() == BLUE) ? cHEdges[1] : cHEdges[0];
+			zItMeshHalfEdge he = (cHEdges[0].getVertex().getColor() == BLUE) ? cHEdges[1] : cHEdges[0];
 
-		//	int numVerts = positions.size();
-		//	zItMeshHalfEdge start = he;
-		//	
-		//	zIntArray tempIDs;
+			int numVerts = positions.size();
+			zItMeshHalfEdge start = he;
+			
+			zIntArray tempIDs;
 
-		//	do
-		//	{
-		//		if (he.getStartVertex().getColor() == BLUE)
-		//		{
-		//			tempIDs.push_back(he.getStartVertex().getId());
-		//			vertVisited[he.getStartVertex().getId()] = true;
-		//			
-		//		}
+			do
+			{
+				if (he.getStartVertex().getColor() == BLUE)
+				{
+					tempIDs.push_back(he.getStartVertex().getId());
+					vertVisited[he.getStartVertex().getId()] = true;
+					
+				}
 
-		//		he = he.getNext().getSym().getNext();
+				he = he.getNext().getSym().getNext();
 
 
-		//	} while (he != start);
+			} while (he != start);
 
-		//	if (tempIDs.size() == 3)
-		//	{
-		//		eConnects.push_back(tempIDs[0]);
-		//		eConnects.push_back(tempIDs[1]);
+			if (tempIDs.size() == 3)
+			{
+				eConnects.push_back(tempIDs[0]);
+				eConnects.push_back(tempIDs[1]);
 
-		//		myfile << "\n " << (currentId + 1) << " " << (tempIDs[0] + 1) << " " << (tempIDs[1] + 1) << ";";
-		//		members_Valley_small.push_back(currentId + 1);
-		//		eColor.push_back(GREEN);			
-		//		currentId++;
+				myfile << "\n " << (currentId + 1) << " " << (tempIDs[0] + 1) << " " << (tempIDs[1] + 1) << ";";
+				members_W.push_back(currentId + 1);
+				eColor.push_back(YELLOW);
+				currentId++;
 
-		//		// -------
+				// -------
 
-		//		eConnects.push_back(tempIDs[1]);
-		//		eConnects.push_back(tempIDs[2]);
+				eConnects.push_back(tempIDs[1]);
+				eConnects.push_back(tempIDs[2]);
 
-		//		myfile << "\n " << (currentId + 1) << " " << (tempIDs[1] + 1) << " " << (tempIDs[2] + 1) << ";";
-		//		members_Valley_small.push_back(currentId + 1);
-		//		eColor.push_back(GREEN);				
-		//		currentId++;
+				myfile << "\n " << (currentId + 1) << " " << (tempIDs[1] + 1) << " " << (tempIDs[2] + 1) << ";";
+				members_W.push_back(currentId + 1);
+				eColor.push_back(YELLOW);
+				currentId++;
 
-		//		// --------
+				// --------
 
-		//		eConnects.push_back(tempIDs[2]);
-		//		eConnects.push_back(tempIDs[0]);
+				eConnects.push_back(tempIDs[2]);
+				eConnects.push_back(tempIDs[0]);
 
-		//		myfile << "\n " << (currentId + 1) << " " << (tempIDs[2] + 1) << " " << (tempIDs[0] + 1) << ";";
-		//		members_Valley_small.push_back(currentId + 1);
-		//		eColor.push_back(GREEN);				
-		//		currentId++;
-		//	}
-		//}
+				myfile << "\n " << (currentId + 1) << " " << (tempIDs[2] + 1) << " " << (tempIDs[0] + 1) << ";";
+				members_W.push_back(currentId + 1);
+				eColor.push_back(YELLOW);
+				currentId++;
+			}
+		}
 	}
 
 	printf("\n total edges before shell %i ", currentId);
@@ -644,6 +721,12 @@ bool toSTAD(string path, zObjMesh& o_Mesh_Shell, zObjMesh& o_Mesh_Valley, zIntAr
 		myfile << " " << id;
 	}
 	if (members_V.size() > 0) myfile << " TABLE ST 114.3X5.4CHS \n";
+
+	for (int id : members_W)
+	{
+		myfile << " " << id;
+	}
+	if (members_W.size() > 0) myfile << " TABLE ST 114.3X5.4CHS \n";
 
 	//CONSTANTS
 	myfile << "\nCONSTANTS ";
@@ -891,7 +974,7 @@ void setup()
 
 	
 	zFnMesh fnMesh_valley(oMesh_valley);
-	fnMesh_valley.from("data/toSTAD/toStad_040623_valley_2.json", zJSON);
+	fnMesh_valley.from("data/toSTAD/toStad_040623_valley_3.json", zJSON);
 
 	//  supports
 	//supports = zIntArray{ 2,3,5,9,13,15,17,21,23,25,29,31,33,37,39,41,45,47,49,53,55,896,899,900,902,903,905,906,907,909,911,912,914,915,916 };
@@ -915,8 +998,9 @@ void setup()
 	
 
 	computeUV_Loop(oMesh_shell);
-	computeValley(oMesh_valley);
+	//computeValley(oMesh_valley);
 
+	computeValley_1(oMesh_valley);
 	// --- 
 		
 	//////////////////////////////////////////////////////////  DISPLAY SETUP

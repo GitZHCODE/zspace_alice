@@ -41,10 +41,10 @@
 #include <pxr/usd/usdLux/domeLight.h>
 #include <pxr/usd/usdShade/shader.h>
 
-#include <usdPhysics/scene.h>
-#include <usdPhysics/rigidBodyAPI.h>
-#include <usdPhysics/collisionAPI.h>
-#include <usdPhysics/meshCollisionAPI.h>
+//#include <pxr/usd/usdPhysics/scene.h>
+//#include <pxr/usd/usdPhysics/rigidBodyAPI.h>
+//#include <pxr/usd/usdPhysics/collisionAPI.h>
+//#include <pxr/usd/usdPhysics/meshCollisionAPI.h>
 
 /// ZSPACE
 #include <headers/zApp/include/zObjects.h>
@@ -326,7 +326,7 @@ void setup()
 	const std::string stageUrl = createOmniverseModel(destinationPath, newStageName, doLiveEdit);
 
 	//open existing stage
-	existingStage = "omniverse://nucleus.zaha-hadid.com/Projects/mayaTest_VB.usd";
+	existingStage = "omniverse://nucleus.zaha-hadid.com/Projects/newBox.usd";
 
 	// Print the username for the server
 	printConnectedUsername(existingStage);

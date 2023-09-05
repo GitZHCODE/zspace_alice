@@ -39,6 +39,9 @@
     <Filter Include="Sketches\zspace_Rhino">
       <UniqueIdentifier>{9b6a1dab-4e4d-4e5a-bc56-ba073d6fde26}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sketches\zspace_Rhino\PanelSketch">
+      <UniqueIdentifier>{a431e68f-b0e5-4c0d-9fab-a03cdb061f67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\userSrc\sketch_empty.cpp">
@@ -118,6 +121,21 @@
     </ClCompile>
     <ClCompile Include="src\userSrc\zspace_rhino\sketch_zSpace_NurbsCurve.cpp">
       <Filter>Sketches\zspace_Rhino</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_USD_Base.cpp">
+      <Filter>Sketches\zspace_ov</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_KMeans.cpp">
+      <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_KMeans.cpp">
+      <Filter>Sketches\zspace_module_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_OV_Core.cpp">
+      <Filter>Sketches\zspace_ov</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_OV_Core_live.cpp">
+      <Filter>Sketches\zspace_ov</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
