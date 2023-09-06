@@ -1,40 +1,9 @@
-﻿C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\ALICE.vcxproj(139,5): warning MSB4011: "C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\src\zspace\propertySheets\OV_203.props" cannot be imported again. It was already imported at "C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\zspace_alice.props (4,5)". This is most likely a build authoring error. This subsequent import will be ignored. 
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\) contains files shared from another project (ALICE_CUDA.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\) contains files shared from another project (ALICE_CUDA.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   sketch_empty.cpp
-  sketch_zspace_Base.cpp
-  sketch_zspace_Tutorial_1.cpp
-  sketch_zspace_VoxelSystem.cpp
-  sketch_zspaceModule_CurvatureDirections.cpp
-  sketch_zspaceModule_KMeans.cpp
-  sketch_zspace_OV_Base.cpp
-  sketch_zspace_OV_Core.cpp
   sketch_zspace_OV_Core_live.cpp
   sketch_zspace_USD_Base.cpp
-  sketch_zSpace_NurbsCurve.cpp
-  sketch_zspace_BJ_Mapper.cpp
-  sketch_zspace_CCF.cpp
-  sketch_zspace_GraphLoftMesh.cpp
-  sketch_zspace_GraphMesh.cpp
-  sketch_zspace_GraphPolyhedra_WIP.cpp
-  sketch_zspace_heat_slicer.cpp
-  sketch_zspace_HKBridge.cpp
-  sketch_zspace_HKBridge_TNA.cpp
-  sketch_zspace_KMeans.cpp
-  Compiling...
-  sketch_zspace_PanelAnalysis.cpp
-  sketch_zspace_PanelSplit.cpp
-  sketch_zspace_Parameterization.cpp
-  sketch_zspace_PlanarityCheck.cpp
-  sketch_zspace_Robot.cpp
-  sketch_zspace_RobotFab.cpp
-  sketch_zspace_SDFSlicer.cpp
-  sketch_zspace_SDFSlicer_BJ.cpp
-  sketch_zspace_SDFSlicer_Osaka.cpp
-  sketch_zspace_Striatus_Slicer.cpp
-  sketch_zspace_toStad2.cpp
 C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1363,5): warning MSB8012: TargetPath(C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.exe) does not match the Linker's OutputFile property value (C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\EXE\ALICE_PLATFORM.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
 LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
-     Creating library C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.lib and object C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.exp
   Generating code
   Finished generating code
   ALICE.vcxproj -> C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.exe
