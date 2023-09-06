@@ -124,6 +124,7 @@
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="zspace_alice.props" />
+    <Import Project="src\zspace\propertySheets\OV_203.props" />
   </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -347,7 +348,7 @@ REM CALL "$(SolutionDir)scripts\"zspace_includedeploy.bat "$(SolutionDir)project
       <PreprocessorDefinitions>ZSPACE_DYNAMIC_LIBRARY;ZSPACE_TOOLSETS_DYNAMIC_LIBRARY; IGL_STATIC_LIBRARY;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(zspaceLibDir)/zSpace_Core.lib;$(zspaceLibDir)/zSpace_Interface.lib;$(zspaceLibDir)/zSpace_Toolsets.lib;$(zspaceLibDir)/zSpace_Modules.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(zspaceLibDir)/$(configuration)/zSpace_Core.lib;$(zspaceLibDir)/$(configuration)/zSpace_Interface.lib;$(zspaceLibDir)/$(configuration)/zSpace_Toolsets.lib;$(zspaceLibDir)/$(configuration)/zSpace_Interop.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;$(zspaceIncludeDir)\depends\freeglut\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
