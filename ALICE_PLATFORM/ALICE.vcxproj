@@ -50,6 +50,7 @@
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_HKBridge.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_HKBridge_TNA.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_KMeans.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_NanshaRoof.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_PanelAnalysis.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_PanelSplit.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Parameterization.cpp" />
