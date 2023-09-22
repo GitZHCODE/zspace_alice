@@ -1,4 +1,4 @@
-#//define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -499,9 +499,9 @@ void setup()
 	// read mesh
 
 	//string path = "data/pSolver/" + fileName + ".json";
-	string path = "data/nansha/upper.json";
+	string path = "data/nansha/0.6Max-v1.json";
 
-	string path1 = "data/nansha/upper.json";
+	string path1 = "data/nansha/0.6Max_v1_solve.json";
 
 
 	zFnMesh fnMesh_in(oMesh_in);
@@ -514,34 +514,11 @@ void setup()
 
 	fnDyMesh.create(oMesh, false);
 
-	//computeGridPlanes(oMesh_in, 0,  gridPlanar_vGroups, gridPlanar_Origins, gridPlanar_Normals,4);	
-	//computeDistancePairs(oMesh_in, 0, vPairs, distance_vPairs, 4);
+	computeGridPlanes(oMesh_in, 0,  gridPlanar_vGroups, gridPlanar_Origins, gridPlanar_Normals,4);	
+	computeDistancePairs(oMesh_in, 0, vPairs, distance_vPairs, 4);
 
-	zIntArray fixedVIds = {5,71,11,64, 4,10,0,2 };
-	//computeFixed(oMesh_in, 2, fixedVIds, 4);
-
-	/*for (zItMeshVertex v(oMesh); !v.end(); v++)
-	{
-		if (v.onBoundary())fixedVIds.push_back(v.getId());
-	}*/
-
-	/*zDoubleArray vertexCurvatures;
-	fnMesh.getGaussianCurvature(vertexCurvatures);
-
-	double gc_max = core.zMax(vertexCurvatures);
-	double gc_min = core.zMin(vertexCurvatures);
-
-	zDomainFloat gcDomain(gc_max, gc_min);
-	zDomainColor colDomain(zMAGENTA, zBLUE);
-
-	for (zItMeshVertex v(oMesh); !v.end(); v++)
-	{
-		zColor blendCol = core.blendColor(vertexCurvatures[v.getId()], gcDomain, colDomain, zHSV);
-		v.setColor(blendCol);
-	}
-
-	fnMesh.computeFaceColorfromVertexColor()*/;
-	
+	zIntArray fixedVIds /*= {5,71,11,64, 4,10,0,2 }*/;
+	computeFixed(oMesh_in, 2, fixedVIds, 4);
 
 	fnDyMesh.setFixed(fixedVIds);
 
@@ -627,9 +604,9 @@ void update(int value)
 		{
 			fnDyMesh.addPlanarityForce(strength_planar, tol_planar, zVolumePlanar, devs_planarity, forceDir_planar, exit_planar, zSolverForceConstraints::zConstraintFree);
 
-			//fnDyMesh.addPlanarityForce_vertexgroups(strength_gridPlanar, tol_gridPlanar, gridPlanar_vGroups, gridPlanar_Origins, gridPlanar_Normals, devs_gridPlanar, forceDir_gridPlanar, exit_gridPlanar);
+			fnDyMesh.addPlanarityForce_vertexgroups(strength_gridPlanar, tol_gridPlanar, gridPlanar_vGroups, gridPlanar_Origins, gridPlanar_Normals, devs_gridPlanar, forceDir_gridPlanar, exit_gridPlanar);
 
-			//fnDyMesh.addRigidLineForce(strength_distPairs, tol_distPairs, vPairs, distance_vPairs, devs_distPairs, forceDir_distPairs, exit_distPairs);
+			fnDyMesh.addRigidLineForce(strength_distPairs, tol_distPairs, vPairs, distance_vPairs, devs_distPairs, forceDir_distPairs, exit_distPairs);
 
 			fnDyMesh.update(dT, zRK4, true, true, true);
 			
@@ -651,13 +628,13 @@ void update(int value)
 		printf("\n planar devs : %1.6f %1.6f \n", fPlanar_max, fPlanar_min);
 
 
-		/*gPlanar_max = core.zMax(devs_gridPlanar);
+		gPlanar_max = core.zMax(devs_gridPlanar);
 		gPlanar_min = core.zMin(devs_gridPlanar);
 		printf("\n gridPlanar devs : %1.6f %1.6f \n", gPlanar_max, gPlanar_min);
 
 		distPair_max = core.zMax(devs_distPairs);
 		distPair_min = core.zMin(devs_distPairs);
-		printf("\n distPairs devs : %1.6f %1.6f \n", distPair_max, distPair_min);*/
+		printf("\n distPairs devs : %1.6f %1.6f \n", distPair_max, distPair_min);
 
 		/*for (int i = 0; i < vPairs.size(); i++)
 		{

@@ -42,6 +42,9 @@
     <Filter Include="Sketches\zspace_Rhino\PanelSketch">
       <UniqueIdentifier>{a431e68f-b0e5-4c0d-9fab-a03cdb061f67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sketches\zspace_tutorials">
+      <UniqueIdentifier>{4ef6a6a0-5948-43b0-b7d6-9cee08343afd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\userSrc\sketch_empty.cpp">
@@ -139,6 +142,9 @@
     </ClCompile>
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_NanshaRoof.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_planarityCheck.cpp">
+      <Filter>Sketches\zspace_tutorials</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
