@@ -146,5 +146,8 @@
     <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_planarityCheck.cpp">
       <Filter>Sketches\zspace_tutorials</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_sanyaMeshWalk.cpp">
+      <Filter>Sketches\zspace_tutorials</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

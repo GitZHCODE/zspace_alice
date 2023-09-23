@@ -619,9 +619,9 @@ void update(int value)
 			else f.setColor(zColor(0.95, 0, 0.55, 1));
 		}*/
 
-		//checkPlanarity(oMesh, devs_planarity, 0.0075);
+		checkPlanarity(oMesh, devs_planarity, 0.0075);
 
-		fnDyMesh.getPlanarityDeviationPerFace(devs_planarity, zQuadPlanar, true, 0.0075);
+		//fnDyMesh.getPlanarityDeviationPerFace(devs_planarity, zQuadPlanar, true, 0.0075);
 
 		fPlanar_max = core.zMax(devs_planarity);
 		fPlanar_min = core.zMin(devs_planarity);

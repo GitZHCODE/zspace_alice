@@ -22,12 +22,12 @@
     <LocalDebuggerCommand>$(SolutionDir)$(Platform)\Release\EXE\$(ProjectName).exe</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\Release\EXE\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerEnvironment>PATH=%PATH%$(SolutionDir)$(Platform)\Release\EXE\lib_zspace\$(configuration);</LocalDebuggerEnvironment>
+    <LocalDebuggerEnvironment>PATH=%PATH%$(zspaceLibDir);</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">
     <LocalDebuggerCommand>$(SolutionDir)$(Platform)\Release\EXE\$(ProjectName).exe</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\Release\EXE\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerEnvironment>PATH=%PATH%;$(SolutionDir)$(Platform)\Release\EXE\lib_zspace\$(configuration);$(SolutionDir)$(Platform)\Release\EXE\lib_omniverse;</LocalDebuggerEnvironment>
+    <LocalDebuggerEnvironment>PATH=%PATH%;$(zspaceLibDir);$(SolutionDir)$(Platform)\Release\EXE\lib_omniverse;</LocalDebuggerEnvironment>
   </PropertyGroup>
 </Project>

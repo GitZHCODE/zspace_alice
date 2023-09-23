@@ -10,7 +10,7 @@
     <zspacemodulesDir>src\zspace\headers\zspace_modules\cpp</zspacemodulesDir>
     <usdIncludeDir>src\zspace\depends\USD\headers</usdIncludeDir>
     <usdLibDir>src\zspace\depends\USD\lib</usdLibDir>
-    <zspaceLibDir>$(solutionDir)\src\zspace\lib</zspaceLibDir>
+    <zspaceLibDir>$(SolutionDir)$(Platform)\Release\EXE\lib_zspace\$(configuration)</zspaceLibDir>
     <zspaceIncludeDir>$(solutionDir)\src\zspace</zspaceIncludeDir>
     <iglIncludeDir>src\zspace\depends\igl\headers</iglIncludeDir>
     <iglBuildDir>src\zspace\depends\igl\build</iglBuildDir>

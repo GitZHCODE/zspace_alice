@@ -63,6 +63,7 @@
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Striatus_Slicer.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_toStad2.cpp" />
     <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_planarityCheck.cpp" />
+    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_sanyaMeshWalk.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{523591A1-85D6-4C6F-9283-4989B0011977}</ProjectGuid>
@@ -216,9 +217,9 @@
       <PreprocessorDefinitions> IGL_STATIC_LIBRARY;  _MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;$(iglBuildDir)\lib\igl_copyleft_comiso.lib;$(iglBuildDir)\lib\CoMISo.lib;$(iglBuildDir)\_deps\comiso-src\lib\libopenblas.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;lib/igl.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;$(zspaceIncludeDir)\depends\freeglut\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;$(zspaceIncludeDir)\depends\freeglut\;$(zspacecoreDir)/Depends/igl/build;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -353,9 +354,9 @@ REM CALL "$(SolutionDir)scripts\"zspace_includedeploy.bat "$(SolutionDir)project
       <PreprocessorDefinitions>ZSPACE_DYNAMIC_LIBRARY;ZSPACE_TOOLSETS_DYNAMIC_LIBRARY; IGL_STATIC_LIBRARY;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(zspaceLibDir)/$(configuration)/zSpace_Core.lib;$(zspaceLibDir)/$(configuration)/zSpace_Interface.lib;$(zspaceLibDir)/$(configuration)/zSpace_Toolsets.lib;$(zspaceLibDir)/$(configuration)/zSpace_Interop.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zSpace_Core.lib;zSpace_Interface.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;lib/igl.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;$(zspaceIncludeDir)\depends\freeglut\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspaceIncludeDir)\depends\openGL\lib;$(zspaceIncludeDir)\depends/SQLITE/lib;$(zspaceIncludeDir)\depends/freeglut;$(zspaceLibDir)\;$(RhinoSDKDir)/lib/Release;$(zspaceIncludeDir)\depends\igl\build;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -400,9 +401,9 @@ REM CALL "$(SolutionDir)scripts\"zspace_includedeploy.bat "$(SolutionDir)project
       <PreprocessorDefinitions>ZSPACE_LOAD_OMNIVERSE;ZSPACE_DYNAMIC_LIBRARY;ZSPACE_MODULES_DYNAMIC_LIBRARY;IGL_STATIC_LIBRARY;BOOST_ALL_DYN_LINK;BOOST_LIB_TOOLSET="vc142";TBB_USE_DEBUG=0;_CRT_SECURE_NO_WARNINGS;NDEBUG;NOMINMAX;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>$(zspaceLibDir)/$(configuration)/zSpace_Core.lib;$(zspaceLibDir)/$(configuration)/zSpace_Interface.lib;$(zspaceLibDir)/$(configuration)/zSpace_Interop.lib;$(zspaceLibDir)/$(configuration)/zSpace_Toolsets.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zSpace_Core.lib;zSpace_Interface.lib;zSpace_Interop.lib;zSpace_Toolsets.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;$(iglBuildDir)\lib\igl.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;$(zspaceIncludeDir)\depends\freeglut\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspacecoreDir)/cpp/Depends/openGL/lib;$(zspacecoreDir)/cpp/Depends/SQLITE/lib;$(zspacecoreDir)/cpp/Depends/freeglut;$(zspaceIncludeDir)\depends\freeglut\;$(zspaceLibDir)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
