@@ -1,6 +1,6 @@
 //#define _MAIN_
 
-#ifdef _MAIN_
+//#ifdef _MAIN_
 
 #include "main.h"
 
@@ -100,4 +100,4 @@ void mouseMotion(int x, int y)
 
 
 
-#endif // _MAIN_
+//#endif // _MAIN_

@@ -30,7 +30,7 @@
     <ClInclude Include="src\userSrc\zspace_drl\VoxelSystem.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\userSrc\sketch_empty.cpp" />
+    <ClCompile Include="src\userSrc\KM_sketches\sketch_zspace_Empty.cpp" />
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp" />
     <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_Tutorial_1.cpp" />
     <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_VoxelSystem.cpp" />

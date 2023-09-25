@@ -44,9 +44,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\userSrc\sketch_empty.cpp">
-      <Filter>Sketches</Filter>
-    </ClCompile>
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
@@ -136,6 +133,9 @@
     </ClCompile>
     <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_OV_Core_live.cpp">
       <Filter>Sketches\zspace_ov</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\KM_sketches\sketch_zspace_Empty.cpp">
+      <Filter>Sketches</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

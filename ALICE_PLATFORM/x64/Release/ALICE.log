@@ -1,7 +1,11 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\) contains files shared from another project (ALICE_CUDA.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1363,5): warning MSB8012: TargetPath(C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.exe) does not match the Linker's OutputFile property value (C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\EXE\ALICE_PLATFORM.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
-LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
-     Creating library C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.lib and object C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.exp
-  Generating code
-  Finished generating code
-  ALICE.vcxproj -> C:\Users\vishu.b\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.exe
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: The intermediate directory (C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\x64\Release\) contains files shared from another project (ALICE_CUDA.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  sketch_zspace_Empty.cpp
+C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\src\userSrc\KM_sketches\sketch_zspace_Empty.cpp(437,1): error C2065: 'ItMesh': undeclared identifier
+C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\src\userSrc\KM_sketches\sketch_zspace_Empty.cpp(437,8): error C2146: syntax error: missing ';' before identifier 'mesh'
+C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\src\userSrc\KM_sketches\sketch_zspace_Empty.cpp(437,13): error C2065: 'meshObj': undeclared identifier
+C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\src\userSrc\KM_sketches\sketch_zspace_Empty.cpp(437,8): error C3861: 'mesh': identifier not found
+C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\src\userSrc\KM_sketches\sketch_zspace_Empty.cpp(448,25): error C2440: 'initializing': cannot convert from 'zSpace::zItMeshVertex' to 'int'
+C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\src\userSrc\KM_sketches\sketch_zspace_Empty.cpp(448,25): message : No user-defined-conversion operator available that can perform this conversion, or the operator cannot be called
+C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\src\userSrc\KM_sketches\sketch_zspace_Empty.cpp(450,18): error C2065: 'mesh': undeclared identifier
+C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\src\userSrc\KM_sketches\sketch_zspace_Empty.cpp(473,64): error C2661: 'zSpace::zItMeshVertex::getConnectedFaces': no overloaded function takes 0 arguments
+C:\Users\Keerti.Manney\source\repos\zspace_alice\ALICE_PLATFORM\src\userSrc\KM_sketches\sketch_zspace_Empty.cpp(491,72): error C2661: 'zSpace::zItMeshVertex::getConnectedHalfEdges': no overloaded function takes 0 arguments

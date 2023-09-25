@@ -48,10 +48,10 @@ CMAKE_SKIP_RPATH:BOOL=NO
 CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
 
 //Value Computed by CMake
-triangle-populate_BINARY_DIR:STATIC=C:/Users/vishu.b/source/repos/libigl/precompile/_deps/triangle-subbuild
+triangle-populate_BINARY_DIR:STATIC=C:/Users/Keerti.Manney/source/repos/libigl/precompile/_deps/triangle-subbuild
 
 //Value Computed by CMake
-triangle-populate_SOURCE_DIR:STATIC=C:/Users/vishu.b/source/repos/libigl/precompile/_deps/triangle-subbuild
+triangle-populate_SOURCE_DIR:STATIC=C:/Users/Keerti.Manney/source/repos/libigl/precompile/_deps/triangle-subbuild
 
 
 ########################
