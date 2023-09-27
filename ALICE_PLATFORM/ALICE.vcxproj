@@ -47,6 +47,7 @@
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphMesh.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphPolyhedra_WIP.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_heat_slicer.cpp" />
+    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_heat_slicer_Sanya.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_HKBridge.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_HKBridge_TNA.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_KMeans.cpp" />

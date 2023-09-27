@@ -1,9 +1,7 @@
-c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.iobj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.lib
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.exp
+c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.iobj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\vc142.pdb
-c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_planaritycheck.obj
-c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_empty.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_kmeans.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_hkbridge_tna.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_hkbridge.obj
@@ -23,6 +21,9 @@ c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_voxelsystem.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_tutorial_1.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_base.obj
+c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_empty.obj
+c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_sanyawalk.obj
+c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_planaritycheck.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_tostad2.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_striatus_slicer.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_sdfslicer_osaka.obj
@@ -34,13 +35,13 @@ c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_panelsplit.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_panelanalysis.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_nansharoof.obj
-c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_sanyawalk.obj
-c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\exe\alice_platform.exe
+c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\sketch_zspace_sanyameshwalk.obj
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.pdb
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.tlog\alice_platform.write.1u.tlog
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.tlog\cl.command.1.tlog
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.tlog\cl.read.1.tlog
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.tlog\cl.write.1.tlog
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.tlog\link.command.1.tlog
+c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.tlog\link.delete.1.tlog
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.tlog\link.read.1.tlog
 c:\users\vishu.b\source\repos\gitzhcode\zspace_alice\alice_platform\x64\release\alice_platform.tlog\link.write.1.tlog

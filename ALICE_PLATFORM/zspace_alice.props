@@ -2,14 +2,13 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <zspacecoreDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_core\cpp</zspacecoreDir>
-    <zspacetoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_toolsets\cpp</zspacetoolsetDir>
+    <codeRepoDir>C:\Users\vishu.b\source\repos\GitZHCODE</codeRepoDir>
+    <zspacecoreDir>$(codeRepoDir)\zspace_core\cpp</zspacecoreDir>
+    <zspacetoolsetDir>$(codeRepoDir)\zspace_toolsets\cpp</zspacetoolsetDir>
     <rhinoDir>C:\Program Files\Rhino 7</rhinoDir>
     <rhinoSDKDir>C:\Program Files\Rhino 7 SDK</rhinoSDKDir>
     <mayaDir>C:\Program Files\Autodesk\Maya2018</mayaDir>
     <zspacemodulesDir>src\zspace\headers\zspace_modules\cpp</zspacemodulesDir>
-    <usdIncludeDir>src\zspace\depends\USD\headers</usdIncludeDir>
-    <usdLibDir>src\zspace\depends\USD\lib</usdLibDir>
     <zspaceLibDir>$(SolutionDir)$(Platform)\Release\EXE\lib_zspace\$(configuration)</zspaceLibDir>
     <zspaceIncludeDir>$(solutionDir)\src\zspace</zspaceIncludeDir>
     <iglIncludeDir>src\zspace\depends\igl\headers</iglIncludeDir>
@@ -17,11 +16,15 @@
     <pythonLibDir>src\zspace\depends\Python\lib</pythonLibDir>
     <pythonIncludeDir>src\zspace\depends\Python\include</pythonIncludeDir>
     <CudaCommonDir>C:\ProgramData\NVIDIA Corporation\CUDA Samples\v11.6\common</CudaCommonDir>
-    <zspacecudatoolsetDir>C:\Users\vishu.b\source\repos\GitZHCODE\zspace_cuda\cpp</zspacecudatoolsetDir>
+    <zspacecudatoolsetDir>$(codeRepoDir)\zspace_cuda\cpp</zspacecudatoolsetDir>
   </PropertyGroup>
   <PropertyGroup />
   <ItemDefinitionGroup />
   <ItemGroup>
+    <BuildMacro Include="codeRepoDir">
+      <Value>$(codeRepoDir)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
     <BuildMacro Include="zspacecoreDir">
       <Value>$(zspacecoreDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
@@ -44,14 +47,6 @@
     </BuildMacro>
     <BuildMacro Include="zspacemodulesDir">
       <Value>$(zspacemodulesDir)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-    <BuildMacro Include="usdIncludeDir">
-      <Value>$(usdIncludeDir)</Value>
-      <EnvironmentVariable>true</EnvironmentVariable>
-    </BuildMacro>
-    <BuildMacro Include="usdLibDir">
-      <Value>$(usdLibDir)</Value>
       <EnvironmentVariable>true</EnvironmentVariable>
     </BuildMacro>
     <BuildMacro Include="zspaceLibDir">

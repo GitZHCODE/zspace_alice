@@ -8,6 +8,8 @@
 #include <headers/zApp/include/zFnSets.h>
 #include <headers/zApp/include/zViewer.h>
 
+#include <igl/readOBJ.h>
+
 
 using namespace zSpace;
 using namespace std;
@@ -21,6 +23,8 @@ void computeVLoops(zObjMesh& oMesh, int startVertexID0, int startVertexID1, vect
 
 	zItMeshHalfEdge heStart;
 	bool chk = fnMesh_in.halfEdgeExists(startVertexID1, startVertexID0, heStart);
+
+	
 
 	bool flip = false;
 	if (!heStart.onBoundary())
@@ -111,8 +115,9 @@ void computeVLoops(zObjMesh& oMesh, int startVertexID0, int startVertexID1, vect
 	} while (!exit_1);
 }
 
-void computeNewPositions(float panelWidth, vector<zItMeshHalfEdgeArray>& v_Loops, vector<zPointArray>& divsPoints)
+void computeNewPositions(zObjMesh& oMesh, vector<zItMeshHalfEdgeArray>& v_Loops, float panelWidth, vector<zPointArray>& divsPoints, int maxPower = 10)
 {
+	zFnMesh fnMesh_in(oMesh);
 	divsPoints.clear();
 
 	for (int l = 0; l < v_Loops.size(); l++)
@@ -130,7 +135,7 @@ void computeNewPositions(float panelWidth, vector<zItMeshHalfEdgeArray>& v_Loops
 		int numDivs = floor(length / panelWidth);
 		int actualDivs = -1;
 
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < maxPower; i++)
 		{
 			if (pow(2, i) > numDivs)
 			{
@@ -141,50 +146,52 @@ void computeNewPositions(float panelWidth, vector<zItMeshHalfEdgeArray>& v_Loops
 
 		//printf(" | nD %i | aD %i ", numDivs, actualDivs);
 
-		float actualPWidth = length / actualDivs;
-		zPointArray loop_pts;
-		loop_pts.push_back(v_Loops[l][0].getStartVertex().getPosition()); // first
-		int currentindex = 0;
+		///float actualPWidth = length / actualDivs;
+		zPointArray loop_pts;		
+		fnMesh_in.computeEdgeLoop_Split(v_Loops[l], actualDivs, loop_pts);
 
-		//////////////////////// loop 
-		int currentIndex = 0;
-		zItMeshHalfEdge walkHe = v_Loops[l][currentIndex];
-		zPoint pOnCurve = walkHe.getStartVertex().getPosition();;
-		bool exit = false;
+		//loop_pts.push_back(v_Loops[l][0].getStartVertex().getPosition()); // first
+		//int currentindex = 0;
 
-		zPoint start;
+		////////////////////////// loop 
+		//int currentIndex = 0;
+		//zItMeshHalfEdge walkHe = v_Loops[l][currentIndex];
+		//zPoint pOnCurve = walkHe.getStartVertex().getPosition();;
+		//bool exit = false;
 
-		float dStart = 0;
-		float dIncrement = actualPWidth;
-		while (!exit)
-		{
-			zPoint eEndPoint = walkHe.getVertex().getPosition();
-			dStart += dIncrement;
-			float distance_increment = dIncrement;
-			while (pOnCurve.distanceTo(eEndPoint) < distance_increment)
-			{
-				distance_increment = distance_increment - pOnCurve.distanceTo(eEndPoint);
-				pOnCurve = eEndPoint;
+		//zPoint start;
 
-				currentIndex++;
-				walkHe = v_Loops[l][currentIndex];
-				eEndPoint = walkHe.getVertex().getPosition();
-			}
+		//float dStart = 0;
+		//float dIncrement = actualPWidth;
+		//while (!exit)
+		//{
+		//	zPoint eEndPoint = walkHe.getVertex().getPosition();
+		//	dStart += dIncrement;
+		//	float distance_increment = dIncrement;
+		//	while (pOnCurve.distanceTo(eEndPoint) < distance_increment)
+		//	{
+		//		distance_increment = distance_increment - pOnCurve.distanceTo(eEndPoint);
+		//		pOnCurve = eEndPoint;
 
-			zVector he_vec = walkHe.getVector();
-			he_vec.normalize();
+		//		currentIndex++;
+		//		walkHe = v_Loops[l][currentIndex];
+		//		eEndPoint = walkHe.getVertex().getPosition();
+		//	}
 
-			start = pOnCurve + he_vec * distance_increment;
-			pOnCurve = start;
+		//	zVector he_vec = walkHe.getVector();
+		//	he_vec.normalize();
 
-			loop_pts.push_back(pOnCurve);
+		//	start = pOnCurve + he_vec * distance_increment;
+		//	pOnCurve = start;
 
-			if (loop_pts.size() == actualDivs) exit = true;
-		}
+		//	loop_pts.push_back(pOnCurve);
 
-		///////////////////////////////////
-		int index = v_Loops[l].size() - 1;
-		loop_pts.push_back(v_Loops[l][index].getVertex().getPosition()); // last
+		//	if (loop_pts.size() == actualDivs) exit = true;
+		//}
+
+		/////////////////////////////////////
+		//int index = v_Loops[l].size() - 1;
+		//loop_pts.push_back(v_Loops[l][index].getVertex().getPosition()); // last
 
 		divsPoints.push_back(loop_pts);
 
@@ -192,7 +199,51 @@ void computeNewPositions(float panelWidth, vector<zItMeshHalfEdgeArray>& v_Loops
 
 }
 
-void createNewMesh(vector<zItMeshHalfEdgeArray>& v_Loops, vector<zPointArray>& divsPoints, zObjMesh& oMesh)
+void computeNewPositions_Quads(zObjMesh& oMesh, vector<zItMeshHalfEdgeArray>& v_Loops, float panelWidth, vector<zPointArray>& divsPoints, zIntArray &loopDivs, int& maxDIVS, int maxPOWER = 10)
+{
+	zFnMesh fnMesh_in(oMesh);
+	divsPoints.clear();
+
+	loopDivs.clear();
+	loopDivs.assign(v_Loops.size(), -1);
+	maxDIVS = 0;
+
+	for (int l = 0; l < v_Loops.size(); l++)
+	{
+		float length = 0;
+		for (int j = 0; j < v_Loops[l].size(); j++)
+		{
+			length += v_Loops[l][j].getLength();
+		}
+
+		int numDivs = floor(length / panelWidth);
+		int actualDivs = -1;
+
+		for (int i = 0; i < maxPOWER; i++)
+		{
+			if (pow(2, i) > numDivs)
+			{
+				actualDivs = pow(2, i);
+				break;
+			}
+		}
+
+		loopDivs[l] = actualDivs;
+
+		if (actualDivs > maxDIVS) maxDIVS = actualDivs;
+
+	}
+
+	for (int l = 0; l < v_Loops.size(); l++)
+	{		
+		zPointArray loop_pts;
+		fnMesh_in.computeEdgeLoop_Split(v_Loops[l], maxDIVS, loop_pts);
+		divsPoints.push_back(loop_pts);
+	}
+
+}
+
+void createNewMesh(vector<zItMeshHalfEdgeArray>& v_Loops, vector<zPointArray>& divsPoints, zObjMesh& oMesh, int maxPower = 10)
 {
 	zFnMesh fnMesh_out(oMesh);
 
@@ -205,11 +256,13 @@ void createNewMesh(vector<zItMeshHalfEdgeArray>& v_Loops, vector<zPointArray>& d
 		int numV_current = divsPoints[i].size();
 		int numV_next = divsPoints[i + 1].size();
 
+		printf("\n Loop %i / %i", i, v_Loops.size() - 1);
+
 		int current_pow = -1;
-		for (int m = 0; m < 6; m++) if (numV_current - pow(2, m) == 1) current_pow = m;
+		for (int m = 0; m < maxPower; m++) if (numV_current - pow(2, m) == 1) current_pow = m;
 
 		int next_pow = -1;
-		for (int m = 0; m < 6; m++) if (numV_next - pow(2, m) == 1) next_pow = m;
+		for (int m = 0; m < maxPower; m++) if (numV_next - pow(2, m) == 1) next_pow = m;
 
 		int powerDiff = abs(current_pow - next_pow);
 
@@ -435,16 +488,154 @@ void createNewMesh(vector<zItMeshHalfEdgeArray>& v_Loops, vector<zPointArray>& d
 		}
 	}
 
-
+	//printf("\n newMesh %i %i %i ", positions.size(), pCounts.size(), pConnects.size());
 	fnMesh_out.create(positions, pCounts, pConnects);
 
 	printf("\n newMesh %i %i %i ", fnMesh_out.numVertices(), fnMesh_out.numEdges(), fnMesh_out.numPolygons());
 
 }
+
+void createNewMesh_Quads(vector<zItMeshHalfEdgeArray>& v_Loops, vector<zPointArray>& divsPoints, zIntArray& loopDivs, int& maxDIVS, zObjMesh& oMesh, int maxPower = 10)
+{
+	zFnMesh fnMesh_out(oMesh);
+
+	vector<vector<int>> panelFaces;
+
+	zPointArray positions;
+	zIntArray pCounts, pConnects;
+
+	int max_pow = -1;
+	for (int m = 0; m < maxPower; m++) if (maxDIVS - pow(2, m) == 0) max_pow = m;
+
+	for (int i = 0; i < v_Loops.size() - 1; i++)
+	{
+		int numV_current = loopDivs[i];
+		printf("\n Loop %i / %i", i, v_Loops.size() - 1);
+
+		int current_pow = -1;
+		for (int m = 0; m < maxPower; m++) if (numV_current - pow(2, m) == 0) current_pow = m;
+
+		int powerDiff = abs(current_pow - max_pow);
+
+		int startId_current = 0;
+		int startId_next = 0;
+
+		int numFaces = maxDIVS;
+		//printf("\n %i %i numF %i", numV_current, numV_next, numFaces);
+
+		vector<int> pFaceIds;
+		int currentID = 0;
+
+		for (int j = 0; j < numFaces; j++)
+		{
+			// add pposition to array
+
+			int v0 = -1;
+			core.checkRepeatVector(divsPoints[i][startId_current], positions, v0, 3);
+			if (v0 == -1)
+			{
+				v0 = positions.size();
+				positions.push_back(divsPoints[i][startId_current]);
+			}
+
+			int v1 = -1;
+			core.checkRepeatVector(divsPoints[i][startId_current + 1], positions, v1, 3);
+			if (v1 == -1)
+			{
+				v1 = positions.size();
+				positions.push_back(divsPoints[i][startId_current + 1]);
+			}
+
+			int v2 = -1;
+			core.checkRepeatVector(divsPoints[i + 1][startId_next + 1], positions, v2, 3);
+			if (v2 == -1)
+			{
+				v2 = positions.size();
+				positions.push_back(divsPoints[i + 1][startId_next + 1]);
+			}
+
+			int v3 = -1;
+			core.checkRepeatVector(divsPoints[i + 1][startId_next], positions, v3, 3);
+			if (v3 == -1)
+			{
+				v3 = positions.size();
+				positions.push_back(divsPoints[i + 1][startId_next]);
+			}
+
+
+			pConnects.push_back(v0);
+			pConnects.push_back(v1);
+			pConnects.push_back(v2);
+			pConnects.push_back(v3);
+
+			pCounts.push_back(4);
+
+			startId_current += 1;
+			startId_next += 1;
+
+			int val = pow(2, powerDiff);
+
+			if (j % val == val -1)
+			{
+				//printf("\n %i %i %i %i %i", j, val, powerDiff, maxDIVS, numV_current);
+				pFaceIds.push_back(pCounts.size() - 1);
+				panelFaces.push_back(pFaceIds);
+				pFaceIds.clear();
+			}
+			else
+			{
+				pFaceIds.push_back(pCounts.size() - 1);
+			}
+		}
+
+		
+
+
+	}
+
+	//printf("\n newMesh %i %i %i ", positions.size(), pCounts.size(), pConnects.size());
+	fnMesh_out.create(positions, pCounts, pConnects);
+
+	printf("\n newMesh %i %i %i ", fnMesh_out.numVertices(), fnMesh_out.numEdges(), fnMesh_out.numPolygons());
+
+	fnMesh_out.setEdgeColor(zRED);
+	for (int i = 0; i < panelFaces.size(); i++)
+	{
+		if (panelFaces[i].size() == 1) continue;
+
+		zIntArray edgeIDs;
+		zItMeshEdgeArray commonEdges;
+		for (int j = 0; j < panelFaces[i].size(); j++)
+		{
+			//printf("\n %i | %i ", i, panelFaces[i][j]);
+
+			zItMeshFace f(oMesh, panelFaces[i][j]);
+			zItMeshHalfEdgeArray fHEdges;
+			f.getHalfEdges(fHEdges);
+
+			for (auto& he : fHEdges)
+			{
+				int id = -1;
+				int eID = he.getEdge().getId();
+				bool chk =core.checkRepeatElement(eID, edgeIDs, id);
+
+				if (chk) commonEdges.push_back(he.getEdge());
+				else edgeIDs.push_back(eID);
+			}
+		}
+
+		for (auto& e : commonEdges) e.setColor(zBLUE);
+	}
+
+
+}
+
+
 ////////////////////////////////////////////////////////////////////////// General
 
 bool compute = false;
-bool display = true;
+bool d_inMesh = true;
+bool d_outMesh = true;
 
 double background = 0.35;
 
@@ -458,10 +649,10 @@ zObjMesh oMesh;
 
 zObjMesh oMeshOut;
 
-int startVertexID0 = 10;
-int startVertexID1 = 524;
+int startVertexID0 = 4270;
+int startVertexID1 = 1027;
 
-float panelWidth = 0.9;
+float panelWidth = 0.1;
 
 vector<zPointArray> divsPoints;
 
@@ -482,7 +673,7 @@ void setup()
 
 	// read mesh	
 	zFnMesh fnMesh_in(oMesh);
-	fnMesh_in.from("data/sanya/inMesh_1.json", zJSON);
+	fnMesh_in.from("data/sanya/inMesh_3.json", zJSON);
 	
 	
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
@@ -512,23 +703,33 @@ void setup()
 
 	B.addButton(&compute, "compute");
 	B.buttons[0].attachToVariable(&compute);
-	B.addButton(&display, "display");
-	B.buttons[1].attachToVariable(&display);
+	
+	B.addButton(&d_inMesh, "d_inMesh");
+	B.buttons[1].attachToVariable(&d_inMesh);
+
+	B.addButton(&d_outMesh, "d_outMesh");
+	B.buttons[2].attachToVariable(&d_outMesh);
 
 }
 
 void update(int value)
 {
+	oMesh.setDisplayObject(d_inMesh);
+	oMeshOut.setDisplayObject(d_outMesh);
+
 	if (compute)
 	{
 		vector<zItMeshHalfEdgeArray> v_Loops;
+		zIntArray loopDivs;
+		int MaxDIVS = -1;
 
 		computeVLoops(oMesh, startVertexID0, startVertexID1, v_Loops);
-
-		computeNewPositions(panelWidth, v_Loops, divsPoints);
+		//computeNewPositions(oMesh, v_Loops, panelWidth, divsPoints);
+		computeNewPositions_Quads(oMesh, v_Loops, panelWidth, divsPoints, loopDivs, MaxDIVS, 10);
 
 		// create new mesh
-		createNewMesh(v_Loops, divsPoints, oMeshOut);
+		//createNewMesh(v_Loops, divsPoints, oMeshOut);
+		createNewMesh_Quads(v_Loops, divsPoints, loopDivs, MaxDIVS, oMeshOut, 10);
 
 		zFnMesh fnMesh_out(oMeshOut);
 		fnMesh_out.to("data/sanya/outMesh.json", zJSON);
@@ -547,12 +748,10 @@ void draw()
 	S.draw();
 	B.draw();
 
-	if (display)
-	{
-		// zspace model draw
-		model.draw();
+	// zspace model draw
+	model.draw();
 		
-	}
+	
 
 	for (int i = 0; i < divsPoints.size(); i++)
 	{
