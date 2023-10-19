@@ -152,5 +152,11 @@
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_heat_slicer_Sanya.cpp">
       <Filter>Sketches\zspace_sketches</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_creatMesh.cpp">
+      <Filter>Sketches\zspace_tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_sanyaMeshStream.cpp">
+      <Filter>Sketches\zspace_tutorials</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

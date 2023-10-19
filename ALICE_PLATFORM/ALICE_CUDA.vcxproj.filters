@@ -4,10 +4,24 @@
     <Filter Include="Sketches">
       <UniqueIdentifier>{ec0acf34-153b-4313-bd3b-fa8589e74bbf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Sketches\Striatus">
+      <UniqueIdentifier>{2ae99193-e904-4e91-96e0-c559e1c5261d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <CudaCompile Include="src\userSrc\zspace_cuda\zspaceCuda_solar.cu">
       <Filter>Sketches</Filter>
     </CudaCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src_cuda\sketch_CUDA_empty.cpp">
+      <Filter>Sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_cuda\sketch_zspaceCuda_solar.cpp">
+      <Filter>Sketches</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\zspace_cuda\striatus\sketch_zspaceCuda_Striatus_Slicer.cpp">
+      <Filter>Sketches\Striatus</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

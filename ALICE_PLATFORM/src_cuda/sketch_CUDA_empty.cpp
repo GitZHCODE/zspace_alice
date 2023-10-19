@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 #define _CUDA_
 
 #ifdef _MAIN_

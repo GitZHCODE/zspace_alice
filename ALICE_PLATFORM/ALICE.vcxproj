@@ -63,7 +63,9 @@
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer_Osaka.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Striatus_Slicer.cpp" />
     <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_toStad2.cpp" />
+    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_creatMesh.cpp" />
     <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_planarityCheck.cpp" />
+    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_sanyaMeshStream.cpp" />
     <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_sanyaMeshWalk.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -355,7 +357,7 @@ REM CALL "$(SolutionDir)scripts\"zspace_includedeploy.bat "$(SolutionDir)project
       <PreprocessorDefinitions>ZSPACE_DYNAMIC_LIBRARY;ZSPACE_TOOLSETS_DYNAMIC_LIBRARY; IGL_STATIC_LIBRARY;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>zSpace_Core.lib;zSpace_Interface.lib;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;lib/igl.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>zSpace_Core.lib;zSpace_Interface.lib;zSpace_Toolsets.lib;;sqlite3.lib;glew32.lib;ALICE_DLL.lib;ALICE_RobotDll.lib;opengl32.lib;gl2ps.lib;libgizmo.lib;lib/igl.lib;freeglut.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)EXE\$(ProjectName).exe</OutputFile>
       <AdditionalLibraryDirectories>/src/algLib/;src/libGizmo/lib;x64/Release;src/gl2ps;src/;src/glew/lib;src/alice;$(OutDir)EXE\;$(zspaceIncludeDir)\depends\openGL\lib;$(zspaceIncludeDir)\depends/SQLITE/lib;$(zspaceIncludeDir)\depends/freeglut;$(zspaceLibDir)\;$(RhinoSDKDir)/lib/Release;$(zspaceIncludeDir)\depends\igl\build;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>

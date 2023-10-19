@@ -40,13 +40,13 @@ int blockStride = 4;
 int braceStride = 1;
 
 
-double blockID = 3;
+double blockID = 22;
 
 int SDFFunc_Num = 5;
 bool SDFFunc_NumSmooth = 2;
 
 int numSDFLayers = 242;
-bool allSDFLayers = false;
+bool allSDFLayers = true;
 
 
 
@@ -60,7 +60,7 @@ zDomain<zPoint> bb_current;
 int resX = 512;
 int resY = 512;
 
-string fileDir = "data/striatus/100_Draft/";
+string fileDir = "data/striatus/";
 
 string filePath = "data/striatus/test/deck_3.json";
 string exportBRGPath = "data/striatus/out_PrintBlock_3.json";
@@ -124,31 +124,31 @@ void setup()
 
 	// read mesh
 	
-	zFnMesh fnCenterMesh(o_centerMesh);
-	fnCenterMesh.from(filePath_centerMesh, zJSON);
+	//zFnMesh fnCenterMesh(o_centerMesh);
+	//fnCenterMesh.from(filePath_centerMesh, zJSON);
 
-	// get transform
-	json j;	
+	//// get transform
+	//json j;	
 
-	ifstream in_myfile;
-	in_myfile.open(filePath_centerMesh.c_str());
-	in_myfile >> j;
-	in_myfile.close();
+	//ifstream in_myfile;
+	//in_myfile.open(filePath_centerMesh.c_str());
+	//in_myfile >> j;
+	//in_myfile.close();
 
-	zFloatArray bTransform_array = j["BridgeTransform"];
-	zTransform bTranform;
+	//zFloatArray bTransform_array = j["BridgeTransform"];
+	//zTransform bTranform;
 
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			bTranform(i, j) = bTransform_array[i * 4 + j];
-		}
-		
-	}
-	
+	//for (int i = 0; i < 4; i++)
+	//{
+	//	for (int j = 0; j < 4; j++)
+	//	{
+	//		bTranform(i, j) = bTransform_array[i * 4 + j];
+	//	}
+	//	
+	//}
+	//
 
-	fnCenterMesh.setTransform(bTranform, true, true);
+	//fnCenterMesh.setTransform(bTranform, true, true);
 
 	//mySlicer.setFromJSON(filePath, blockStride, braceStride);
 	//mySlicer.setFromJSON(fileDir, blockID);

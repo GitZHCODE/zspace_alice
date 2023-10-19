@@ -22,7 +22,7 @@
     <LocalDebuggerCommand>$(SolutionDir)$(Platform)\Release\EXE\$(ProjectName).exe</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\Release\EXE\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerEnvironment>PATH=%PATH%$(zspaceLibDir);</LocalDebuggerEnvironment>
+    <LocalDebuggerEnvironment>PATH=%PATH%;$(zspaceLibDir);</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">
     <LocalDebuggerCommand>$(SolutionDir)$(Platform)\Release\EXE\$(ProjectName).exe</LocalDebuggerCommand>

@@ -26,7 +26,8 @@ zModel model;
 /*!<Objects*/
 zUtilsCore core;
 zObjMesh oMesh;
-zFnMeshDynamics fnDy;
+zFnMesh fnMesh;
+//zFnMeshDynamics fnDy;
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 
@@ -45,13 +46,17 @@ void setup()
 
 	// read mesh
 	string path = "data/nansha/0.6Max-v1.json";
-	zFnMesh fnMesh_in(oMesh);
-	fnMesh_in.from(path, zJSON);
-	
-	
-	fnDy.create(oMesh, false);
+	zFnMeshDynamics fnDy(oMesh);
+	fnDy.from(path, zJSON);
+	fnDy.makeDynamic();
 
 	
+
+	//zFnMesh fnMesh(oMesh);
+	//fnMesh.from(path, zJSON);
+	//fnDy.create(oMesh, false);
+
+	//printf("\n numPa %i ", fnDy.numParticles());
 
 	// planarity
 	//zDoubleArray planarDevs;
@@ -143,15 +148,21 @@ void update(int value)
 {
 	if (compute)
 	{
+
+		zFnMeshDynamics fnDy(oMesh);
+
 		zDoubleArray planarDevs;
 		zVectorArray planar_forceDirs;
-		bool planar_exit;
+		bool planar_exit = false;
 		
 		for (int i = 0; i < 1; i++)
 		{
 			fnDy.addPlanarityForce(1.0, 0.0001, zVolumePlanar, planarDevs, planar_forceDirs, planar_exit, zSolverForceConstraints::zConstraintFree);
 			fnDy.update(0.1, zIntergrationType::zRK4, true, true, true);
 		}
+		
+		zVectorArray fDirs;
+
 		
 
 		// check deviations
@@ -161,7 +172,7 @@ void update(int value)
 		
 		printf("\n planar %1.4f %1.4f ", min_pl, max_pl);
 
-		compute = !compute;	
+		compute = !planar_exit;
 	}
 
 	

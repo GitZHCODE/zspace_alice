@@ -85,8 +85,8 @@ zDomainFloat neopreneOffset(0, 0);
 zDomainFloat oDomain(0.0001, 0.40);
 
 zDomain<zPoint> bb(zPoint(-10, -10, 0), zPoint(10, 10, 0));
-int resX = 256;
-int resY = 256;
+int resX = 512;
+int resY = 512;
 
 bool dSliceMesh = true;
 bool dGradientMesh = true;

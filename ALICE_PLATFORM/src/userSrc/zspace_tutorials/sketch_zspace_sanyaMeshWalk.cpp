@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -507,6 +507,22 @@ void createNewMesh_Quads(vector<zItMeshHalfEdgeArray>& v_Loops, vector<zPointArr
 	int max_pow = -1;
 	for (int m = 0; m < maxPower; m++) if (maxDIVS - pow(2, m) == 0) max_pow = m;
 
+	// create positions
+	vector<zIntArray> divsPoint_Index;
+	for (int i = 0; i < v_Loops.size() ; i++)
+	{
+		zIntArray tempIndices;
+
+		for (int j = 0; j < divsPoints[i].size(); j++)
+		{
+			tempIndices.push_back(positions.size());
+			positions.push_back(divsPoints[i][j]);
+		}
+
+		divsPoint_Index.push_back(tempIndices);
+	}
+
+
 	for (int i = 0; i < v_Loops.size() - 1; i++)
 	{
 		int numV_current = loopDivs[i];
@@ -530,7 +546,13 @@ void createNewMesh_Quads(vector<zItMeshHalfEdgeArray>& v_Loops, vector<zPointArr
 		{
 			// add pposition to array
 
-			int v0 = -1;
+			int v0 = divsPoint_Index[i][startId_current];
+			int v1 = divsPoint_Index[i][startId_current + 1];
+
+			int v2 = divsPoint_Index[i + 1][startId_next + 1];
+			int v3 = divsPoint_Index[i + 1][startId_next];
+
+			/*int v0 = -1;
 			core.checkRepeatVector(divsPoints[i][startId_current], positions, v0, 3);
 			if (v0 == -1)
 			{
@@ -560,7 +582,7 @@ void createNewMesh_Quads(vector<zItMeshHalfEdgeArray>& v_Loops, vector<zPointArr
 			{
 				v3 = positions.size();
 				positions.push_back(divsPoints[i + 1][startId_next]);
-			}
+			}*/
 
 
 			pConnects.push_back(v0);
@@ -674,7 +696,7 @@ void setup()
 	// read mesh	
 	zFnMesh fnMesh_in(oMesh);
 	fnMesh_in.from("data/sanya/inMesh_3.json", zJSON);
-	
+		
 	
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -753,13 +775,13 @@ void draw()
 		
 	
 
-	for (int i = 0; i < divsPoints.size(); i++)
+	/*for (int i = 0; i < divsPoints.size(); i++)
 	{
 		for (int j = 0; j < divsPoints[i].size(); j++)
 		{
 			model.displayUtils.drawPoint(divsPoints[i][j], zGREEN, 5);
 		}
-	}
+	}*/
 
 	
 
