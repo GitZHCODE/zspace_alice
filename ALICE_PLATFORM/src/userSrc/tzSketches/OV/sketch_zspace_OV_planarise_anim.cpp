@@ -249,8 +249,12 @@ void setup()
 	// read mesh
 
 	zFnMesh fnMesh(oMesh);
-	fnMesh.from(dir_in + "m_0.json", zJSON);
+	fnMesh.from(dir_in + "NanshaRoof.obj", zOBJ);
+	
+	//fnMesh.from("data/pSolver/in/joined-0.10step-v1/joined-0.10step-v1.json", zJSON);
+
 	fnDyMesh.create(oMesh, true);
+
 
 	// Connect to OV
 	bool doLiveEdit = false;

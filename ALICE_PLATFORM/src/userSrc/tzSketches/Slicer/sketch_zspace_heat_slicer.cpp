@@ -253,6 +253,7 @@ void setup()
 	json j;
 	bool chk = core.readJSON(path + "sliceMesh.json", j);
 	totalGraphs = j["NumLayers"].get<int>();
+	totalGraphs = 100;
 	start_boundary_ids = j["BoundariesStart"].get<zIntArray>();
 	end_boundary_ids = j["BoundariesEnd"].get<zIntArray>();
 

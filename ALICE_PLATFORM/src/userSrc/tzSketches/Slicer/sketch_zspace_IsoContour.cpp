@@ -218,8 +218,8 @@ private:
 	void computeHeatMap(int _boundaryID)
 	{
 		zIntArray vertices = boundaries[_boundaryID];
-		myMeshParam.computeGeodesics_Heat(vertices);
-		scalars = myMeshParam.getGeodesicsHeatDistance();
+		myMeshParam.computeGeodesics_Heat(vertices, scalars);
+		//scalars = myMeshParam.getGeodesicsHeatDistance();
 	}
 
 	void computeIsoContour(zObjGraphArray& o_sectionGraphs, int _numGraphs)

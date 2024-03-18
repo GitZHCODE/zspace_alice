@@ -15,7 +15,7 @@
     <iglBuildDir>src\zspace\depends\igl\build</iglBuildDir>
     <pythonLibDir>src\zspace\depends\Python\lib</pythonLibDir>
     <pythonIncludeDir>src\zspace\depends\Python\include</pythonIncludeDir>
-    <CudaCommonDir>C:\ProgramData\NVIDIA Corporation\CUDA Samples\v11.8\common</CudaCommonDir>
+    <CudaCommonDir>C:\ProgramData\NVIDIA Corporation\CUDA Samples\v11.6\common</CudaCommonDir>
     <zspacecudatoolsetDir>$(codeRepoDir)\zspace_cuda\cpp</zspacecudatoolsetDir>
   </PropertyGroup>
   <PropertyGroup />

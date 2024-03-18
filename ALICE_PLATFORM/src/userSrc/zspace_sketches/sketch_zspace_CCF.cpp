@@ -554,6 +554,7 @@ float bPlanar_max, bPlanar_min;
 
 zDoubleArray creaseData;
 string creaseAttrib = "EdgeCreaseData";
+string mainDir = "data/ccf/";
 
 float dT = 0.1;
 
@@ -564,6 +565,8 @@ zVectorArray forceDir_panelBoundaryplanar;
 vector<zIntArray> panelBoundaryplanar_vGroups;
 zPointArray panelBoundaryplanar_Origins;
 zVectorArray panelBoundaryplanar_Normals;
+
+zIntArray alignIds;
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 
@@ -585,12 +588,11 @@ void setup()
 	cin >> fileName;
 
 	// read mesh
-
-	string path = "data/pSolver/" + fileName + ".json";
+	string path = mainDir + fileName + ".json";
 	//string path = "data/pSolver/DF_Y_shape.obj";
 
 	zFnMesh fnMesh_inPlanes(oMesh_inplanes);
-	fnMesh_inPlanes.from("data/pSolver/panelBoundary_planes.json", zJSON);
+	fnMesh_inPlanes.from( mainDir + "panelBoundary_planes.json", zJSON);
 
 	zFnMesh fnMesh_in(oMesh_in);
 	fnMesh_in.from(path, zJSON);
@@ -611,11 +613,14 @@ void setup()
 	fnDyMesh.getFaceNormals(fNorms);
 
 	zIntArray fixedVerts;
+
 	for (zItMeshVertex v(oMesh_in); !v.end(); v++)
 	{
 		if (v.getColor() == RED) fixedVerts.push_back(v.getId());
+		if (v.getColor() == zWHITE) alignIds.push_back(v.getId());
 	}
 	fnDyMesh.setFixed(fixedVerts);
+
 
 	printf("\n fixedVerts %i ", fixedVerts.size());
 
@@ -773,8 +778,11 @@ void update(int value)
 		zDoubleArray devs_panelBoundaryplanar;
 
 		bool exit_align;
+		zDoubleArray vertexDistances;
 		zDoubleArray devs_align;
 		zVectorArray forceDir_align;
+
+
 
 		for (int i = 0; i < numIterations; i++)
 		{
@@ -786,8 +794,12 @@ void update(int value)
 			if (vertexAlignPairs.size() > 0)
 			{
 
-				fnDyMesh.addRigidLineForce(0.5, 0.001, vertexAlignPairs, devs_align, forceDir_align, exit_align);
+				fnDyMesh.addRigidLineForce(0.5, 0.001, vertexAlignPairs, vertexDistances, devs_align, forceDir_align, exit_align);
 			}
+
+
+
+			fnDyMesh.addPlaneForce(1.0, alignIds, zPoint(0, 0, 0), zVector(0, 0, 1));
 
 			fnDyMesh.update(dT, zRK4, true, true, true);
 		}
@@ -855,11 +867,11 @@ void update(int value)
 			else e.setColor(BLUE);
 		}
 
-		string fPath_unroll = "data/pSolver/ccf_out_unroll.json";
+		string fPath_unroll = mainDir + "ccf_out_unroll.json";
 		zFnMesh fnMesh_unroll(oMesh_unroll);
 		fnMesh_unroll.to(fPath_unroll, zJSON);
 
-		string fPath = "data/pSolver/ccf_out.json";
+		string fPath = mainDir + "ccf_out.json";
 		fnDyMesh.to(fPath, zJSON);
 
 		json j;

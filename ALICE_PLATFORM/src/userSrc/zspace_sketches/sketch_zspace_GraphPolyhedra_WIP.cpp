@@ -19,13 +19,16 @@ bool readGraph = false;
 bool readMesh = false;
 bool equilibrium = false;
 bool equilibriumREACHED = false;
+bool makeStrips = false;
 
 bool display = true;
 bool dFormGraph = true;
 bool dForceMeshes = true;
 bool displayAllMeshes = true;
+bool dStrips = false;
 
-double background = 0.35;
+
+double background = 0.95;
 
 int currentMeshID = 0;
 int totalMeshes = 0;
@@ -42,6 +45,9 @@ double angleTolerance = 5;
 double areaTolerance = 0.1;
 bool printInfo = true;
 
+double stripScale = 0.0;
+double bevel = 0.0;
+
 bool exportFiles = false;
 
 
@@ -55,6 +61,8 @@ zIntergrationType type = zRK4;
 
 /*!<Tool sets*/
 zTsGraphPolyhedra myPolyhedra;
+
+vector<zObjMeshArray> strips;
 
 ////// --- CUSTOM METHODS -------------------------------------------------
 
@@ -74,7 +82,6 @@ void setup()
 	// initialise model
 	model = zModel(100000);		
 
-	
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -105,6 +112,12 @@ void setup()
 	S.addSlider(&areaTolerance, "areaTolerance");
 	S.sliders[3].attachToVariable(&areaTolerance, 0, 1);
 
+	S.addSlider(&stripScale, "stripScale");
+	S.sliders[4].attachToVariable(&stripScale, 0, 1);
+
+	S.addSlider(&bevel, "bevel");
+	S.sliders[5].attachToVariable(&bevel, 0, 1);
+	
 	////////////////////////////////////////////////////////////////////////// Buttons
 
 	B = *new ButtonGroup(Alice::vec(50, 450, 0));
@@ -112,18 +125,23 @@ void setup()
 	B.addButton(&equilibrium, "equilibrium");
 	B.buttons[0].attachToVariable(&equilibrium);
 
+	B.addButton(&makeStrips, "makeStrips");
+	B.buttons[1].attachToVariable(&makeStrips);
+
 	B.addButton(&display, "display");
-	B.buttons[1].attachToVariable(&display);
+	B.buttons[2].attachToVariable(&display);
 
 	B.addButton(&dFormGraph, "dFormGraph");
-	B.buttons[2].attachToVariable(&dFormGraph);
+	B.buttons[3].attachToVariable(&dFormGraph);
 
 	B.addButton(&dForceMeshes, "dForceMeshes");
-	B.buttons[3].attachToVariable(&dForceMeshes);
+	B.buttons[4].attachToVariable(&dForceMeshes);
 
 	B.addButton(&displayAllMeshes, "displayAllMeshes");
-	B.buttons[4].attachToVariable(&displayAllMeshes);
+	B.buttons[5].attachToVariable(&displayAllMeshes);
 
+	B.addButton(&dStrips, "dStrips");
+	B.buttons[6].attachToVariable(&dStrips);
 }
 
 void update(int value)
@@ -160,7 +178,15 @@ void update(int value)
 		//else if (angleDeviations->max > angleTolerance) areaForce = false;
 		if (equilibriumREACHED) printf("\n Equilibrium Reached !");
 
-		equilibrium = !equilibrium;	
+		//equilibrium = !equilibrium;	
+	}
+
+	if (makeStrips)
+	{
+		myPolyhedra.createStrips(1, bevel, stripScale);
+		myPolyhedra.getStripMeshes(strips);
+
+		makeStrips = !makeStrips;
 	}
 
 	if (exportFiles)
@@ -219,6 +245,17 @@ void draw()
 		}
 	}
 
+	if (dStrips)
+	{
+		for (auto& arr : strips)
+		{
+			for (auto& s : arr)
+			{
+				s.setDisplayElements(false, true, true);
+				s.draw();
+			}
+		}
+	}
 
 	//////////////////////////////////////////////////////////
 

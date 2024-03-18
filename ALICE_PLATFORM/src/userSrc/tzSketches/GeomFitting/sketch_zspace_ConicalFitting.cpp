@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -33,11 +33,12 @@ zUtilsCore core;
 zObjMesh oMesh;
 zObjMesh oMesh_copy;
 double tol_planarity = 0.1;
+double tol_sphere = 0.1;
 double tol_cylinder = 0.1;
 double tol_cone = 0.1;
 double dT = 0.1;
 
-
+zPoint dCenter;
 ////// --- GUI OBJECTS ----------------------------------------------------
 
 class zPanel
@@ -54,7 +55,7 @@ public:
 		computeDevs();
 	}
 
-	void fit(double dT, double tol_planarity, double tol_cylinder, double tol_cone, bool checkPlanar = true, bool checkCylinder = true, bool checkCone = true)
+	void fit(double dT, double tol_planarity, double tol_sphere, double tol_cylinder, double tol_cone, bool checkPlanar = true, bool checkCylinder = true, bool checkCone = true, bool checkSphere = true)
 	{
 		computeDevs();
 		LOG << endl
@@ -71,6 +72,12 @@ public:
 			setPanelColor(GREEN);
 			fitPlane();
 		}
+		else if (panelDev_sphere < tol_sphere && checkSphere)
+		{
+			setPanelColor(ORANGE);
+			fitSphere();
+		}
+
 		else if (panelDev_cylinder < tol_cylinder && checkCylinder)
 		{
 			setPanelColor(CYAN);
@@ -92,6 +99,8 @@ public:
 	double panelDev_planarity;
 	double panelDev_cylinder;
 	double panelDev_cone;
+	double panelDev_sphere;
+	zPoint sphereCenter;
 
 private:
 	zObjMesh& oMesh;
@@ -199,9 +208,41 @@ private:
 		fnDyMesh.addSpringForce(1.0, minor_hes.second.getEdge().getId(), meanLength);
 
 		//main angle force
-		fnDyMesh.addAngleForce(1.0, centerVertex.getId(), main_hes.first.getVertex().getId(), main_hes.second.getVertex().getId(), restAngle);
-		fnDyMesh.addAngleForce(1.0, minor_hes.first.getVertex().getId(), c1_hes.first.getVertex().getId(), c2_hes.first.getVertex().getId(), restAngle);
-		fnDyMesh.addAngleForce(1.0, minor_hes.second.getVertex().getId(), c1_hes.second.getVertex().getId(), c2_hes.second.getVertex().getId(), restAngle);
+		//fnDyMesh.addAngleForce(1.0, centerVertex.getId(), main_hes.first.getVertex().getId(), main_hes.second.getVertex().getId(), restAngle);
+		//fnDyMesh.addAngleForce(1.0, minor_hes.first.getVertex().getId(), c1_hes.first.getVertex().getId(), c2_hes.first.getVertex().getId(), restAngle);
+		//fnDyMesh.addAngleForce(1.0, minor_hes.second.getVertex().getId(), c1_hes.second.getVertex().getId(), c2_hes.second.getVertex().getId(), restAngle);
+
+
+
+
+		zVector c1_vec, c2_vec, minor_vec;
+		float average_vecLen;
+		c1_vec = c1_hes.first.getVector() + c1_hes.second.getVector();
+		c2_vec = c2_hes.first.getVector() + c2_hes.second.getVector();
+		minor_vec = minor_hes.first.getVector() + minor_hes.second.getVector();
+
+
+		zVector average_vec = (c1_vec + c2_vec + minor_vec) / 3;
+		//average_vec = zVector(0, 0, 0);
+
+		c1_vec -= average_vec;
+		c2_vec -= average_vec;
+		minor_vec -= average_vec;
+
+		//main_hes.first.getVertex().setPosition(main_hes.first.getVertex().getPosition() + average_vec);
+		//main_hes.first.getVertex().setPosition(main_hes.first.getVertex().getPosition() + average_vec);
+		//main_hes.first.getVertex().setPosition(main_hes.first.getVertex().getPosition() + average_vec);
+
+		average_vecLen = (c1_vec + c2_vec + minor_vec).length() / 3;
+		fnDyMesh.addLoadForce(0.5 * c1_vec.length(), main_hes.first.getVertex().getId(), c1_vec);
+		fnDyMesh.addLoadForce(0.5 * c2_vec.length(), main_hes.second.getVertex().getId(), c2_vec);
+		fnDyMesh.addLoadForce(0.5 * minor_vec.length(), centerVertex.getId(), minor_vec);
+
+		cout << endl;
+		cout << "c1:" << 0.5 * c1_vec.length() << endl;
+		cout << "c2:" << 0.5 * c2_vec.length() << endl;
+		cout << "minor:" << 0.5 * minor_vec.length() << endl;
+
 
 		//plane force
 		zIntArray c1_vIds, c2_vIds;
@@ -280,6 +321,150 @@ private:
 		//v_second -= minor_hes.second.getVertex().getPosition();
 		//fnDyMesh.addLoadForce(1.0, minor_hes.first.getVertex().getId(), v_first);
 		//fnDyMesh.addLoadForce(1.0, minor_hes.second.getVertex().getId(), v_second);
+	}
+	void fitSphere()
+	{
+		//equal distance force
+		zIntArray vIds;
+		getVertices(vIds, false);
+
+		float meanDist_diagonal = 0;
+		for (auto& vId : vIds)
+		{
+			zItMeshVertex v(oMesh, vId);
+			float d = v.getPosition().distanceTo(centerVertex.getPosition());
+			meanDist_diagonal += d;
+		}
+		meanDist_diagonal /= vIds.size();
+
+		for (auto& vId : vIds)
+		{
+			fnDyMesh.addDistanceForce(1.0, centerVertex.getId(), vId, meanDist_diagonal);
+		}
+
+		zIntArray vIds_bot;
+		float meanDist_square = 0;
+
+		meanDist_square += c1_hes.first.getVertex().getPosition().distanceTo(c1_hes.second.getVertex().getPosition());
+		meanDist_square += c1_hes.second.getVertex().getPosition().distanceTo(c2_hes.second.getVertex().getPosition());
+		meanDist_square += c2_hes.second.getVertex().getPosition().distanceTo(c2_hes.first.getVertex().getPosition());
+		meanDist_square += c2_hes.first.getVertex().getPosition().distanceTo(c1_hes.first.getVertex().getPosition());
+
+		meanDist_square /= 4;
+
+		fnDyMesh.addDistanceForce(1.0, c1_hes.first.getVertex().getId(),c1_hes.second.getVertex().getId(), meanDist_square);
+		fnDyMesh.addDistanceForce(1.0, c1_hes.second.getVertex().getId(), c2_hes.second.getVertex().getId(), meanDist_square);
+		fnDyMesh.addDistanceForce(1.0, c2_hes.second.getVertex().getId(), c2_hes.first.getVertex().getId(), meanDist_square);
+		fnDyMesh.addDistanceForce(1.0, c2_hes.first.getVertex().getId(), c1_hes.first.getVertex().getId(), meanDist_square);
+
+		//radius
+		float radius;
+		float angle_main = main_hes.first.getVector().angle(main_hes.second.getVector()) * DEG_TO_RAD;
+		float angle_minor = minor_hes.first.getVector().angle(minor_hes.second.getVector()) * DEG_TO_RAD;
+
+		cout << "angle_main:" << angle_main << endl;
+		cout << "angle_minor:" << angle_minor << endl;
+		float angle_mean = (angle_main + angle_minor) / 2;
+		angle_main = angle_main > Z_HALF_PI ? Z_PI - angle_main : angle_main;
+		radius = meanDist_square * tanf(0.5 * angle_mean);
+
+		//equal angle force
+		fnDyMesh.addAngleForce(1.0, centerVertex.getId(), main_hes.first.getVertex().getId(), main_hes.second.getVertex().getId(), angle_mean, false);
+		fnDyMesh.addAngleForce(1.0, centerVertex.getId(), minor_hes.first.getVertex().getId(), minor_hes.second.getVertex().getId(), angle_mean, false);
+
+		//fix angle problem
+		zVector check_main = main_hes.first.getVector() + main_hes.second.getVector();
+		zVector check_minor = main_hes.first.getVector() + minor_hes.second.getVector();
+		zVector normal = centerVertex.getNormal();
+		normal.normalize();
+		if (check_main * normal > 0 || check_minor * normal > 0)
+		{
+			float move = meanDist_square * cosf(angle_mean * 0.5);
+			centerVertex.setPosition(centerVertex.getPosition() + normal * move * 2);
+			//fnDyMesh.addLoadForce(move * 2, centerVertex.getId(), normal);
+		}
+
+		//plane force
+		zIntArray cluster_bot;
+
+		cluster_bot.push_back(c1_hes.first.getVertex().getId());
+		cluster_bot.push_back(c1_hes.second.getVertex().getId());
+		cluster_bot.push_back(c2_hes.first.getVertex().getId());
+		cluster_bot.push_back(c2_hes.second.getVertex().getId());
+
+		zVector average_bot, average_mid;
+
+		for (auto& id : cluster_bot)
+		{
+			zItMeshVertex v(oMesh, id);
+			average_bot += v.getPosition();
+		}
+		average_bot /= 4;
+
+		zVector origin, planeZ;
+		getBestFitPlane(origin, planeZ,false);
+		sphereCenter = origin - planeZ;
+
+		planeZ.normalize();
+
+		fnDyMesh.addPlaneForce(1.0, cluster_bot, average_bot, planeZ);
+	}
+
+	void fitSphere_legacy()
+	{
+		//equal length force
+		zDoubleArray lens_edges;
+		double meanLength = 0;
+		zFloatArray restLengths;
+		fnDyMesh.getEdgeLengths(lens_edges);
+		for (auto& len : lens_edges)
+		{
+			meanLength += len;
+		}
+		meanLength /= fnDyMesh.numEdges();
+		restLengths.assign(fnDyMesh.numEdges(), meanLength);
+		fnDyMesh.addSpringForce(0.2, restLengths);
+
+
+		//radius
+		float radius;
+		float angle_main = main_hes.first.getVector().angle360(main_hes.second.getVector(),minor_hes.first.getVector()) * DEG_TO_RAD;
+		float angle_minor = minor_hes.first.getVector().angle360(minor_hes.second.getVector(),main_hes.second.getVector()) * DEG_TO_RAD;
+		//float angle_main = main_hes.first.getVector().angle360(main_hes.second.getVector(),minor_hes.first.getVector()) * DEG_TO_RAD;
+		//float angle_minor = minor_hes.first.getVector().angle360(minor_hes.second.getVector(), main_hes.second.getVector()) * DEG_TO_RAD;
+
+		cout << "angle_main:" << angle_main << endl;
+		cout << "angle_minor:" << angle_minor << endl;
+		float angle_mean = (angle_main + angle_minor) / 2;
+		angle_main = angle_main > Z_HALF_PI ? Z_PI - angle_main : angle_main;
+		angle_main = 3.1;
+		radius = meanLength * tanf(0.5 * angle_mean);
+
+		//equal angle force
+		fnDyMesh.addAngleForce(1.0, centerVertex.getId(), main_hes.first.getVertex().getId(), main_hes.second.getVertex().getId(), angle_mean, false);
+		fnDyMesh.addAngleForce(1.0, centerVertex.getId(), minor_hes.first.getVertex().getId(), minor_hes.second.getVertex().getId(), angle_mean, false);
+
+		//radius force
+		zVector origin, planeZ;
+		getBestFitPlane(origin, planeZ);
+		planeZ.normalize();
+		planeZ *= radius;
+		origin = centerVertex.getPosition();
+		origin -= planeZ;
+
+		sphereCenter = origin;
+
+		zItMeshVertex v(oMesh);
+		for (v.begin(); !v.end(); v++)
+		{
+			zVector vPos = v.getPosition();
+			float dist = origin.distanceTo(vPos);
+			float moveDist = radius - dist;
+			zVector vec = vPos - origin;
+			fnDyMesh.addLoadForce(0.1*moveDist, v.getId(), vec);
+
+			cout << "dist:" << dist << endl;
+		}
 	}
 
 	void fitUpdate(const double dT)
@@ -368,12 +553,38 @@ private:
 	{
 		panelDev_cone = abs(edgeDev_C1 - edgeDev_C2);
 	}
+	void computeDev_sphere()
+	{
+		panelDev_sphere = abs(edgeDev_main - edgeDev_minor);
+	}
 
-	void getVertexPositions(zPointArray& positions)
+	void getVertices(zIntArray& vertices, bool includeCenter = true)
+	{
+		vertices.clear();
+
+		if (includeCenter)
+			vertices.push_back(centerVertex.getId());
+
+		vertices.push_back(main_hes.first.getVertex().getId());
+		vertices.push_back(main_hes.second.getVertex().getId());
+		
+		vertices.push_back(minor_hes.first.getVertex().getId());
+		vertices.push_back(minor_hes.second.getVertex().getId());
+		
+		vertices.push_back(c1_hes.first.getVertex().getId());
+		vertices.push_back(c1_hes.second.getVertex().getId());
+		
+		vertices.push_back(c2_hes.first.getVertex().getId());
+		vertices.push_back(c2_hes.second.getVertex().getId());
+	}
+
+	void getVertexPositions(zPointArray& positions, bool includeCenter = true)
 	{
 		positions.clear();
 
-		positions.push_back(centerVertex.getPosition());
+		if(includeCenter)
+			positions.push_back(centerVertex.getPosition());
+
 		positions.push_back(main_hes.first.getVertex().getPosition());
 		positions.push_back(main_hes.second.getVertex().getPosition());
 
@@ -387,11 +598,13 @@ private:
 		positions.push_back(c2_hes.second.getVertex().getPosition());
 	}
 
-	void getVertexNormals(zVectorArray& normals)
+	void getVertexNormals(zVectorArray& normals, bool includeCenter = true)
 	{
 		normals.clear();
 
-		normals.push_back(centerVertex.getNormal());
+		if(includeCenter)
+			normals.push_back(centerVertex.getNormal());
+
 		normals.push_back(main_hes.first.getVertex().getNormal());
 		normals.push_back(main_hes.second.getVertex().getNormal());
 
@@ -405,12 +618,33 @@ private:
 		normals.push_back(c2_hes.second.getVertex().getNormal());
 	}
 
-	void getBestFitPlane(zPoint& origin, zVector& normal)
+	void getBestFitPlane(zPoint& origin, zVector& normal, bool includeCenter = true)
 	{
 		zPointArray positions;
 		zVectorArray normals;
-		getVertexPositions(positions);
-		getVertexNormals(normals);
+		getVertexPositions(positions, includeCenter);
+		getVertexNormals(normals, includeCenter);
+
+		for (int i = 0; i < positions.size(); i++)
+		{
+			origin += positions[i];
+			normal += normals[i];
+		}
+		origin /= positions.size();
+		normal /= normals.size();
+		normal.normalize();
+	}
+
+	void getBestFitPlane(zItMeshVertexArray& vertices, zPoint& origin, zVector& normal)
+	{
+		zPointArray positions;
+		zVectorArray normals;
+
+		for (auto& v : vertices)
+		{
+			positions.push_back(v.getPosition());
+			normals.push_back(v.getNormal());
+		}
 
 		for (int i = 0; i < positions.size(); i++)
 		{
@@ -469,10 +703,12 @@ void setup()
 	S.sliders[0].attachToVariable(&background, 0, 1);
 	S.addSlider(&tol_planarity, "tol_planarity");
 	S.sliders[1].attachToVariable(&tol_planarity, 0, 1);
+	S.addSlider(&tol_sphere, "tol_sphere");
+	S.sliders[2].attachToVariable(&tol_sphere, 0, 1);
 	S.addSlider(&tol_cylinder, "tol_cylinder");
-	S.sliders[2].attachToVariable(&tol_cylinder, 0, 1);
+	S.sliders[3].attachToVariable(&tol_cylinder, 0, 1);
 	S.addSlider(&tol_cone, "tol_cone");
-	S.sliders[3].attachToVariable(&tol_cone, 0, 1);
+	S.sliders[4].attachToVariable(&tol_cone, 0, 1);
 	////////////////////////////////////////////////////////////////////////// Buttons
 
 	B = *new ButtonGroup(Alice::vec(50, 450, 0));
@@ -492,7 +728,8 @@ void update(int value)
 	{
 		for (auto& panel : panels)
 		{
-			panel.fit(dT, tol_planarity, tol_cylinder, tol_cone, true, true, true);
+			panel.fit(dT, tol_planarity, tol_sphere, tol_cylinder, tol_cone, true, true, true, true);
+			dCenter = panel.sphereCenter;
 		}
 
 	}
@@ -522,14 +759,15 @@ void draw()
 		// zspace model draw
 		model.draw();
 		
-		//zPoint* vPositions = fnDyMesh.getRawVertexPositions();
+		zFnMesh fn(oMesh);
+		zPoint* vPositions = fn.getRawVertexPositions();
 
-		//for (int i = 0; i < fnDyMesh.numVertices(); i++) {
-		//	bool fixedV = std::find(std::begin(fixedVertexIds[myCounter]), std::end(fixedVertexIds[myCounter]), i) != std::end(fixedVertexIds[myCounter]);
+		for (int i = 0; i < fn.numVertices(); i++) {
 
-		//	if (fixedV)
-		//		model.displayUtils.drawPoint(vPositions[i], zColor(1, 0, 0, 1), 5);
-		//}
+				model.displayUtils.drawLine(vPositions[i], dCenter, zColor(1, 0, 0, 1), 2);
+		}
+		model.displayUtils.drawPoint(dCenter, zColor(1, 0, 0, 1), 5);
+
 	}
 
 	
@@ -546,7 +784,20 @@ void draw()
 
 void keyPress(unsigned char k, int xm, int ym)
 {
-	if (k == 'p') compute = true;;	
+	if (k == 'p') compute = true;
+	if (k == '1')
+	{
+		//float z, rx, ry, tx, ty;
+		//getCamera(z, rx, ry, tx, ty);
+		//cout << endl;
+		//cout << z << endl;
+		//cout << rx << endl;
+		//cout << ry << endl;
+		//cout << tx << endl;
+		//cout << ty << endl;
+
+		setCamera(1.5, -38.7, -45.899, 0.2, 0.4);
+	}
 }
 
 void mousePress(int b, int s, int x, int y)

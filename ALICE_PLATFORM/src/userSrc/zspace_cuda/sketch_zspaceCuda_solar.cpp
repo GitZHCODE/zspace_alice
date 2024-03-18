@@ -1,4 +1,4 @@
-//#define _MAIN_
+#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -20,10 +20,12 @@ bool COMPUTE_RADIATION = false;
 
 bool READ_EPW = false;
 bool COLORMESH = false;
+bool EXPORTMESH = false;
 
 zLocation LOCATION;
 
-
+string inPath;
+string outPath;
 
 int dummyYEAR = 0;
 int YEAR = 2020;
@@ -68,7 +70,30 @@ ZSPACE_EXTERN void cleanDeviceMemory();
 
 ZSPACE_EXTERN bool cdpCummulativeRadiation(zTsSolarAnalysis& sAnalysis, bool EPWRead);
 
+ZSPACE_INLINE void loadConfig(string& _inPath, string& _outPath, zDomainDate& dDates, zLocation& dLocation)
+{
+	json j;
+	string file = "data/solarRadiationConfig.json";
+	bool chk = core.readJSON(file, j);
 
+	if (chk)
+	{
+		_inPath = j["InMesh"].get<string>();
+		_outPath = j["OutMesh"].get<string>();
+
+		int year = j["Year"].get<int>();
+		const json& months = j["Months"].get<vector<int>>();
+		const json& dates = j["Dates"].get<vector<int>>();
+		const json& hours = j["Hours"].get<vector<int>>();
+
+		const json& location = j["Location"].get<vector<float>>();
+
+		dDates = zDomainDate(zDate(year, months[0], dates[0], hours[0], 1), zDate(year, months[1], dates[1], hours[1], 1));
+		dLocation.latitude = location[0];
+		dLocation.longitude = location[1];
+		dLocation.timeZone = location[2];
+	}
+}
 
 void setup()
 {
@@ -91,12 +116,19 @@ void setup()
 	GPU_COMPUTE = checkCudaExists(GPUString);
 	cout << "\n " << GPUString;
 
-	zDomainDate dDates(zDate(YEAR, MONTHS[0], DATES[0], HOURS[0], 1), zDate(YEAR, MONTHS[1], DATES[1], HOURS[1], 1));
+	//----------------------------------
+	zDomainDate dDates;
+	loadConfig(inPath, outPath, dDates, LOCATION);
+	
+	//----------------------------------
+
+
+	//zDomainDate dDates(zDate(YEAR, MONTHS[0], DATES[0], HOURS[0], 1), zDate(YEAR, MONTHS[1], DATES[1], HOURS[1], 1));
 	solar.setDomain_Dates(dDates);
 
-	LOCATION.latitude = 51.50000; 
-	LOCATION.longitude = -0.11700; 
-	LOCATION.timeZone = 0;
+	//LOCATION.latitude = 51.50000; 
+	//LOCATION.longitude = -0.11700; 
+	//LOCATION.timeZone = 0;
 	solar.setLocation(LOCATION);
 
 	// sunpaths
@@ -105,7 +137,7 @@ void setup()
 
 	// in mesh
 	zFnMesh fnMesh(o_Mesh);
-	fnMesh.from("data/solarMesh.obj", zOBJ);
+	fnMesh.from(inPath, zOBJ);
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
@@ -163,6 +195,8 @@ void update(int value)
 
 		BAKE_SUNPATH = true;
 		COMPUTE_RADIATION = true;
+		EXPORTMESH = true;
+
 		COMPUTE_SUNPATH = !COMPUTE_SUNPATH;
 	} 
 
@@ -332,6 +366,14 @@ void update(int value)
 
 		fnMesh.computeFaceColorfromVertexColor();
 		COLORMESH = !COLORMESH;
+	}
+
+	if (EXPORTMESH)
+	{
+		zFnMesh fnMesh(o_Mesh);
+		fnMesh.to(outPath, zJSON);
+
+		EXPORTMESH = !EXPORTMESH;
 	}
 }
 

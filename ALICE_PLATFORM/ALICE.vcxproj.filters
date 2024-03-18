@@ -16,6 +16,21 @@
     <ClInclude Include="src\userSrc\zspace_drl\VoxelSystem.h">
       <Filter>Sketches\zspace_drl</Filter>
     </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\DRL\VoxelSystem.h">
+      <Filter>Sketches\tzSketches\drl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\DRL\VoxelSystem_backup_working.h">
+      <Filter>Sketches\tzSketches\drl</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\PolySplit\line.h">
+      <Filter>Sketches\tzSketches\polySplit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\PolySplit\polygon.h">
+      <Filter>Sketches\tzSketches\polySplit</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\PolySplit\vector.h">
+      <Filter>Sketches\tzSketches\polySplit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MVC">
@@ -44,6 +59,63 @@
     </Filter>
     <Filter Include="Sketches\zspace_tutorials">
       <UniqueIdentifier>{4ef6a6a0-5948-43b0-b7d6-9cee08343afd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches">
+      <UniqueIdentifier>{a7be68c7-d6c1-49ce-957f-864bf9240546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\color">
+      <UniqueIdentifier>{9dfd3129-f5ca-42ff-9d8a-60f05fee56d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\configurator">
+      <UniqueIdentifier>{d8d0cf3b-1a9b-4317-b8b7-5fe031e08456}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\drl">
+      <UniqueIdentifier>{84dcbe7f-303f-459c-8241-2ae8265afc21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\dynamics">
+      <UniqueIdentifier>{4108bae1-61b7-4f15-ab76-7e541b4032a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\geomFitting">
+      <UniqueIdentifier>{a753e25a-20bf-4253-bc1d-28b3cd6c8169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\graphPolyhedra">
+      <UniqueIdentifier>{c60145bd-b943-44a2-b99c-2de0dfe65c09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\kmeans">
+      <UniqueIdentifier>{db08c58e-32ab-4aa1-aa90-6857f40e7a96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\ov">
+      <UniqueIdentifier>{be6ea103-c0cc-44de-a3db-64113563f9f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\paneling">
+      <UniqueIdentifier>{5a729156-8ab6-4132-acea-cefa5bb8582a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\parameterisation">
+      <UniqueIdentifier>{47362d28-124d-4148-9af6-be3fb57ed6a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\planarise">
+      <UniqueIdentifier>{954a0ffd-5da5-4710-a3e6-abad790bbef0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\slicer">
+      <UniqueIdentifier>{f827a0ab-cb94-4296-8159-dc6a800a1f0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\solar">
+      <UniqueIdentifier>{e7ee14c7-5896-4fc1-93a4-8865169c4220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\tutorials">
+      <UniqueIdentifier>{984f4c50-e480-4adc-9cb2-a4268df69e6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\usd">
+      <UniqueIdentifier>{05d39c6d-92d9-4f87-a6b6-426c4f270faf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\streamlines">
+      <UniqueIdentifier>{7c2809b9-2462-409c-b518-af7be9bf5405}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\deformer">
+      <UniqueIdentifier>{37ecd249-d385-4905-a634-8cabeb08e976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\polySplit">
+      <UniqueIdentifier>{6b9bf327-a252-4430-977d-92a4e735b108}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -157,6 +229,171 @@
     </ClCompile>
     <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_sanyaMeshStream.cpp">
       <Filter>Sketches\zspace_tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Configurator\sketch_Configurator.cpp">
+      <Filter>Sketches\tzSketches\configurator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_bevel.cpp">
+      <Filter>Sketches\tzSketches\tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Dynamics\sketch_zspace_biArcs.cpp">
+      <Filter>Sketches\tzSketches\dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_biArcs.cpp">
+      <Filter>Sketches\tzSketches\dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Dynamics\sketch_zspace_biArcs_group.cpp">
+      <Filter>Sketches\tzSketches\dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Dynamics\sketch_zspace_biArcs_kmeans.cpp">
+      <Filter>Sketches\tzSketches\dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Dynamics\sketch_zspace_biArcs_louvre_kmeans.cpp">
+      <Filter>Sketches\tzSketches\dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Dynamics\sketch_zspace_CCF.cpp">
+      <Filter>Sketches\tzSketches\dynamics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Color\sketch_zspace_ColorFillFour.cpp">
+      <Filter>Sketches\tzSketches\color</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Color\sketch_zspace_ColorSplit.cpp">
+      <Filter>Sketches\tzSketches\color</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\GeomFitting\sketch_zspace_ConicalFitting.cpp">
+      <Filter>Sketches\tzSketches\geomFitting</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_cubeChamfer.cpp">
+      <Filter>Sketches\tzSketches\tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_edgeloops.cpp">
+      <Filter>Sketches\tzSketches\tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_graphPlusField.cpp">
+      <Filter>Sketches\tzSketches\tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\GraphPolyhedra\sketch_zspace_GraphPolyhedra_WIP.cpp">
+      <Filter>Sketches\tzSketches\graphPolyhedra</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_backup.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_production.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_IsoContour.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\kmeans\sketch_zspace_KMeans.cpp">
+      <Filter>Sketches\tzSketches\kmeans</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Solar\sketch_zspace_MSC.cpp">
+      <Filter>Sketches\tzSketches\solar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\USD\sketch_zspace_OmniConnect.cpp">
+      <Filter>Sketches\tzSketches\ov</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\USD\sketch_zspace_OV_Base.cpp">
+      <Filter>Sketches\tzSketches\ov</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\OV\sketch_zspace_OV_Core.cpp">
+      <Filter>Sketches\tzSketches\ov</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\OV\sketch_zspace_OV_mesh_data.cpp">
+      <Filter>Sketches\tzSketches\ov</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\OV\sketch_zspace_OV_planarise_anim.cpp">
+      <Filter>Sketches\tzSketches\ov</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\OV\sketch_zspace_OV_tz.cpp">
+      <Filter>Sketches\tzSketches\ov</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Paneling\sketch_zspace_PanelAnalysis.cpp">
+      <Filter>Sketches\tzSketches\paneling</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Parameterization\sketch_zspace_Parameterization.cpp">
+      <Filter>Sketches\tzSketches\parameterisation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Planarise\sketch_zspace_Planarise.cpp">
+      <Filter>Sketches\tzSketches\planarise</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_SDFSlicer.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Solar\sketch_zspace_SolarCuda.cpp">
+      <Filter>Sketches\tzSketches\solar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Solar\sketch_zspace_SolarDebug.cpp">
+      <Filter>Sketches\tzSketches\solar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Solar\sketch_zspace_SolarDebug_Production.cpp">
+      <Filter>Sketches\tzSketches\solar</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\USD\sketch_zspace_USDBase.cpp">
+      <Filter>Sketches\tzSketches\usd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\USD\sketch_zspace_USD_read.cpp">
+      <Filter>Sketches\tzSketches\usd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\USD\sketch_zspace_USD_read_LM.cpp">
+      <Filter>Sketches\tzSketches\usd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\USD\sketch_zspace_USD_write.cpp">
+      <Filter>Sketches\tzSketches\usd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\DRL\sketch_zspace_Tutorial_2211.cpp">
+      <Filter>Sketches\tzSketches\drl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\DRL\sketch_zspace_VoxelSystem.cpp">
+      <Filter>Sketches\tzSketches\drl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\DRL\sketch_zspace_VoxelSystem_debug.cpp">
+      <Filter>Sketches\tzSketches\drl</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_stripper.cpp">
+      <Filter>Sketches\tzSketches\tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_Sanya.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_guangdu.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_working.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Streamlines\sketch_zspace_streamlines2D.cpp">
+      <Filter>Sketches\tzSketches\streamlines</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Deformer\sketch_latticeDeformer.cpp">
+      <Filter>Sketches\tzSketches\deformer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\sketch_zspace_polySplit.cpp">
+      <Filter>Sketches\tzSketches\polySplit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\line.cpp">
+      <Filter>Sketches\tzSketches\polySplit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\polygon.cpp">
+      <Filter>Sketches\tzSketches\polySplit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Configurator\sketch_Configurator_1.cpp">
+      <Filter>Sketches\tzSketches\configurator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Planarise\sketch_zspace_Planarise_HE..cpp">
+      <Filter>Sketches\tzSketches\planarise</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_one_side.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\sketch_zspace_polySplit_maya.cpp">
+      <Filter>Sketches\tzSketches\polySplit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\sketch_zspace_polySplit_example.cpp">
+      <Filter>Sketches\tzSketches\polySplit</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

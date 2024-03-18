@@ -29,6 +29,9 @@
     <ClInclude Include="src\alice\utilities.h" />
     <ClInclude Include="src\userSrc\tzSketches\DRL\VoxelSystem.h" />
     <ClInclude Include="src\userSrc\tzSketches\DRL\VoxelSystem_backup_working.h" />
+    <ClInclude Include="src\userSrc\tzSketches\PolySplit\line.h" />
+    <ClInclude Include="src\userSrc\tzSketches\PolySplit\polygon.h" />
+    <ClInclude Include="src\userSrc\tzSketches\PolySplit\vector.h" />
     <ClInclude Include="src\userSrc\zspace_drl\VoxelSystem.h" />
   </ItemGroup>
   <ItemGroup>
@@ -37,6 +40,8 @@
     <ClCompile Include="src\userSrc\tzSketches\Color\sketch_zspace_ColorFillFour.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Color\sketch_zspace_ColorSplit.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Configurator\sketch_Configurator.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Configurator\sketch_Configurator_1.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Deformer\sketch_latticeDeformer.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\DRL\sketch_zspace_Tutorial_2211.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\DRL\sketch_zspace_VoxelSystem.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\DRL\sketch_zspace_VoxelSystem_debug.cpp" />
@@ -55,16 +60,31 @@
     <ClCompile Include="src\userSrc\tzSketches\Paneling\sketch_zspace_PanelAnalysis.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Parameterization\sketch_zspace_Parameterization.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Planarise\sketch_zspace_Planarise.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Planarise\sketch_zspace_Planarise_HE..cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\line.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\polygon.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\sketch_zspace_polySplit.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\sketch_zspace_polySplit_example.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\sketch_zspace_polySplit_maya.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_backup.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_guangdu.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_one_side.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_production.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_Sanya.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_working.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_IsoContour.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_SDFSlicer.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Solar\sketch_zspace_MSC.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Solar\sketch_zspace_SolarCuda.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Solar\sketch_zspace_SolarDebug.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Solar\sketch_zspace_SolarDebug_Production.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Streamlines\sketch_zspace_streamlines2D.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_bevel.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_biArcs.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_cubeChamfer.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_edgeloops.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_graphPlusField.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_stripper.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\USD\sketch_zspace_OmniConnect.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\USD\sketch_zspace_OV_Base.cpp" />

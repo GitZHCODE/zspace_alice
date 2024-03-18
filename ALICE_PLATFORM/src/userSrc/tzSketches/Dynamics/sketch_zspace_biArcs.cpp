@@ -26,7 +26,7 @@ bool solved = false;
 int currentGraph = 0;
 int numGraphs = 0;
 
-string dir_in = "data/biArc/in/";
+string dir_in = "data/biArc/in_single/";
 string dir_out = "data/biArc/out/";
 
 double background = 0.35;

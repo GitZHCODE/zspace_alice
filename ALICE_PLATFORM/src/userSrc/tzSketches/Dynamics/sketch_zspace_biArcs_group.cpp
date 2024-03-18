@@ -16,7 +16,6 @@ using namespace std;
 
 #define M_PI 3.14159265358979323846  /* pi */
 #define DEBUGGER if (0) cout
-#define DEBUGGER_K if (1) cout
 
 ////////////////////////////////////////////////////////////////////////// General
 
@@ -89,66 +88,6 @@ int numKmeansIter = 200;
 int kmeansSpacing = 5;
 zTsKMeans myKMeans;
 
-
-
-void runKmeans()
-{
-
-	int nC = (int)numClusters;
-	int nI = (int)numKmeansIter;
-	myKMeans = zTsKMeans(radiusData, nC, nI);
-
-	int actualClusters;
-	int out = myKMeans.getKMeansClusters(actualClusters, zTsKMeans::initialisationMethod::kmeansPlusPlus, 1, 2, tol_kdev_cluster);
-
-	kmeansCentroids = MatrixXf(myKMeans.clusterIDS.size(), 1);
-
-	//printf("\n kMeans : %i | %i %i ", out, nC, actualClusters);
-
-	//cout << "\n centroids \n" << myKMeans.means;
-
-	printf("\n  Actual numClusters %i", actualClusters);
-	printf("\n   numClusters %i", myKMeans.numClusters);
-	//printf("\n  clusterIDs %i", myKMeans.clusterIDS.size());
-	//printf("\n  means %i", myKMeans.means.size());
-	//cout << endl;
-
-	//printf("\n \n data, CLusterID ");
-
-
-
-	for (int i = 0; i < myKMeans.clusterIDS.size(); i++)
-	{		
-		int ID = myKMeans.clusterIDS[i];
-		//printf("\n %i | meanID %i ", i, meanID);
-		kmeansCentroids(i,0) = myKMeans.means(ID, 0);
-		//printf("\n %1.2f, %1.2f, %i ", myKMeans.dataPoints(i, 0), myKMeans.means(myKMeans.clusterIDS[i], 0), myKMeans.clusterIDS[i]);
-	}
-
-	numClusters = actualClusters;
-}
-
-void writeKmeans(string& filename)
-{
-		// Open the file for writing
-		std::ofstream file(filename);
-
-		// Write the data rows
-		for (int i = 0; i < myKMeans.clusterIDS.size(); i++) {
-			file << radiusData(i, 0);
-			file << ",";
-			file << kmeansCentroids(i, 0);
-			file << ",";
-			file << myKMeans.clusterIDS[i];
-			file << ",";
-			file << chordData(i, 0);
-
-			file << std::endl;
-		}
-
-		// Close the file
-		file.close();
-}
 
 void setupGraph(zObjGraph& oGraph, int id)
 {
@@ -525,18 +464,11 @@ void update(int value)
 
 	if (toFile)
 	{
-		//zFnGraph fn(oGraphs[currentGraph]);
-		//fn.to(dir_out + "out_" + to_string(currentGraph) + ".json", zJSON);
-
 		for (int i = 0; i < numGraphs; i++)
 		{
 			zFnGraph fn(oGraphs[i]);
 			fn.to(dir_out + "out_" + to_string(i) + ".json", zJSON);
 		}
-
-		//kmeans csv file
-		string path = dir_out + "kmeans.csv";
-		writeKmeans(path);
 
 		toFile = !toFile;
 	}

@@ -16,7 +16,6 @@ using namespace std;
 
 #define M_PI 3.14159265358979323846  /* pi */
 #define DEBUGGER if (0) cout
-#define DEBUGGER_K if (1) cout
 
 ////////////////////////////////////////////////////////////////////////// General
 
@@ -95,66 +94,6 @@ int kmeansSpacing = 5;
 zTsKMeans myKMeans;
 
 
-
-void runKmeans()
-{
-
-	int nC = (int)numClusters;
-	int nI = (int)numKmeansIter;
-	myKMeans = zTsKMeans(radiusData, nC, nI);
-
-	int actualClusters;
-	//int out = myKMeans.getKMeansClusters(actualClusters, zTsKMeans::initialisationMethod::kmeansPlusPlus, 1, 2, tol_kdev_cluster);
-
-	kmeansCentroids = MatrixXf(myKMeans.clusterIDS.size(), 1);
-
-	//printf("\n kMeans : %i | %i %i ", out, nC, actualClusters);
-
-	//cout << "\n centroids \n" << myKMeans.means;
-
-	printf("\n  Actual numClusters %i", actualClusters);
-	printf("\n   numClusters %i", myKMeans.numClusters);
-	//printf("\n  clusterIDs %i", myKMeans.clusterIDS.size());
-	//printf("\n  means %i", myKMeans.means.size());
-	//cout << endl;
-
-	//printf("\n \n data, CLusterID ");
-
-
-
-	for (int i = 0; i < myKMeans.clusterIDS.size(); i++)
-	{		
-		int ID = myKMeans.clusterIDS[i];
-		//printf("\n %i | meanID %i ", i, meanID);
-		kmeansCentroids(i,0) = myKMeans.means(ID, 0);
-		printf("\n %1.2f, %1.2f, %i ", myKMeans.dataPoints(i, 0), myKMeans.means(myKMeans.clusterIDS[i], 0), myKMeans.clusterIDS[i]);
-	}
-
-	numClusters = actualClusters;
-}
-
-void writeKmeans(string& filename)
-{
-		// Open the file for writing
-		std::ofstream file(filename);
-
-		// Write the data rows
-		for (int i = 0; i < myKMeans.clusterIDS.size(); i++) {
-			file << radiusData(i, 0);
-			file << ",";
-			file << kmeansCentroids(i, 0);
-			file << ",";
-			file << myKMeans.clusterIDS[i];
-			file << ",";
-			file << chordData(i, 0);
-
-			file << std::endl;
-		}
-
-		// Close the file
-		file.close();
-}
-
 void setupGraph(zObjGraph& oGraph, int id)
 {
 	model.addObject(oGraph);
@@ -166,6 +105,7 @@ void setupGraph(zObjGraph& oGraph, int id)
 	//find start he
 	int counter = 0;
 	zItGraphHalfEdge he_start;
+
 	for (zItGraphHalfEdge he(oGraph); !he.end(); he++)
 	{
 		if (he.getVertex().checkValency(1))
@@ -173,14 +113,30 @@ void setupGraph(zObjGraph& oGraph, int id)
 			he_start = he;
 
 			//add vector forces
-			vectorVertexIds[id].push_back(he_start.getSym().getNext().getVertex().getId());
+			vectorVertexIds[id].push_back(he_start.getSym().getVertex().getId());
 			startVertexIds[id].push_back(he_start.getSym().getVertex().getId());
 			endVertexIds[id].push_back(he_start.getVertex().getId());
 
 			//add fix vertex ids to arr
-			fixedVertexIds[id].push_back(he_start.getSym().getVertex().getId());
+			fixedVertexIds[id].push_back(he_start.getVertex().getId());
 		}
 	}
+
+	//for (zItGraphHalfEdge he(oGraph); !he.end(); he++)
+	//{
+	//	if (he.getVertex().checkValency(1))
+	//	{
+	//		he_start = he;
+
+	//		//add vector forces
+	//		vectorVertexIds[id].push_back(he_start.getSym().getNext().getVertex().getId());
+	//		startVertexIds[id].push_back(he_start.getSym().getVertex().getId());
+	//		endVertexIds[id].push_back(he_start.getVertex().getId());
+
+	//		//add fix vertex ids to arr
+	//		fixedVertexIds[id].push_back(he_start.getSym().getVertex().getId());
+	//	}
+	//}
 
 
 	fnDyGraphs[id].setFixed(fixedVertexIds[id]);
@@ -283,14 +239,6 @@ void snapeToRadius(float& L, float& ang,float&outRadius, float digits)
 
 	ang = 2 * half_ang;
 	outRadius = (float)R_round;
-
-	if (outRadius > 1000)
-	{
-		DEBUGGER_K << "tangent: " << tan(half_ang) << endl;
-		DEBUGGER_K << "L: " << L << endl;
-		DEBUGGER_K << "ang: " << ang << endl;
-		DEBUGGER_K << "outRadius: " << outRadius << endl;
-	}
 
 }
 
@@ -434,91 +382,6 @@ void update(int value)
 
 			dev_ang = abs(vec0 * vec1);
 
-
-			//if (dev_ang < tol_ang)
-			//{
-			//	fnDyGraphs[currentGraph].addAngleForce(1.0, id, restAngle, false);
-			//	//solved = false;
-			//}
-
-			/*
-			//radius
-			float radius;
-
-			double halfangle;
-			halfangle = he_0.angle(he_1);
-			halfangle *= DEG_TO_RAD;
-			halfangle *= 0.5;
-
-			//cout << "halfangle:" << halfangle << endl;
-			//cout << "tan:" << tan(halfangle) << endl;
-			//cout << "atan:" << atan(tan(halfangle)) << endl;
-			// 
-			float tol = 0.01;
-
-			int currentArc = currentGraph * arcVertexIds[currentGraph].size() + i;
-			if (counterKmeansIter > 0 && counterIter % kmeansSpacing == 1)
-			{
-				radius = kmeansCentroids(currentArc, 0);
-
-				//if (radius != -1)
-				//{
-				//	zVector chord = he_1 - he_0;
-				//	float halfChord = chord.length();
-				//	halfChord /= 2;
-
-				//	if (halfangle > 1e-6 && halfangle < M_PI - 1e-6)
-				//	{
-				//		meanLength = radius / tan(halfangle);
-
-				//		float sine = halfChord / radius;
-				//		float angA = asin(sine);
-
-				//		zVector chordVec = he_0 + he_1;
-				//		float newToChord;
-				//		float angB = 0.5 * M_PI - angA;
-				//		chordVec *= 0.5;
-
-				//		if (radius < halfChord + 1e-6)
-				//			radius = halfChord + 1e-6;
-
-				//		if (angB > M_PI * 0.5 - 1e-6)
-				//			radius = -1;
-				//		else
-				//		{
-				//			newToChord = halfChord / tan(angB);
-				//			float left = chordVec.length() - newToChord;
-				//			chordVec.normalize();
-				//			zVector moveVec = chordVec * left;
-
-				//			meanLength = (he_0 - moveVec).length();
-				//			float strength = moveVec.length();
-
-				//			fnDyGraphs[currentGraph].addLoadForce(strength, v.getId(), moveVec);
-				//		}
-				//	}
-				//}
-			}
-			else
-			{
-				if (halfangle > tol && halfangle < 0.5 * M_PI - tol)
-				{
-					radius = meanLength * tan(halfangle);
-				}
-				else
-					radius = -1;
-			}
-
-			cout << currentArc << "_meanLength:" << meanLength << endl;
-			cout << currentArc << "_radius:" << radius << endl;
-			cout << "-------" << endl;
-
-			radiusData(currentArc, 0) = radius;
-
-			*/
-
-			//add arc equal length force
-			//meanLength = 0.01;
 			dev_lens.push_back(dev_len);
 
 			if (dev_len > tol_len)
@@ -584,44 +447,7 @@ void update(int value)
 		compute = !compute;
 		goNext = !goNext;
 
-		//---------------------------------KMEANS----------------------------------
-		if (currentGraph == numGraphs - 1 && counterIter % kmeansSpacing == -1)
-		{
-			float dev_max_k = 0;
-
-				runKmeans();
-
-				float dev_temp = 0;
-				for (int i = 0; i < myKMeans.clusterIDS.size(); i++)
-				{
-					dev_temp = abs(radiusData(i, 0) - kmeansCentroids(i, 0));
-					dev_max_k = (dev_temp > dev_max_k) ? dev_temp : dev_max_k;
-				}
-
-				DEBUGGER_K << endl << "dev_max_k: " << dev_max_k << endl;
-
-			//for (int i = 0; i < myKMeans.means.size(); i++)
-			//printf("\n %1.2f, %1.2f, %i ", myKMeans.dataPoints(i, 0), myKMeans.means(myKMeans.clusterIDS[i], 0), myKMeans.clusterIDS[i]);
-
-			cout << endl;
-			printf("\n  clusterIDs %i", myKMeans.clusterIDS.size());
-			printf("\n  means %i", myKMeans.means.size());
-			cout << endl;
-
-			DEBUGGER_K << endl << "----------------------" << endl;
-
-			counterKmeansIter++;
-
-			//DEBUGGER_K << "dev_max_k: " << dev_max_k << endl;
-			//if (dev_max_k > tol_kmeans)
-			//	solved = false;
-
-			//DEBUGGER_K << "----------------------" << endl;
-
-			//counterKmeansIter++;
-		}
-		//---------------------------------KMEANS----------------------------------
-
+		//check deviation at the end of each iteration
 		if (currentGraph % numGraphs == 0)
 		{
 			dev_lens.clear();
@@ -660,10 +486,6 @@ void update(int value)
 			zFnGraph fn(oGraphs[i]);
 			fn.to(dir_out + "out_" + to_string(i) + ".json", zJSON);
 		}
-
-		//kmeans csv file
-		string path = dir_out + "kmeans.csv";
-		writeKmeans(path);
 
 		toFile = !toFile;
 	}
