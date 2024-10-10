@@ -72,6 +72,7 @@ function GlobalCommonDefines()
     --RELEASE
     filter "configurations:*Release*"
         optimize "Full"
+        floatingpoint "Fast"
         warnings "Off"
 
     --DLL

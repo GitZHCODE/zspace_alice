@@ -13,6 +13,9 @@ EXE/*.exp
 EXE/lib_zspace/*
 EXE/lib_omniverse/*
 
+# Data
+EXE/data/NatPower/*
+
 # Visual studio files and solution files
 .vs/
 *.sln
