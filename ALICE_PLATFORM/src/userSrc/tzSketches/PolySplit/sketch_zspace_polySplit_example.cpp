@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -26,20 +26,23 @@ double background = 1.0;
 double scale = 1.0;
 double densityMin = 0.01;
 double densityMax = 1.0;
-double offsetVal = 0.2;
+double offsetVal = 0.05;
 
 double targetArea = 5000;
 int numInterations;
 int numPolys;
 double computeTime = 0;
-bool readMap = false;
+bool readMap = true;
 
 float mapScalar = 1.0f;
 
-int eId0 = -1;
-int eId1 = -1;
-double factor0 = -1.0;
-double factor1 = -1.0;
+int e0 = -1;
+int e1 = -1;
+double f0 = -1.0;
+double f1 = -1.0;
+
+double itr_alignVec = 0;
+double maxNumItr = 5;
 
 ////// --- zSpace Objects --------------------------------------------------
 /*!<model*/
@@ -58,11 +61,15 @@ map<int,vector<double>> map_eId_factors;
 map<pair<int,int>, pair<int,int>> map_eId_eId;
 
 zObjMeshScalarField oDensityField;
-zObjMesh oMesh;
+zObjMesh inMesh;
 zObjMesh densityMap;
 
-string path_inMesh = "data/polySplit/inPolys.json";
+zVector alignVec(1, 0, 0);
+
+//string path_inMesh = "data/polySplit/inPolys.json";
+string path_inMesh = "data/polySplit/polylineData.json";
 string path_field_density = "data/polySplit/densityMap.json";
+//string path_field_density = "data/polySplit/densityMap.usd";
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 Vectors zPointArrayToVectors(zPointArray& vertices)
@@ -73,6 +80,30 @@ Vectors zPointArrayToVectors(zPointArray& vertices)
 
 	return vectors;
 }
+
+zPointArray VectorsToPointArray(Vectors& vertices)
+{
+	zPointArray pts;
+	for (auto& v : vertices)
+		pts.push_back(zPoint(v.x, v.y, v.z));
+
+	return pts;
+}
+
+zPolygon offsetPoly(const zPolygon& poly, float offsetVal)
+{
+	vector<Vector> pts;
+	Vector centroid = poly.countCenter();
+	for (auto& p : poly.getVectors())
+	{
+		Vector vec = centroid - p;
+		vec *= offsetVal;
+		pts.push_back(p + vec);
+	}
+	zPolygon outPoly(pts);
+	return outPoly;
+}
+
 
 /*NOT COMPLETE*/
 void split_targetArea(zPointArray& pts, double targetArea, unordered_map <int, vector<zLine>>& outLines, vector<zPolygon>& outPolys, int& outNumIterations)
@@ -127,7 +158,7 @@ void split_targetArea(zPointArray& pts, double targetArea, unordered_map <int, v
 	outNumIterations = counter;
 }
 
-void split_averageArea(zPointArray& pts, double targetArea, unordered_map <int, vector<zLine>>& outLines, vector<zPolygon>& outPolys, int& outNumIterations)
+void split_averageArea(zPointArray& pts, double targetArea, unordered_map <int, vector<zLine>>& outLines, vector<zPolygon>& outPolys, int maxNumIter, int& outNumIterations)
 {
 	outPolys.clear();
 	zPolygon inPoly(zPointArrayToVectors(pts));
@@ -138,11 +169,14 @@ void split_averageArea(zPointArray& pts, double targetArea, unordered_map <int, 
 
 	int counter = 0;
 	bool exit;
+	bool forceExit;
 	do
 	{
 		temp.clear();
 		exit = true;
+		forceExit = counter > maxNumIter ? true : false;
 
+		if(!forceExit)
 		for (auto& poly : polys)
 		{
 			double area = poly.countSquare();
@@ -156,7 +190,7 @@ void split_averageArea(zPointArray& pts, double targetArea, unordered_map <int, 
 				fnField.getFieldValue(zCenter, zFieldNeighbourWeighted, val);
 			}
 
-			val *= targetArea;
+			val = sinf(val) * targetArea;
 			//cout << "val:" << val << endl;
 
 			if (area * 0.5 > val)
@@ -165,10 +199,19 @@ void split_averageArea(zPointArray& pts, double targetArea, unordered_map <int, 
 
 				zPolygon poly1, poly2;
 				zLine cutLine;
-				poly.split(area * 0.5, poly1, poly2, cutLine);
+
+				//Vector alignVec = counter < itr_alignVec ? Vector(1, 0, 0) : Vector(0, 0, 0);
+				Vector vec = counter < itr_alignVec ? Vector(alignVec.x, alignVec.y, alignVec.z) : Vector(0, 0, 0);
+
+				poly.split(area * 0.5, poly1, poly2, cutLine, vec);
 				temp.push_back(poly1);
 				temp.push_back(poly2);
 				outLines[counter].push_back(cutLine);
+
+				poly.getData(e0, e1, f0, f1);
+				//cout << endl;
+				//cout << "e0:" << e0 << ",f0:" << f0 << endl;
+				//cout << "e1:" << e1 << ",f1:" << f1 << endl;
 			}
 			else
 			{
@@ -200,7 +243,6 @@ void fromFile(string& file, vector<zPointArray>& inPolys)
 
 	if (chk)
 	{
-		zObjMesh inMesh;
 		zFnMesh fnMesh(inMesh);
 
 		fnMesh.from(file, zJSON);
@@ -220,6 +262,31 @@ void fromFile(string& file, vector<zPointArray>& inPolys)
 				pts[i] = v.getPosition();
 			}
 			inPolys[f.getId()] = pts;
+		}
+	}
+}
+
+void fromFile_poly(string& file, vector<zPointArray>& inPolys)
+{
+	inPolys.clear();
+
+	json j;
+	bool chk = core.json_read(file, j);
+
+	if (chk)
+	{
+		const auto& polylines = j.get<vector<vector<vector<float>>>>();
+
+		inPolys.assign(polylines.size(), zPointArray());
+		for (int i = 0; i < polylines.size(); i++)
+		{
+			zPointArray pts;
+			pts.assign(polylines[i].size(), zPoint());
+			for (int j = 0; j < polylines[i].size(); j++)
+			{
+				pts[j] = zVector(polylines[i][j][0], polylines[i][j][1], polylines[i][j][2]);
+			}
+			inPolys[i] = pts;
 		}
 	}
 }
@@ -339,7 +406,7 @@ void exportCutsToFile()
 			counter_numFile++;
 			counter2++;
 
-			cout << counter_numFile << "/" << numPolys << endl;
+			cout << counter_numFile << "/" << map_age_cutLines.size() << endl;
 		}
 		counter1++;
 	}
@@ -347,6 +414,59 @@ void exportCutsToFile()
 	cout << endl;
 	cout << "All files have been exported to: " + outPath << endl;
 }
+
+void exportBlocksToFile_mesh()
+{
+	string outPath = "data/polySplit/outMesh.json";
+
+	zPointArray positions;
+	zIntArray pConnects;
+	zIntArray pCounts;
+
+	int offset = 0;
+
+	for (const auto& polys : outPolys)
+	{
+		for (const auto& poly : polys)
+		{
+			for (const auto& p : poly.getVectors())
+			{
+				positions.push_back(zPoint(p.x, p.y, p.z));
+			}
+
+			int size = poly.getVectors().size();
+			for (int i = offset; i < offset + size; i++)
+			{
+				pConnects.push_back(i);
+			}
+			pCounts.push_back(size);
+
+			offset += size;
+		}
+	}
+
+	//for (auto& it : positions)
+	//	cout << it << endl;
+
+	//cout << "--pconnects--" << endl;
+
+	//for (auto& it : pConnects)
+	//	cout << it << endl;
+
+	//cout << "--pcounts--" << endl;
+
+	//for (auto& it : pCounts)
+	//	cout << it << endl;
+
+	zObjMesh outMesh;
+	zFnMesh fn(outMesh);
+	fn.create(positions, pCounts, pConnects);
+	fn.to(outPath, zJSON);
+
+	cout << endl;
+	cout << "All files have been exported to: " + outPath << endl;
+}
+
 
 
 void setFieldScalar(double& _min, double& _max)
@@ -373,9 +493,9 @@ void setFieldScalar(double& _min, double& _max)
 
 void fieldFromMap_density(string& path, zObjMeshScalarField& oField, int resX, int resY)
 {
-	readMap = false;
+	//readMap = false;
 
-	if (fs::exists(path_field_density))
+	if (fs::exists(path))
 	{
 		//readMap = true;
 
@@ -393,35 +513,36 @@ void fieldFromMap_density(string& path, zObjMeshScalarField& oField, int resX, i
 		zItMeshVertex v(densityMap);
 		for (; !v.end(); v++)
 		{
+
 			zIntArray neighbours;
-			fnField.getNeighbour_Contained(v.getPosition(), neighbours);
+			
+				//fnField.getNeighbour_Contained(zPoint(-170.463, -80.5909, 2.23821e-13), neighbours);
+			zPoint vPos(v.getPosition().x, v.getPosition().y, 0);
+			fnField.getNeighbour_Contained(vPos, neighbours);
+
+			//cout << "numNeighbours:" << neighbours.size() << endl;
+			//cout << "pos:" << v.getPosition() << endl;
+			//cout << "v value:" << v.getColor().r << endl;
 
 			for (auto& id : neighbours)
 			{
 				zItMeshScalarField it(oField, id);
 				fVals[id] += v.getColor().r;
+
+	/*			cout << "i:" << id << endl;
+				cout << "v value:" << v.getColor().r << endl;
+				cout << "f value:" << fVals[id] << endl;*/
 			}
 		}
-
+		
 		fnField.setFieldValues(fVals);
 
 		setFieldScalar(densityMin, densityMax);
+		fnField.updateColors();
+
 	}
 }
 
-zPolygon offsetPoly(const zPolygon& poly, float offsetVal)
-{
-	vector<Vector> pts;
-	Vector centroid = poly.countCenter();
-	for (auto& p : poly.getVectors())
-	{
-		Vector vec = centroid - p;
-		vec *= offsetVal;
-		pts.push_back(p + vec);
-	}
-	zPolygon outPoly(pts);
-	return outPoly;
-}
 
 void setup()
 {
@@ -458,21 +579,32 @@ void setup()
 	//	inPolys.push_back(poly);
 	//}
 
-	fromFile(path_inMesh, inPolys);
+	fromFile_poly(path_inMesh, inPolys);
 
-	fieldFromMap_density(path_field_density, oDensityField, 100, 100);
+	fieldFromMap_density(path_field_density, oDensityField, 200, 200);
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
 	model.addObject(oDensityField);
 	model.addObject(densityMap);
+	model.addObject(inMesh);
 
 	oDensityField.setDisplayElements(false, false, false);
 	densityMap.setDisplayElements(false, false, false);
+	inMesh.setDisplayElements(false, true, false);
+	
+	zPointArray edgeCenters;
+	zFnMesh fn(inMesh);
+	fn.getCenters(zHEData::zEdgeData, edgeCenters);
+	inMesh.setEdgeCenters(edgeCenters);
+	inMesh.setDisplayElementIds(true, true, false);
+
 
 	//model.addObject(oMesh);
 	// set display element booleans
 	//oMesh.setDisplayElements(false, true, false);
+
+
 
 	////////////////////////////////////////////////////////////////////////// Sliders
 
@@ -483,13 +615,17 @@ void setup()
 	S.addSlider(&scale, "scale");
 	S.sliders[1].attachToVariable(&scale, 0, 1);
 	S.addSlider(&targetArea, "targetArea");
-	S.sliders[2].attachToVariable(&targetArea, 0, 50000);
+	S.sliders[2].attachToVariable(&targetArea, 0, 100000);
+	S.addSlider(&maxNumItr, "maxNumItr");
+	S.sliders[3].attachToVariable(&maxNumItr, 0, 10);
 	S.addSlider(&densityMin, "densityMin");
-	S.sliders[3].attachToVariable(&densityMin, 0, 1);
+	S.sliders[4].attachToVariable(&densityMin, 0, 1);
 	S.addSlider(&densityMax, "densityMax");
-	S.sliders[4].attachToVariable(&densityMax, 0, 1);
+	S.sliders[5].attachToVariable(&densityMax, 0, 1);
 	S.addSlider(&offsetVal, "offsetVal");
-	S.sliders[5].attachToVariable(&offsetVal, 0, 1);
+	S.sliders[6].attachToVariable(&offsetVal, 0, 1);
+	//S.addSlider(&itr_alignVec, "itr_alignVec");
+	//S.sliders[6].attachToVariable(&itr_alignVec, 0, 10);
 
 	////////////////////////////////////////////////////////////////////////// Buttons
 
@@ -522,14 +658,15 @@ void update(int value)
 
 		//split_targetArea(pts, targetArea);
 
-
+		readMap = false;
+		//original method
 		for (auto& poly : inPolys)
 		{
 			vector<zPolygon> polyInBlock;
 			int tempNumIteration;
 			//split_targetArea(poly, targetArea, map_age_cutLines, polyInBlock, numInterations);
-			split_averageArea(poly, targetArea, map_age_cutLines, polyInBlock, tempNumIteration);
-			
+			split_averageArea(poly, targetArea, map_age_cutLines, polyInBlock, 1, tempNumIteration);
+
 			for (auto& poly : polyInBlock)
 				poly = offsetPoly(poly, offsetVal);
 
@@ -539,8 +676,36 @@ void update(int value)
 			numInterations = tempNumIteration > numInterations ? tempNumIteration : numInterations;
 		}
 
+		//offset
+		inPolys.clear();
+		for (auto& polys : outPolys)
+		{
+			for (auto& poly : polys)
+			{
+				poly = offsetPoly(poly, offsetVal);
+				Vectors vecs = poly.getVectors();
+				inPolys.push_back(VectorsToPointArray(vecs));
+			}
+		}
+		outPolys.clear();
 
-		
+		readMap = true;
+
+		//run again
+		for (auto& poly : inPolys)
+		{
+			vector<zPolygon> polyInBlock;
+			int tempNumIteration;
+			//split_targetArea(poly, targetArea, map_age_cutLines, polyInBlock, numInterations);
+			split_averageArea(poly, targetArea, map_age_cutLines, polyInBlock, maxNumItr, tempNumIteration);
+
+			outPolys.push_back(polyInBlock);
+			numPolys += polyInBlock.size();
+
+			numInterations = tempNumIteration > numInterations ? tempNumIteration : numInterations;
+		}
+
+
 		auto end = std::chrono::high_resolution_clock::now();
 		auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - begin);
 		//printf("\n Entire Time: %.7f seconds.", elapsed.count() * 1e-9);
@@ -556,6 +721,7 @@ void update(int value)
 
 		exportBlocksToFile();
 		exportCutsToFile();
+		//exportBlocksToFile_mesh();
 		exportTo = !exportTo;
 	}
 
@@ -566,8 +732,14 @@ void update(int value)
 		cutLines.clear();
 		map_age_cutLines.clear();
 
-		fromFile(path_inMesh, inPolys);
-		fieldFromMap_density(path_field_density, oDensityField, 100, 100);
+		fromFile_poly(path_inMesh, inPolys);
+		if(readMap) fieldFromMap_density(path_field_density, oDensityField, 100, 100);
+
+		//zPointArray edgeCenters;
+		//zFnMesh fn(inMesh);
+		//fn.getCenters(zHEData::zEdgeData, edgeCenters);
+		//inMesh.setEdgeCenters(edgeCenters);
+		//inMesh.setDisplayElementIds(true, true, false);
 
 		compute = !compute;
 
@@ -591,6 +763,8 @@ void draw()
 		// zspace model draw
 		model.draw();
 
+		//model.displayUtils.drawLine(zPoint(0, 0, 0), zPoint(0, 0, 0) + alignVec*100, zMAGENTA, 4);
+
 		for (auto& pts : inPolys)
 		{
 			for (int i = 0; i < pts.size() - 1; i++)
@@ -600,24 +774,43 @@ void draw()
 			model.displayUtils.drawLine(pts[pts.size() - 1], pts[0], zBLACK, 3);
 		}
 
-		for (auto& polys : outPolys)
-		{
-			for (auto& poly : polys)
-			{
-				zPointArray pts;
-				for (auto& vec : poly.getVectors())
-					pts.push_back(zPoint(vec.x, vec.y, vec.z));
+		//for (auto& polys : outPolys)
+		//{
+		//	for (auto& poly : polys)
+		//	{
+		//		zPointArray pts;
+		//		for (auto& vec : poly.getVectors())
+		//			pts.push_back(zPoint(vec.x, vec.y, vec.z));
 
-					for (int i = 0; i < pts.size() - 1; i++)
-					{
-						model.displayUtils.drawLine(pts[i], pts[i + 1], zBLACK, 1);
-					}
-					model.displayUtils.drawLine(pts[pts.size() - 1], pts[0], zBLACK, 1);
-			}
+		//			for (int i = 0; i < pts.size() - 1; i++)
+		//			{
+		//				model.displayUtils.drawLine(pts[i], pts[i + 1], zBLACK, 1);
+		//			}
+		//			model.displayUtils.drawLine(pts[pts.size() - 1], pts[0], zBLACK, 1);
+		//	}
 
-		}
+		//}
 
-		//zDomainColor domainCol(zRED, zBLUE);
+		//if (e0 != -1 && e1 != -1)
+		//{
+		//	zItMeshEdge edge0(inMesh, e0);
+		//	zItMeshHalfEdge he0 = edge0.getHalfEdge(0);
+		//	if (he0.onBoundary()) he0 = he0.getSym();
+		//	zPoint p0 = he0.getStartVertex().getPosition();
+		//	p0 = p0 + he0.getVector() * f0;
+
+		//	model.displayUtils.drawPoint(p0, zRED, 10);
+
+		//	zItMeshEdge edge1(inMesh, e1);
+		//	zItMeshHalfEdge he1 = edge1.getHalfEdge(0);
+		//	if (he1.onBoundary()) he1 = he1.getSym();
+		//	zPoint p1 = he1.getStartVertex().getPosition();
+		//	p1 = p1 + he1.getVector() * f1;
+
+		//	model.displayUtils.drawPoint(p1, zRED, 10);
+		//}
+
+
 		zDomainColor domainCol(zRED, zBLUE);
 		zDomainFloat domain(1.0f, numInterations);
 
@@ -665,6 +858,17 @@ void keyPress(unsigned char k, int xm, int ym)
 	{
 		oDensityField.setDisplayElements(false, false, false);
 		densityMap.setDisplayElements(false, false, false);
+	}
+
+	if (k == 's')
+	{
+		zFnMesh fn(inMesh);
+		fn.splitFace(0, e0, e1, f0, f1);
+		cout << "split face" << endl;
+
+		zPointArray edgeCenters;
+		fn.getCenters(zHEData::zEdgeData, edgeCenters);
+		inMesh.setEdgeCenters(edgeCenters);
 	}
 }
 

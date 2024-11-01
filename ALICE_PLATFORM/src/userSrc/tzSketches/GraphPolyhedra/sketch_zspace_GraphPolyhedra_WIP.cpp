@@ -21,6 +21,7 @@ bool display = true;
 
 double background = 0.35;
 
+double dT = 0.5;
 ////// --- zSpace Objects --------------------------------------------------
 /*!<model*/
 zModel model;
@@ -31,8 +32,8 @@ zObjMeshArray convexhulls;
 zUtilsCore core;
 
 /*!<Tool sets*/
-zObjGraph graph;
 zTsGraphPolyhedra polyhedra;
+zObjGraph* spatialGraph;
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 
@@ -50,27 +51,29 @@ void setup()
 	model = zModel(100000);
 	
 	// read mesh
-	string path = "data/staticGraph.json";
+	string path = "data/polyhedra/staticGraph.json";
 	//string path = "data/spatialGraph.json";
-	polyhedra = zTsGraphPolyhedra(graph);
 
-	polyhedra.setDisplayModel(model);
-	polyhedra.createGraphFromFile(path, zJSON, false);
-	polyhedra.create();
+	//polyhedra = zTsGraphPolyhedra(graph);
 
-	polyhedra.setDisplayGraphElements(true, false, false);
-	polyhedra.setDisplayHullElements(false);
-	polyhedra.setDisplayPolyhedraElements(true,false,false,false,false);
+	//polyhedra.setDisplayModel(model);
+	//polyhedra.createGraphFromFile(path, zJSON, false);
+	//polyhedra.create();
 
-
+	//polyhedra.setDisplayGraphElements(true, false, false);
+	//polyhedra.setDisplayHullElements(false);
+	//polyhedra.setDisplayPolyhedraElements(true, false, false, false, false);
+	polyhedra.setFormGraphFromFile(path, zJSON);
+	polyhedra.setFormGraphFromOffsetMeshes
+	polyhedra.createForceMeshes();
 
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
-	//zObjGraph* spatialGraph = polyhedra.getRawSpatialGraph();
-	//model.addObject(graph);
+	spatialGraph = polyhedra.getRawFormGraph();
+	model.addObject(*spatialGraph);
 
 	// set display element booleans
-	//graph.setDisplayElements(true, true);
+	spatialGraph->setDisplayElements(false, true);
 
 	////////////////////////////////////////////////////////////////////////// Sliders
 	
@@ -98,6 +101,9 @@ void update(int value)
 		//bool c = true;
 		//polyhedra.equilibrium(c, 1, zEuler);
 
+		bool c = true;
+		polyhedra.equilibrium(c, 1, 1, dT, zEuler);
+
 		compute = !compute;	
 	}
 }
@@ -114,7 +120,8 @@ void draw()
 	{
 		// zspace model draw
 		model.draw();
-		polyhedra.draw();
+		//polyhedra.draw();
+		spatialGraph->draw();
 	}
 
 	

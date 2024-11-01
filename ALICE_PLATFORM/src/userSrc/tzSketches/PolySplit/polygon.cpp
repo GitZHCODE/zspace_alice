@@ -215,7 +215,7 @@ int getCut(const zLine &l1, const zLine &l2, double s, const zPolygon &poly1, co
             cut = cut.reverse();
             cut.offset(offset);
 
-            return 1;
+            return 2;
         }
     }
 
@@ -335,7 +335,7 @@ double zPolygon::countSquare() const
     return fabs(countSquare_signed());
 }
 
-int zPolygon::split(double square, zPolygon &poly1, zPolygon &poly2, zLine &cutLine) const
+int zPolygon::split(double square, zPolygon &poly1, zPolygon &poly2, zLine &cutLine, Vector& alignVec)
 {
     int polygonSize = (int)poly.size();
 
@@ -356,6 +356,7 @@ int zPolygon::split(double square, zPolygon &poly1, zPolygon &poly2, zLine &cutL
 
     int minCutLine_exists = 0;
     double minSqLength = DBL_MAX;
+    double maxAngle = -1;
 
     for(int i = 0; i < polygonSize - 1; i++)
     {
@@ -370,29 +371,61 @@ int zPolygon::split(double square, zPolygon &poly1, zPolygon &poly2, zLine &cutL
             zLine l2 = zLine(polys[j], polys[(j + 1) < polygonSize ? (j + 1) : 0]);
             zLine cut;
 
-            if(getCut(l1, l2, square, p1, p2, cut, 0))
+            //check angle
+            double angle = abs((l1.getEnd() - l1.getStart()).dot(alignVec)) + abs((l2.getEnd() - l2.getStart()).dot(alignVec));
+
+            int cutEvent = getCut(l1, l2, square, p1, p2, cut, 0);
+            if(cutEvent)
             {
-                /*Vector cutVec = cut.getEnd() - cut.getStart();
-                if(cutVec.dot(alignVec)<guideTol)*/
-                
-                    double sqLength = cut.squareLength();
-                if(sqLength < minSqLength && isSegmentInsidePoly(polys, cut, i, j))
-                {
-                    minSqLength = sqLength;
-                    poly1 = p1;
-                    poly2 = p2;
-                    cutLine = cut;
-                    minCutLine_exists = 1;
+                //align vector
+                //alignVec = Vector(1, 0, 0);
+                guideTol = 0.8;
 
-                    //new
-                    Vector _vec0(cut.getStart() - l1.getStart());
-                    double _f0 = vec0.length()/ l1.length();
+				Vector cutVec = cut.getEnd() - cut.getStart();
+				double sqLength = cut.squareLength();
 
-                    Vector vec1(cut.getEnd() - l2.getStart());
-                    double f1 = vec1.length() / l2.length();
-                    setData(i, j, f0, f1);
-                }
-            }
+                bool chk;
+                if (alignVec == Vector(0, 0, 0)) chk = sqLength < minSqLength;
+                else chk = angle > maxAngle;
+
+                //if (sqLength < minSqLength && isSegmentInsidePoly(polys, cut, i, j))
+				//if (angle > maxAngle && isSegmentInsidePoly(polys, cut, i, j))
+                if(chk && isSegmentInsidePoly(polys, cut, i, j))
+				{
+					minSqLength = sqLength;
+					poly1 = p1;
+					poly2 = p2;
+					cutLine = cut;
+					minCutLine_exists = 1;
+
+					//new
+					Vector vec0, vec1;
+					double _f0, _f1;
+					if (cutEvent == 2)
+					{
+						vec0 = Vector(cut.getStart() - l1.getStart());
+						_f0 = vec0.length() / l1.length();
+
+						vec1 = Vector(cut.getEnd() - l2.getStart());
+						_f1 = vec1.length() / l2.length();
+					}
+					else if (cutEvent == 1)
+					{
+						vec0 = Vector(cut.getEnd() - l1.getStart());
+						_f0 = vec0.length() / l1.length();
+
+						vec1 = Vector(cut.getStart() - l2.getStart());
+						_f1 = vec1.length() / l2.length();
+					}
+					else
+					{
+						_f0 = -1;
+						_f1 = -1;
+					}
+
+					setData(i, j, _f0, _f1);
+				}
+			}
         }
     }
 
@@ -513,11 +546,6 @@ int zPolygon::isClockwise() const
     return sum <= 0;
 }
 
-void zPolygon::setData(int _e0, int _e1, double _f0, double _f1)
-{
-    e0 = _e0;
-    e1 = _e1;
-    f0 = _f0;
-    f1 = _f1;
-}
+
+
 

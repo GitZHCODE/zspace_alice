@@ -19,6 +19,7 @@ using namespace std;
 bool compute = false;
 bool display = true;
 bool reset = false;
+bool exportTo = false;
 
 double background = 0.35;
 double dT = 0.5;
@@ -78,6 +79,21 @@ void setupGraph(zObjGraph& oGraph)
 
 }
 
+void setupGraph_color(zObjGraph& oGraph)
+{
+	zItGraphVertex v(oGraph);
+
+	for (; !v.end(); v++)
+	{
+		if (v.getColor() == zRED)
+			fixedVertices.push_back(v.getId());
+		else if (v.getColor() == zGREEN)
+			arcVertices.push_back(v.getId());
+		else if (v.getColor() == zBLUE)
+			nodeVertices.push_back(v.getId());
+	}
+}
+
 void setup()
 {
 	////////////////////////////////////////////////////////////////////////// Enable smooth display
@@ -92,11 +108,11 @@ void setup()
 
 	// read mesh
 	dyGraph = zFnGraphDynamics(oGraph);
-	dyGraph.from("data/biArc/inGraph.json", zJSON);
+	dyGraph.from("data/biArc/acadia24_biArcs/inGraph.json", zJSON);
 	dyGraph.makeDynamic();
 
-	setupGraph(oGraph);
-	
+	//setupGraph(oGraph);
+	setupGraph_color(oGraph);
 	//dyGraph.setFixed(nodeVertices);
 
 	oGraph_copy = oGraph;
@@ -126,7 +142,8 @@ void setup()
 	B.buttons[1].attachToVariable(&display);
 	B.addButton(&reset, "reset");
 	B.buttons[2].attachToVariable(&reset);
-
+	B.addButton(&exportTo, "exportTo");
+	B.buttons[3].attachToVariable(&exportTo);
 }
 
 void update(int value)
@@ -166,18 +183,18 @@ void update(int value)
 		}
 
 		//add vector forces
-		//for (auto& vId : fixedVertices)
-		//{
-		//	zItGraphVertex v(oGraph_copy, vId);
-		//	zItGraphHalfEdge he = v.getHalfEdge();
+		for (auto& vId : fixedVertices)
+		{
+			zItGraphVertex v(oGraph_copy, vId);
+			zItGraphHalfEdge he = v.getHalfEdge();
 
-		//	zVector origin = he.getVertex().getPosition();
-		//	he = he.getSym();
-		//	zVector vec = he.getVector();
-		//	int vId = he.getVertex().getId();
+			zVector origin = he.getVertex().getPosition();
+			he = he.getSym();
+			zVector vec = he.getVector();
+			int vId = he.getVertex().getId();
 
-		//	dyGraph.addVectorForce(1.0, vId, origin, vec);
-		//}
+			dyGraph.addVectorForce(1.0, vId, origin, vec);
+		}
 
 		//run the solver
 		dyGraph.update(dT, zEuler, true, true, true);
@@ -189,6 +206,11 @@ void update(int value)
 	{
 		oGraph = oGraph_copy;
 		reset = false;
+	}
+
+	if (exportTo)
+	{
+		dyGraph.to("data/biArc/acadia24_biArcs/inGraph.json", zJSON);
 	}
 }
 

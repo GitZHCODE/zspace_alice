@@ -13,9 +13,22 @@
 using namespace zSpace;
 using namespace std;
 
+string outPath = "data/Parameterization/guangdu/new/outFolder";
+
 ////////////////////////////////////////////////////////////////////////// CUSTOM METHODS 
 
 zUtilsCore core;
+
+void computeBoundaries(zObjMesh* o_mesh, zIntArray& bIDs)
+{
+	zItMeshVertex v(*o_mesh);
+	for (; !v.end(); v++)
+	{
+		if (v.onBoundary())
+			bIDs.push_back(v.getId());
+	}
+}
+
 
 void computeBoundaryVertices(zObjMesh* o_mesh, zIntArray& vIDs, zIntArray& bIDs)
 {
@@ -99,6 +112,52 @@ void computeContours(zObjMesh* o_mesh, zFloatArray& scalars_start, zFloatArray& 
 
 }
 
+void computeContours_oneSide(zObjMesh* o_mesh, zFloatArray& scalars, int currentContourID, int totalContours, zObjGraphArray& o_contourGraphs)
+{
+
+	if (currentContourID >= o_contourGraphs.size())
+	{
+		cout << "Error: currentContourID greater than or eual to size of o_contourGraphs." << endl;
+		return;
+	}
+
+	// weighted scalars
+	float weight = ((float)(currentContourID + 1) / (float)totalContours);
+
+	// Generate the isocontour using the threshold value
+	zPointArray positions;
+	zIntArray edgeConnects;
+	zColorArray vColors;
+	int pres = 3;
+	zFnMesh fnMesh(*o_mesh);
+
+	fnMesh.getIsoContour(scalars, weight, positions, edgeConnects, vColors, pres, pow(10, -1 * pres));
+
+	// Create graph from the isocontour
+	zFnGraph tempFn(o_contourGraphs[currentContourID]);
+	tempFn.create(positions, edgeConnects);
+	tempFn.setEdgeColor(zColor(255, 255, 255, 1));
+	tempFn.setEdgeWeight(2);
+	tempFn.setVertexColors(vColors, false);
+
+	// color mesh
+	zColor* mesh_vColors = fnMesh.getRawVertexColors();
+
+	zScalar minScalar = core.zMin(scalars);
+	zScalar maxScalar = core.zMax(scalars);
+
+	zDomainFloat distanceDomain(minScalar, maxScalar);
+	zDomainColor colDomain(zColor(1, 0, 0, 1), zColor(0, 1, 0, 1));
+
+	for (int i = 0; i < fnMesh.numVertices(); i++)
+	{
+		mesh_vColors[i] = core.blendColor(scalars[i], distanceDomain, colDomain, zRGB);
+	}
+
+	fnMesh.computeFaceColorfromVertexColor();
+
+}
+
 void colorMesh(zObjMesh* o_mesh, zFloatArray& scalars)
 {
 	zFnMesh fnMesh(*o_mesh);
@@ -120,6 +179,8 @@ void colorMesh(zObjMesh* o_mesh, zFloatArray& scalars)
 	fnMesh.computeFaceColorfromVertexColor();
 
 }
+
+
 ////////////////////////////////////////////////////////////////////////// General
 
 bool compute_heat = false;
@@ -133,11 +194,12 @@ bool d_sliceMesh = true;
 bool d_ContourGraphs = true;
 bool d_AllGraphs = false;
 
+bool exportTo = false;
 double background = 0.35;
 
 
 int currentGraphId = 0;
-int totalGraphs = 120;
+int totalGraphs = 40;
 
 ////// --- zSpace Objects --------------------------------------------------
 /*!<model*/
@@ -156,6 +218,34 @@ zPointArray vPositions;
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 
+void toFile()
+{
+	// Cleanup existing files in the output directory
+	fs::remove_all(outPath);
+	// Recreate the output directory
+	fs::create_directories(outPath);
+
+	int counter_folder = 0;
+	int counter_file = 0;
+
+	//export mesh
+	zFnMesh fnMesh(*myMeshParam.getRawInMesh());
+	fnMesh.to(outPath + "/outMesh.json", zJSON);
+
+	//export graphs
+	for (auto& contour : o_contours)
+	{
+		//make file
+		string file = outPath + "/graph_" + to_string(counter_file) + ".json";
+		zFnGraph fnGraph(contour);
+		fnGraph.to(file, zJSON);
+		counter_file++;
+	}
+
+	cout << endl;
+	cout << "All files have been exported to: " + outPath << endl;
+}
+
 
 void setup()
 {
@@ -170,11 +260,11 @@ void setup()
 	model = zModel(100000);
 
 	zFnMesh fnSliceMesh(o_sliceMesh);
-	fnSliceMesh.from("data/Parameterization/guangdu/CentralRoof_Quad.obj", zOBJ);
+	fnSliceMesh.from("data/Parameterization/guangdu/new/mesh_quad.obj", zOBJ);
 	fnSliceMesh.getVertexPositions(vPositions);
 
 	// read mesh
-	myMeshParam.setFromFile("data/Parameterization/guangdu/CentralRoof_Tri.obj", zOBJ);
+	myMeshParam.setFromFile("data/Parameterization/guangdu/new/mesh_tri.obj", zOBJ);
 
 	// set contours
 	o_contours.clear();
@@ -220,6 +310,8 @@ void setup()
 	B.addButton(&d_ContourGraphs, "d_ContourGraphs");
 	B.buttons[4].attachToVariable(&d_ContourGraphs);
 
+	B.addButton(&exportTo, "exportTo");
+	B.buttons[5].attachToVariable(&exportTo);
 
 
 }
@@ -231,19 +323,37 @@ void update(int value)
 		zObjMesh* o_inMesh = myMeshParam.getRawInMesh();
 
 		// Geodesics heat method
-		zIntArray start_ids = { 15608 };
+		zIntArray start_ids = { 3815,10697 };
+		//zIntArray start_ids = { 15608 };
 		zIntArray start_boundary_ids;
-		computeBoundaryVertices(o_inMesh, start_ids, start_boundary_ids);
+		
+		//computeBoundaryVertices(o_inMesh, start_ids, start_boundary_ids);
+
+		computeBoundaries(o_inMesh, start_boundary_ids);
+
+
 		//myMeshParam.computeGeodesics_Heat(start_boundary_ids, geodesics_start);
 		myMeshParam.computeGeodesics_Exact(start_boundary_ids, geodesics_start);
 
 
-		zIntArray end_ids = { 4299  };
-		zIntArray end_boundary_ids;
-		computeBoundaryVertices(o_inMesh, end_ids, end_boundary_ids);
-		myMeshParam.computeGeodesics_Exact(end_boundary_ids, geodesics_end);
+		//zIntArray end_ids = { 2360,1631,380,1263,4228,4808,9173,7844,6973 };
+		////zIntArray end_ids = { 4299  };
+		//zIntArray end_boundary_ids;
+		//computeBoundaryVertices(o_inMesh, end_ids, end_boundary_ids);
+		//myMeshParam.computeGeodesics_Exact(end_boundary_ids, geodesics_end);
 
-		printf("\n boundary start %i | end %i ", start_boundary_ids.size(), end_boundary_ids.size());
+		//printf("\n boundary start %i | end %i ", start_boundary_ids.size(), end_boundary_ids.size());
+
+		zDomainFloat startMinMax(core.zMin(geodesics_start), core.zMax(geodesics_start));
+		zDomainFloat outMinMax(0, 1);
+
+		for (auto& v : geodesics_start)
+		{
+			v = core.ofMap(v, startMinMax, outMinMax);
+		}
+
+		cout << "start min:" << core.zMin(geodesics_start) << endl;
+		cout << "start max:" << core.zMax(geodesics_start) << endl;
 
 		compute_heat = !compute_heat;
 	}
@@ -254,6 +364,7 @@ void update(int value)
 		for (int i = 0; i < totalGraphs; i++)
 		{
 			computeContours(&o_sliceMesh, geodesics_end, geodesics_start, i, totalGraphs, o_contours);
+			//computeContours_oneSide(&o_sliceMesh, geodesics_start, i, totalGraphs, o_contours);
 		}
 
 		compute_contour = !compute_contour;
@@ -266,6 +377,12 @@ void update(int value)
 
 		compute_color_start = !compute_color_start;
 		compute_color = !compute_color;
+	}
+
+	if (exportTo)
+	{
+		toFile();
+		exportTo = !exportTo;
 	}
 }
 

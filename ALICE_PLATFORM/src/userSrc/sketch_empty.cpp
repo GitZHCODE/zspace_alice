@@ -4,13 +4,15 @@
 
 #include "main.h"
 
-//#include <headers/include/zCore.h>
-//#include <headers/include/zGeometry.h>
-//#include <headers/include/zDisplay.h>
-//#include <headers/include/zData.h>
-//#include <headers/include/zIO.h> 
-//
-//using namespace zSpace;
+
+#include <headers/zApp/include/zObjects.h>
+#include <headers/zApp/include/zFnSets.h>
+#include <headers/zApp/include/zViewer.h>
+
+
+using namespace zSpace;
+using namespace std;
+
 
 ////////////////////////////////////////////////////////////////////////// General
 
@@ -20,12 +22,21 @@ bool display = true;
 
 double background = 0.35;
 
-////////////////////////////////////////////////////////////////////////// zSpace Objects
+zModel model;
 
+////////////////////////////////////////////////////////////////////////// zSpace Objects
 
 
 void setup()
 {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_POINT_SMOOTH);
+
+	model = zModel(100000);
+	
+
+
 	////////////////////////////////////////////////////////////////////////// Enable smooth display
 	
 	glEnable(GL_BLEND);
@@ -63,6 +74,8 @@ void draw()
 {
 	backGround(background);
 	drawGrid(50);
+
+	model.draw();
 
 	S.draw();
 	B.draw();

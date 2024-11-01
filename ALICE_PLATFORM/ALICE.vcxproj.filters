@@ -31,6 +31,30 @@
     <ClInclude Include="src\userSrc\tzSketches\PolySplit\vector.h">
       <Filter>Sketches\tzSketches\polySplit</Filter>
     </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\CityEngine\line.h">
+      <Filter>Sketches\tzSketches\cityEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\CityEngine\polygon.h">
+      <Filter>Sketches\tzSketches\cityEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\CityEngine\vector.h">
+      <Filter>Sketches\tzSketches\cityEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\CityEngine\zTsCityEngine.h">
+      <Filter>Sketches\tzSketches\cityEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Configurator3d\zTsConfigurator3d.h">
+      <Filter>Sketches\tzSketches\configurator3d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Configurator3d\zTsScanline.h">
+      <Filter>Sketches\tzSketches\configurator3d</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\OV\zTsOVdataProcessor.h">
+      <Filter>Sketches\tzSketches\ov\chicagoInnovate</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\ConfiguratorField\zTsConfiguratorField.h">
+      <Filter>Sketches\tzSketches\configuratorField</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MVC">
@@ -116,6 +140,30 @@
     </Filter>
     <Filter Include="Sketches\tzSketches\polySplit">
       <UniqueIdentifier>{6b9bf327-a252-4430-977d-92a4e735b108}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\vectorField">
+      <UniqueIdentifier>{c4fb12aa-14f9-43a4-93f7-b9c9b18c4705}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\sdf">
+      <UniqueIdentifier>{fd8033b9-b373-4618-b145-ec78634eaea6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\cityEngine">
+      <UniqueIdentifier>{06198a5e-b755-4849-be46-0b76ded862e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\graphicStatics">
+      <UniqueIdentifier>{64fada94-2a65-494a-9adc-7e97b8e98fbc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\configurator3d">
+      <UniqueIdentifier>{85816b16-d2ca-4af2-89c9-65558460a487}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\growingParcels">
+      <UniqueIdentifier>{5b5d3ed8-3167-4674-89ba-3f2c7ddeb538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\ov\chicagoInnovate">
+      <UniqueIdentifier>{86df3355-6efe-4000-8d41-ffc5df23363f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\configuratorField">
+      <UniqueIdentifier>{52d2ce17-258e-47b5-ba4f-22aeeca2bf7f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -394,6 +442,75 @@
     </ClCompile>
     <ClCompile Include="src\userSrc\tzSketches\PolySplit\sketch_zspace_polySplit_example.cpp">
       <Filter>Sketches\tzSketches\polySplit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\PolySplit\sketch_zspace_polySplit_faceSplit.cpp">
+      <Filter>Sketches\tzSketches\polySplit</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Parameterization\sketch_zspace_Relaxation.cpp">
+      <Filter>Sketches\tzSketches\parameterisation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Slicer\sketch_zspace_heat_slicer_guangdu_multi.cpp">
+      <Filter>Sketches\tzSketches\slicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Paneling\sketch_zspace_PatternYate.cpp">
+      <Filter>Sketches\tzSketches\paneling</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\GraphPolyhedra\sketch_zSpace_Polytopal.cpp">
+      <Filter>Sketches\tzSketches\graphPolyhedra</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_Natpower_BlockMesh.cpp">
+      <Filter>Sketches\tzSketches\tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\VectorField\sketch_zspace_VectorFieldPathfinding.cpp">
+      <Filter>Sketches\tzSketches\vectorField</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\SDF\sketch_zspace_sdf.cpp">
+      <Filter>Sketches\tzSketches\sdf</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\CityEngine\line.cpp">
+      <Filter>Sketches\tzSketches\cityEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\CityEngine\polygon.cpp">
+      <Filter>Sketches\tzSketches\cityEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\CityEngine\sketch_zspace_cityEngine.cpp">
+      <Filter>Sketches\tzSketches\cityEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\CityEngine\zTsCityEngine.cpp">
+      <Filter>Sketches\tzSketches\cityEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Tutorials\sketch_zspace_bfs_loop.cpp">
+      <Filter>Sketches\tzSketches\tutorials</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\GraphicStatics\sketch_zspace_2DGS.cpp">
+      <Filter>Sketches\tzSketches\graphicStatics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Configurator3d\sketch_Configurator_voxel.cpp">
+      <Filter>Sketches\tzSketches\configurator3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Configurator3d\zTsConfigurator3d.cpp">
+      <Filter>Sketches\tzSketches\configurator3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\USD\sketch_usdConverter.cpp">
+      <Filter>Sketches\tzSketches\usd</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Configurator3d\sketch_Scanline.cpp">
+      <Filter>Sketches\tzSketches\configurator3d</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\GrowingParcels\sketch_parcel_sb.cpp">
+      <Filter>Sketches\tzSketches\growingParcels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\OV\zTsOVdataProcessor.cpp">
+      <Filter>Sketches\tzSketches\ov\chicagoInnovate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\OV\sketch_zspace_OV_chicago.cpp">
+      <Filter>Sketches\tzSketches\ov\chicagoInnovate</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\ConfiguratorField\sketch_Configurator_field.cpp">
+      <Filter>Sketches\tzSketches\configuratorField</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\ConfiguratorField\zTsConfiguratorField.cpp">
+      <Filter>Sketches\tzSketches\configuratorField</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
