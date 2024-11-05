@@ -1,4 +1,4 @@
-//#define _MAIN_
+#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -10,7 +10,7 @@
 #include <headers/zApp/include/zFnSets.h>
 #include <headers/zApp/include/zViewer.h>
 
-#include <userSrc/tzSketches/Configurator3d/zTsConfigurator3d.h>
+//#include <userSrc/tzSketches/Configurator3d/zTsConfigurator3d.h>
 
 //
 using namespace zSpace;

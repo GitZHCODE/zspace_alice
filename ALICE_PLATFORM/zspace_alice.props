@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <codeRepoDir>C:\Users\taizhong.chen\source\repos\GitZHCODE</codeRepoDir>
+    <codeRepoDir>C:\Users\taizhong_chen\source\repos\GitZHCODE</codeRepoDir>
     <zspacecoreDir>$(codeRepoDir)\zspace_core\cpp</zspacecoreDir>
     <zspacetoolsetDir>$(codeRepoDir)\zspace_toolsets\cpp</zspacetoolsetDir>
     <rhinoDir>C:\Program Files\Rhino 7</rhinoDir>

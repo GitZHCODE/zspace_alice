@@ -25,17 +25,20 @@ bool d_graph = true;
 bool d_field = true;
 bool d_parcel = false;
 bool d_bounds = false;
+bool d_mesh = true;
+bool loadAssets = false;
+bool exportTo = false;
 
-double background = 0.125;
+double background = 1.0;
 
 int resX = 40;
 int resY = 40;
 double displayVecLength = 0.2;
 
 double minNum = 1.0f;
-double maxNum = 4.0f;
-double minRadius = 0.15f;
-double maxRadius = 0.35f;
+double maxNum = 2.0f;
+double minRadius = 0.90f;
+double maxRadius = 1.35f;
 double parcelOffset = 0.15f;
 double parcelRotation = 0.0;
 
@@ -47,7 +50,7 @@ zObjGraph* baseGraph;
 
 zTsConfiguratorField configurator;
 
-string path_graphMesh = "data/Configurator_field/inFolder/graphMesh.json";
+string path_graphMesh = "data/Configurator_field/graphMesh.usda";
 string path_underlayMesh = "data/Configurator_field/inFolder/underlayMesh.json";
 
 zPointArray positions;
@@ -77,9 +80,9 @@ void setup()
 	S.addSlider(&maxNum, "maxNum");
 	S.sliders[2].attachToVariable(&maxNum, 0, 10);
 	S.addSlider(&minRadius, "minRadius");
-	S.sliders[3].attachToVariable(&minRadius, 0, 0.5);
+	S.sliders[3].attachToVariable(&minRadius, 0, 5);
 	S.addSlider(&maxRadius, "maxRadius");
-	S.sliders[4].attachToVariable(&maxRadius, 0, 0.5);
+	S.sliders[4].attachToVariable(&maxRadius, 0, 5);
 	S.addSlider(&parcelOffset, "parcelOffset");
 	S.sliders[5].attachToVariable(&parcelOffset, 0, 5);
 	S.addSlider(&parcelRotation, "parcelRotation");
@@ -93,17 +96,25 @@ void setup()
 	B.buttons[0].attachToVariable(&compute);
 	B.addButton(&reset, "reset");
 	B.buttons[1].attachToVariable(&reset);
-	B.addButton(&d_graph, "d_graph");
-	B.buttons[2].attachToVariable(&d_graph);
+	//B.addButton(&d_graph, "d_graph");
+	//B.buttons[2].attachToVariable(&d_graph);
 	B.addButton(&d_field, "d_field");
-	B.buttons[3].attachToVariable(&d_field);
+	B.buttons[2].attachToVariable(&d_field);
 	B.addButton(&d_parcel, "d_parcel");
-	B.buttons[4].attachToVariable(&d_parcel);
+	B.buttons[3].attachToVariable(&d_parcel);
 	B.addButton(&d_bounds, "d_bounds");
-	B.buttons[5].attachToVariable(&d_bounds);
+	B.buttons[4].attachToVariable(&d_bounds);
+	B.addButton(&d_mesh, "d_mesh");
+	B.buttons[5].attachToVariable(&d_mesh);
+	B.addButton(&loadAssets, "loadAssets");
+	B.buttons[6].attachToVariable(&loadAssets);
+	B.addButton(&exportTo, "exportTo");
+	B.buttons[7].attachToVariable(&exportTo);
+
 
 	//configurator
-	configurator.initialise(path_graphMesh, path_underlayMesh, resX, resY, minNum, maxNum, minRadius, maxRadius);
+	configurator.initialise(path_graphMesh, resX, resY, minNum, maxNum, minRadius, maxRadius);
+	configurator.loadAssets();
 }
 
 void update(int value)
@@ -124,9 +135,25 @@ void update(int value)
 
 	if (reset)
 	{
-		configurator.initialise(path_graphMesh, path_underlayMesh, resX, resY, minNum, maxNum, minRadius, maxRadius);
+		configurator.initialise(path_graphMesh, resX, resY, minNum, maxNum, minRadius, maxRadius);
+		configurator.loadAssets();
 
 		reset = !reset;
+	}
+
+	if (loadAssets)
+	{
+		configurator.loadAssets();
+
+		loadAssets = !loadAssets;
+	}
+
+	if (exportTo)
+	{
+		configurator.exportAssets();
+		//configurator.exportTo();
+
+		exportTo = !exportTo;
 	}
 }
 
@@ -151,13 +178,9 @@ void draw()
 		configurator.draw(false, true);
 	}
 
-	if (!d_field)
-	{
-	}
-
 	if (d_parcel)
 	{
-		configurator.draw(false, false, true);
+		configurator.draw(false, false, true, false, false);
 
 		//for (int i = 0; i < positions.size(); i++)
 		//{
@@ -165,10 +188,17 @@ void draw()
 		//}
 	}
 
+	if (d_mesh)
+	{
+		configurator.draw(false, false, false, true, false);
+
+	}
+
 	if (d_bounds)
 	{
-		configurator.draw(false, false, false, true);
+		configurator.draw(false, false, false, false, true);
 	}
+
 
 	//////////////////////////////////////////////////////////
 
@@ -183,7 +213,13 @@ void draw()
 
 void keyPress(unsigned char k, int xm, int ym)
 {
+	if (k == 'f')
+		setCamera(29, 0, 0.001, 62.9, -27.7);
 
+
+	//	float z, ry, rx, tx, tz;
+	//getCamera(z, rx, ry, tx, ty);
+	//cout << z << "," << rx << "," << ry << "," << tx << "," << ty << endl;
 }
 
 void mousePress(int b, int s, int x, int y)

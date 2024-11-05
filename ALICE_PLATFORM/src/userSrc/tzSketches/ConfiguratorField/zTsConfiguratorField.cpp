@@ -33,6 +33,27 @@ namespace zSpace
 		return circlePoints;
 	}
 
+	std::vector<int> assignRanks(const std::vector<float>& arr) {
+		// Step 1: Create a sorted unique list
+		std::vector<float> sortedArr = arr; // Make a copy of the original array
+		std::sort(sortedArr.begin(), sortedArr.end()); // Sort in ascending order
+
+		// Remove duplicates
+		sortedArr.erase(std::unique(sortedArr.begin(), sortedArr.end()), sortedArr.end());
+
+		// Step 2: Assign ranks
+		std::vector<int> ranks;
+		ranks.reserve(arr.size());
+
+		for (const auto& num : arr) {
+			// Find the first position where num could be inserted without violating the order
+			// This effectively gives the rank
+			int rank = std::lower_bound(sortedArr.begin(), sortedArr.end(), num) - sortedArr.begin();
+			ranks.push_back(rank);
+		}
+
+		return ranks;
+	}
 	/* PUBLIC */
 
 	Parcel::Parcel() {};
@@ -41,8 +62,30 @@ namespace zSpace
 		centre = _centre;
 		parcelId = _parcelId;
 		radius = _radius;
+
+		assetMesh = zObjMesh();
+		isTooClose = false;
+		isEmpty = false;
 	};
 	Parcel::~Parcel() {};
+
+	void Parcel::updateTransform()
+	{
+		zVector vec_x = vec;
+		zVector vec_z(0, 0, 1);
+		zVector vec_y = vec_z ^ vec_x;
+		zVector vec_o = centre;
+
+		zFnMesh fn(assetMesh);
+
+		t.setIdentity();
+		t(0, 0) = vec_x.x;	t(0, 1) = vec_x.y;	t(0, 2) = vec_x.z;
+		t(1, 0) = vec_y.x;	t(1, 1) = vec_y.y;	t(1, 2) = vec_y.z;
+		t(2, 0) = vec_z.x;	t(2, 1) = vec_z.y;	t(2, 2) = vec_z.z;
+		t(3, 0) = vec_o.x;	t(3, 1) = vec_o.y;	t(3, 2) = vec_o.z;
+
+		fn.setTransform(t);
+	}
 
 	/* PUBLIC */
 
@@ -51,7 +94,6 @@ namespace zSpace
 
 	void zTsConfiguratorField::initialise(
 		string path_graphMesh,
-		string path_underlayMesh,
 		int fieldNumX,
 		int fieldNumY,
 		float minNum,
@@ -63,7 +105,7 @@ namespace zSpace
 		
 
 		initialise_graphMesh(path_graphMesh);
-		initialise_underlayMesh(path_underlayMesh);
+		//initialise_underlayMesh(path_underlayMesh);
 		initialise_field(fieldNumX, fieldNumY);
 		intialise_parcels(minNum, maxNum, minRadius, maxRadius);
 	}
@@ -73,7 +115,77 @@ namespace zSpace
 		equiliseParcels();
 		rotateParcels(parcelRotation);
 		markParcels(parcelOffset);
+
+		for (auto& parcel : parcels)
+		{
+			parcel.assetMesh.setDisplayObject(true);
+
+			parcel.updateTransform();
+			if (parcel.isTooClose)
+				parcel.assetMesh.setDisplayObject(false);
+		}
 	}
+
+	void zTsConfiguratorField::loadAssets()
+	{
+		UsdStageRefPtr stage;
+		usd_openStage(path_assets, stage);
+
+		zObjMeshPointerArray meshPtrArr;
+		if (stage)
+			for (UsdPrim prim : stage->Traverse())
+			{
+				if (prim.IsA<UsdGeomMesh>())
+				{
+					zObjMesh* mPtr = new zObjMesh();
+					meshPtrArr.push_back(mPtr);
+					zFnMesh fn(*mPtr);
+					fn.from(prim);
+				}
+			}
+
+		int numAssets = meshPtrArr.size();
+		for (auto& parcel : parcels)
+		{
+			int id = parcel.assetId > numAssets - 1 ? numAssets - 1 : parcel.assetId;
+			parcel.assetMesh = zObjMesh(*meshPtrArr[id]);
+
+			parcel.updateTransform();
+		}
+
+	}
+
+	void zTsConfiguratorField:: exportAssets()
+	{
+		UsdStageRefPtr stage;
+		usd_createStage(path_agg,"World",stage);
+
+		if (stage)
+		{
+			int counter = 0;
+
+			for (auto& parcel : parcels)
+			{
+				if (!parcel.isTooClose && !parcel.isEmpty)
+				{
+					SdfPath sdfPath("/World/Population/asset_" + to_string(counter));
+					UsdPrim prim = stage->DefinePrim(sdfPath,TfToken("Mesh"));
+
+					zFnMesh fn(parcel.assetMesh);
+					fn.to(prim);
+
+					counter++;
+				}
+			}
+			stage->Save();
+			LOG_BUILD << to_string(counter) + " assets exported" << endl;
+		}
+		else
+		{
+			LOG_BUILD << "output stage not found" << endl;
+		}
+	}
+
 
 	void zTsConfiguratorField::getVectorField(zPointArray& positions, zVectorArray& vectors)
 	{
@@ -95,7 +207,7 @@ namespace zSpace
 		}
 	}
 
-	void zTsConfiguratorField::draw(bool d_graphMesh, bool d_fieldMesh, bool d_parcels, bool d_parcelBounds)
+	void zTsConfiguratorField::draw(bool d_graphMesh, bool d_fieldMesh, bool d_parcels, bool d_mesh, bool d_parcelBounds)
 	{
 
 		if (d_graphMesh)
@@ -136,12 +248,23 @@ namespace zSpace
 
 			for (auto& parcel : parcels)
 			{
-				if (!parcel.isTooClose)
+				if (!parcel.isTooClose && !parcel.isEmpty)
 				{
 					display.drawPoint(parcel.centre, zRED, 2);
 					display.drawLine(parcel.centre, parcel.centre + parcel.vec * parcel.radius, zBLACK, 2);
 					//display.drawLine(parcel.centre, parcel.centre + parcel.vec * vecLength, zWHITE, 2);
 				}
+			}
+		}
+
+		if (d_mesh)
+		{
+			for (auto& parcel : parcels)
+			{
+				parcel.assetMesh.setDisplayElements(false, true, true);
+				//parcel.assetMesh.setDisplayTransform(true);
+
+				parcel.assetMesh.draw();
 			}
 		}
 
@@ -163,8 +286,9 @@ namespace zSpace
 
 	void zTsConfiguratorField::initialise_graphMesh(string path)
 	{
+		graphMesh = zObjMesh();
 		zFnMesh fnMesh(graphMesh);
-		fnMesh.from(path, zJSON);
+		fnMesh.from(path, zUSD);
 	}
 
 	void zTsConfiguratorField::initialise_underlayMesh(string path)
@@ -217,6 +341,8 @@ namespace zSpace
 		float rndMin = -0.1;
 		float rdnMax = 0.1;
 
+		vector<float> vals;
+
 		zItMeshFace f(graphMesh);
 		for (; !f.end(); f++)
 		{
@@ -225,20 +351,32 @@ namespace zSpace
 			zColor colour = f.getColor();
 			zVector fCentre = f.getCenter();
 
-			for (int i = 0; i < nf_parcels; i++)
+			if (colour.v != 0)
 			{
-				zItMeshScalarField s(scalarField, fCentre);
+				for (int i = 0; i < nf_parcels; i++)
+				{
+					zItMeshScalarField s(scalarField, fCentre);
 
-				parcels.emplace_back(f.getCenter() + randomNumber(rndMin, rdnMax), numParcels, radius);
-				parcels[numParcels].vec = fieldVectors[s.getId()];
-				parcels[numParcels].col = colour;
-				numParcels++;
+					parcels.emplace_back(f.getCenter() + randomNumber(rndMin, rdnMax), numParcels, radius);
+					parcels[numParcels].vec = fieldVectors[s.getId()];
+					parcels[numParcels].col = colour;
+
+					vals.push_back(colour.h);
+
+					numParcels++;
+				}
 			}
 			//cout << "f_parcels: " << nf_parcels << endl;
 			//cout << "f_radius: " << radius << endl;
 		}
 
 		cout << "numParcels: " << numParcels << endl;
+
+		vector<int> ranks = assignRanks(vals);
+		for (int i = 0; i < numParcels; i++)
+		{
+			parcels[i].assetId = ranks[i];
+		}
 	}
 
 	// field
@@ -375,13 +513,6 @@ namespace zSpace
 		vector<zVector> positions;
 		vector<int> pConnects;
 
-		//positions.push_back(he_start.getStartVertex().getPosition());
-		//positions.push_back(he_start.getVertex().getPosition());
-		//pConnects.push_back(0);
-		//pConnects.push_back(1);
-
-		//zFnGraph fnGraph(medialGraph);
-		//fnGraph.create(positions, pConnects);
 
 		int id_start = he_start.getId();
 		do
@@ -691,7 +822,148 @@ namespace zSpace
 
 	void zTsConfiguratorField::populateAssets()
 	{
+		std::vector<fs::path> assetPaths;
+		int numAssets = 0;
 
+		for (const auto& entry : fs::directory_iterator(path_assets)) {
+			auto ext = entry.path().extension().string();
+
+			if (ext == ".usd" || ext == ".usda") {
+				fs::path absolutePath = fs::absolute(entry.path());
+				assetPaths.push_back(absolutePath);
+				numAssets++;
+			}
+		}
+
+		std::cout << "Number of assets found: " << numAssets << std::endl;
+
+		if (numAssets != 0)
+		{
+
+			std::sort(assetPaths.begin(), assetPaths.end(), compare_time_creation);
+
+			std::vector<std::string> assetStrings;
+			assetStrings.reserve(assetPaths.size());
+
+			std::vector<std::string> assetNames;
+			assetNames.reserve(assetPaths.size());
+
+			std::vector<std::string> extensions;
+			extensions.reserve(assetPaths.size());
+
+			for (const auto& path : assetPaths) {
+				assetStrings.push_back(path.string());
+				assetNames.push_back(path.stem().string());
+				extensions.push_back(path.extension().string());
+
+				cout << "path.string():" << path.string() << endl;
+				cout << "assetName: " << path.stem().string() << endl;
+				cout << "extension: " << path.extension().string() << endl;
+			}
+
+
+			UsdStageRefPtr stage_out;
+			usd_createStage(path_agg, "World", stage_out);
+
+			if (stage_out)
+			{
+				//reference geometry
+				int counter = 0;
+				for (auto& parcel : parcels)
+				{
+					if (!parcel.isTooClose)
+					{
+						int id = parcel.assetId > numAssets - 1? numAssets - 1: parcel.assetId;
+						string path_stage = assetStrings[id];
+						string refGeoPrimPath("/World/Assets/" + assetNames[id] + "/References/Ref" + to_string(counter));
+
+						cout << "refGeoPrimPath: " << refGeoPrimPath << endl;
+						cout << "path_stage: " << path_stage << endl;
+
+						UsdPrim refGeoPrim = stage_out->DefinePrim(SdfPath(refGeoPrimPath));
+
+						// clear transformation
+						UsdStageRefPtr stage = UsdStage::Open(path_stage);
+						string transformPath = "/World/Assets/" + assetNames[id];
+
+						UsdGeomXformable tempPrim(stage->GetPrimAtPath(SdfPath(transformPath)));
+						if (tempPrim)
+						{
+							tempPrim.ClearXformOpOrder();
+							stage->GetRootLayer()->Save();
+						}
+
+						// add reference
+						refGeoPrim.GetReferences().AddReference(path_stage);
+						refGeoPrim.SetInstanceable(true);
+
+						// add transformation to newGeoPrim
+						UsdGeomXformable xformable(refGeoPrim);
+
+						// Apply transformation
+						zVector vec_x = parcel.vec;
+						zVector vec_z(0, 0, 1);
+						zVector vec_y = vec_z ^ vec_x;
+						zVector vec_o = parcel.centre;
+
+						zTransform t;
+						t.setIdentity();
+						t(0, 0) = vec_x.x;	t(0, 1) = vec_y.x;	t(0, 2) = vec_z.x;  t(0, 3) = vec_o.x;
+						t(1, 0) = vec_x.y;	t(1, 1) = vec_y.y;	t(1, 2) = vec_z.y;	t(1, 3) = vec_o.y;
+						t(2, 0) = vec_x.z;	t(2, 1) = vec_y.z;	t(2, 2) = vec_z.z;	t(2, 3) = vec_o.z;
+
+						GfMatrix4d transform;
+						transform.Set(
+							t(0, 0), t(1, 0), t(2, 0), t(3, 0),
+							t(0, 1), t(1, 1), t(2, 1), t(3, 1),
+							t(0, 2), t(1, 2), t(2, 2), t(3, 2),
+							t(0, 3), t(1, 3), t(2, 3), t(3, 3)
+						);
+
+						xformable.ClearXformOpOrder();
+						xformable.AddTransformOp(UsdGeomXformOp::PrecisionDouble).Set(transform);
+
+						counter++;
+					}
+				}
+			}
+			stage_out->Save();
+		}
+	}
+
+	void zTsConfiguratorField::exportTo()
+	{
+		populateAssets();
+	}
+
+	// usd
+	bool zTsConfiguratorField::usd_createStage(std::string path, string defaultPrimName, UsdStageRefPtr& uStage)
+	{
+		uStage = UsdStage::CreateNew(path);
+
+		if (!uStage) cout << "\n error creating USD file  " << path.c_str() << endl;
+		else
+		{
+			uStage->SetMetadata(TfToken("defaultPrim"), VtValue(defaultPrimName));
+			uStage->SetMetadata(TfToken("upAxis"), VtValue("Z"));
+			uStage->SetMetadata(TfToken("metersPerUnit"), VtValue(0.01));
+
+			UsdGeomXform root = UsdGeomXform::Define(uStage, SdfPath("/" + defaultPrimName));
+			//UsdGeomXform layer = UsdGeomXform::Define(uStage, SdfPath("/World/Geometry"));
+
+			cout << "\n creating USD file: " << path.c_str() << endl;
+		}
+
+		return (uStage) ? true : false;
+	}
+
+	bool zTsConfiguratorField::usd_openStage(std::string path, UsdStageRefPtr& uStage)
+	{
+		uStage = UsdStage::Open(path);
+		if (!uStage) std::cout << "\n Failure to open stage." << std::endl;
+		else cout << "\n opened USD stage of file:  " << path.c_str() << endl;
+
+		return (uStage) ? true : false;
 	}
 
 	// generic
