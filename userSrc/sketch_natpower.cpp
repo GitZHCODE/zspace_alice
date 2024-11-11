@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 #define _HAS_STD_BYTE 0
 
 #ifdef _MAIN_
@@ -212,8 +212,14 @@ void setup()
 	B.addButton(&dCritical, "dCritical");
 	B.buttons[bcounter++].attachToVariable(&dCritical);
 
+	blockID = 79;
+	readJson = true;
+	computeFRAMES = true;
+	computeSDF = true;
 
-
+	exportSections = true;
+	exportSDF = true;
+	allSDFLayers = true;
 }
 
 zFloatArray getArrayFromTransform(zTransform& transform)
@@ -247,53 +253,16 @@ void get2DArrayFromTransform(zTransform& transform, vector<zDoubleArray>& arr)
 
 void update(int value)
 {
-	if (selectBlockFolder)
+	if (blockID > 82)
 	{
-		selectBlockFolder = !selectBlockFolder;
-
-		string readCIN = "n";
-		cout << "\n Current main directory is: \n " << mainDir << endl;
-		cout << "Change main dir? 'y' or 'n'" << endl;
-		cin >> readCIN;
-
-		string tempMainDir = mainDir;
-		if (readCIN == "y" || readCIN == "Y")
-		{
-			cout << "\n Enter main directory";
-			cin >> tempMainDir;
-		}
-
-
-		cout << "\n Enter blocks version number: (for example; 13_1 or 13) " << endl;
-		cin >> blockVersion;
-
-		//check if the directory exist
-		//string tempDir = tempMainDir + "/" + "V" + blockVersion + "/shared/blocks/";
-		string tempDir = tempMainDir + "/" + blockVersion + "/shared/blocks/";
-
-		if (!filesystem::exists(tempDir))
-		{
-			cout << "\n the following directory does NOT exist! \n " << tempDir;
-			cout << "\n Try again? 'y' or 'n' ";
-			cin >> readCIN;
-
-			if (readCIN == "y" || readCIN == "Y")
-			{
-				selectBlockFolder = true;
-			}
-
-		}
-		else
-		{
-			blockDir = tempDir;
-			cout << "\n Block Directory updated! " << endl << blockDir;
-		}
-
-
+		std::cout << "####### DONE #######" << std::endl;
+		system("pause");
 	}
+
+	std::cout << "### BLOCK " << blockID << " ###" << std::endl;
+
 	if (readJson)
 	{
-		blockID = (int)_slider_blockID;
 		_slider_blockID = blockID;
 		mySlicer = zTsNatpowerSDF();
 		mySlicer.setFromJSON(blockDir, blockID, runBothPlanes, runPlaneLeft);
@@ -310,33 +279,9 @@ void update(int value)
 		zFnMesh fnm(mySlicer.o_GuideMesh);
 		zDomainColor col_domain(zRED, zBLUE);
 
-
-
-		//zDoubleArray vertexCurvature;
-		//fnm.getGaussianCurvature(vertexCurvature);
-
-		/*float min_gc = core.zMin(vertexCurvature);
-		float max_gc = core.zMax(vertexCurvature);
-
-		zDomainFloat gc_domain(min_gc, max_gc);
-		zDomainFloat out_domain(0.0, 1.0);*/
-
-		//printf("\n GaussianCurvature Min | Max %1.4f | %1.4f", min_gc, max_gc);
-
-		//for (zItMeshVertex v(mySlicer.o_GuideMesh); !v.end(); v++)
-		//{
-		//	zColor v_blendColor = core.blendColor(vertexCurvature[v.getId()], gc_domain, col_domain, zHSV);
-		//	v.setColor(v_blendColor);
-
-		//	float remapValue = core.ofMap((float)vertexCurvature[v.getId()], gc_domain, out_domain);
-		//	vertexCurvature[v.getId()] = remapValue;
-
-		//}
-
-		//fnm.computeFaceColorfromVertexColor();
-
-		readJson = !readJson;
+		//readJson = !readJson;
 	}
+
 	if (computeFRAMES)
 	{
 		mySlicer._interpolateFramesOrigins = interpolateOrigins;
@@ -358,51 +303,26 @@ void update(int value)
 			mySlicer.createFieldMesh(bb, resx, resy);
 
 		}
-		//if (mySlicer.planarBlock) mySlicer.createFieldMeshFromSectionBounds(0.01f, 0.2);
 
-
-		/*int numMinPts = 0;
-		zFnPointCloud fn;
-		zObjPointCloud* o_minPts = mySlicer.getRawCriticalPoints(false);
-		fn = zFnPointCloud(*o_minPts);
-		zPointArray maxPoints;
-		fn.getVertexPositions(maxPoints);
-		for (auto& p : maxPoints)
-		{
-			cout << endl << p;
-		}*/
-
-		computeFRAMES = !computeFRAMES;
+		//computeFRAMES = !computeFRAMES;
 	}
+
 	if (computeSDF)
 	{
 		printf("\n SDF smooth %i", SDFFunc_NumSmooth);
 		mySlicer.compute_PrintBlocks(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, false, true);
 
-		//mySlicer.computeSDF(allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, printLayerWidth, 0, raftLayerWidth);;
-
-		computeSDF = !computeSDF;
+		//computeSDF = !computeSDF;
 	}
 
 	if (computeHEIGHTS_Folder)
 	{
-		//bool chkSDF = false;
-		//bool chkGeo = true;
-		//bool layerChk = natpower.checkPrintLayerHeights(chkSDF, chkGeo);
-		//natpower.computePrintBlocks(printHeightDomain, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, neopreneOffset, true, false);
-		//printf("\n layerChk = %s | chkSDF %s | chkGeo %s", to_string(layerChk), to_string(chkSDF), to_string(chkGeo));
 
 		mySlicer.check_PrintLayerHeights_Folder(blockDir, printHeightDomain, neopreneOffset, runBothPlanes, runPlaneLeft);
 
 		computeHEIGHTS_Folder = !computeHEIGHTS_Folder;
 	}
-	if (computeTRANSFORM)
-	{
-		mySlicer.setTransforms(toLOCAL);
-		toLOCAL = !toLOCAL;
 
-		computeTRANSFORM = !computeTRANSFORM;
-	}
 	if (exportSlice)
 	{
 		//expBlockDir = blockDir + "exported";
@@ -480,18 +400,15 @@ void update(int value)
 			//try to read one of the json
 			//string path2 = OutputFolder + "section_" + core.getPaddedIndexString(0, 3) + ".json";
 			char* chr = path.data();
-
-
 		}
 
-		exportSections = !exportSections;
+		//exportSections = !exportSections;
 	}
 
 	if (exportSDF)
 	{
-		exportSDF = !exportSDF;
+		//exportSDF = !exportSDF;
 		expBlockDir = blockDir + "exportedSDF";
-
 
 		bool chkTransform = false;
 
@@ -513,6 +430,7 @@ void update(int value)
 		//mySlicer.exportJSON(blockDir, OutputFolder, "3dp_block", printLayerWidth, raftLayerWidth);
 		mySlicer.exportJSON_update(blockDir, OutputFolder);
 	}
+
 	if (readSDF)
 	{
 		readSDF = !readSDF;
@@ -546,7 +464,7 @@ void update(int value)
 		SDFFunc_NumSmooth = (int)_slider_SDF_smooth;
 	}
 
-
+	blockID++;
 }
 
 

@@ -9,13 +9,13 @@ if not exist "paths.lua" (
 	echo viewer_path = "Alice">> paths.lua
 	echo viewer_deps_path = "Dependencies">> paths.lua
 	echo exe_path = "EXE">> paths.lua
-	echo zspace_core_path = "Dependencies/ZSPACE_CORE">> paths.lua
-	echo zspace_toolsets_path = "Dependencies/ZSPACE_TOOLSETS">> paths.lua
-	echo zspace_deps_path = "Dependencies/ZSPACE_DEPENDENCIES">> paths.lua
+	echo zspace_core_path = "../zspace_core">> paths.lua
+	echo zspace_toolsets_path = "../zspace_toolsets">> paths.lua
+	echo zspace_deps_path = "../zspace_dependencies">> paths.lua
 	echo sketches_path = "Sketches">> paths.lua
 	echo.>> paths.lua
 	echo rhino_dir = "C:/Program Files/Rhino 7 SDK">> paths.lua
-	echo maya_dir = "C:/Program Files/Autodesk/Maya2020">> paths.lua
+	echo maya_dir = "C:/Program Files/Autodesk/Maya2023">> paths.lua
 )
 
 :: Get the omniverse path from paths.lua
@@ -42,17 +42,26 @@ if "%zspace_deps_path%"=="" (
 )
 
 :: Create the Omnidlls folder if it doesn't exist or is empty
+:: Test to see if plugin.info has been copied
 set omni=false
 if not exist "EXE\lib_omniverse" set omni=true
 if not exist "EXE\lib_omniverse\python310.dll" set omni=true
+if not exist "EXE\lib_omniverse\usd\ar\resources\plugInfo.json" set omni=true
+if not exist "EXE\lib_omniverse\usd\omniverse\resources\plugInfo.json" set omni=true
 if "%omni%"=="true" (
 	if not exist "EXE\lib_omniverse" mkdir "EXE\lib_omniverse"       	
 
 	echo Moving Omniverse DLLs...
 	:: Copy omniverse DLLs
-    for /r "%zspace_deps_path%\omniverse" %%f in (*.dll) do (
-        xcopy "%%f" "EXE\lib_omniverse" /y >nul 2>&1
-    )
+	for /r "%zspace_deps_path%\omniverse" %%f in (*.dll) do (
+		xcopy "%%f" "EXE\lib_omniverse" /y >nul 2>&1
+	)
+
+	echo Copying Plugin Infos...
+	:: Copy main plugin info usd folder
+	xcopy "%zspace_deps_path%\omniverse\usd\release\lib\usd\" "EXE\lib_omniverse\usd\" /s /e
+	:: Copy omniusdreader plugin folder
+	xcopy "%zspace_deps_path%\omniverse\omni_usd_resolver\release\usd\omniverse\" "EXE\lib_omniverse\usd\omniverse\" /s /e
 )
 
 :: Run Premake

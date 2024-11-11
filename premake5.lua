@@ -58,7 +58,7 @@ function prependPath(p, table)
 end
 
 function GlobalCommonDefines()
-    defines {"IGL_STATIC_LIBRARY", "_HAS_STD_BYTE=0", "WIN64", "ALICE"}
+    defines {"IGL_STATIC_LIBRARY", "_HAS_STD_BYTE=0", "WIN64", "ALICE", "NOMINMAX"}
 
     targetdir("bin/%{cfg.buildcfg}/%{cfg.platform}")
     objdir ("bin-int/%{cfg.buildcfg}/%{cfg.platform}")

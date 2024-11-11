@@ -2,6 +2,7 @@
 **/bin
 **/bin-int
 **/project
+!Dependencies/**/bin
 
 # Compiled files
 EXE/*.exe

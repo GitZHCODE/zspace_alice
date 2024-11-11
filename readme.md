@@ -6,30 +6,27 @@
 Optionally the library may also be pre-compiled into a statically  or dynamically linked library, for faster compile times.
 
 - [Installation](#Installation)
-- [Launching](#Launching)
 - [Citing](#Citing)
 - [License](#license)
 - [Third party dependcencies](#used-third-party-dependencies)
 
 # Installation
 
-1. Download and follow the instructions to install Visual Studio 2019 from [Microsoft](https://learn.microsoft.com/en-us/visualstudio/releases/2019/release-notes).
-2. Open Visual Studio 2019 and click on "Clone a repository"
-   ![VS_1](https://github.com/GitZHCODE/zspace_alice/blob/master/assets/1_VS.png)
-3. Go to [GitZHCODE/zspace_alice](https://github.com/GitZHCODE/zspace_alice). 
-   - Click on "Code" button and copy HTTPS directory from the web page.
-     ![Git_3](https://github.com/GitZHCODE/zspace_alice/blob/master/assets/2_Git.png) 
-   - Paste the directory to the "Repository location" in Visual Studio.
-   - Click on "Clone".
-     ![VS_4](https://github.com/GitZHCODE/zspace_alice/blob/master/assets/3_VS.png)
+>In order to use RhinoInterop please make sure you have Rhino7 SDK installed!  
+>Install from this link [Rhino7SDK](https://developer.rhino3d.com/guides/cpp/installing-tools-windows/)  
+>Additonally make sure that you have RhinoLibrary.lib in 'C:\Program Files\Rhino 7 SDK\lib\Release'
 
-# Launching
-1. Browse to "Users\name\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM", double click on "ALICE.sln" to open the solution.
-![Folder_5](https://github.com/GitZHCODE/zspace_alice/blob/master/assets/4_Folder.png)
-2. Change the "Solution Configurations" to "Release_zSpaceDLL". Click on "Local Windows Debugger" (play button) to launch Alice.
-![Alice_6](https://github.com/GitZHCODE/zspace_alice/blob/master/assets/5_VS.png)
-3. If it successfully loaded, you should be able to see Alice viewer window and Console window pop up on your screen.
-![Alice_7](https://github.com/GitZHCODE/zspace_alice/blob/master/assets/6_Alice.png)
+1. Copy and paste the following into your command line:
+```cmd
+git clone -b vl https://github.com/GitZHCODE/zspace_alice.git zspace_alice
+git clone -b vl https://github.com/GitZHCODE/zspace_core.git zspace_core
+git clone -b vl https://github.com/GitZHCODE/zspace_toolsets.git zspace_toolsets
+git clone https://github.com/GitZHCODE/zDependencies.git zspace_dependencies
+```
+
+2. Navigate to zspace_alice folder and double-click ```Setup.bat```
+3. Open the generated ```zspace_alice.sln``` file.
+4. Build the Solution.
 
 # Citing
 If you use the library of ZSPACE in a project, please refer to the GitHub repository.
