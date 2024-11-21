@@ -1,4 +1,4 @@
-//#define _MAIN_
+#define _MAIN_
 #define _HAS_STD_BYTE 0
 
 #ifdef _MAIN_
@@ -8,16 +8,16 @@
 
 
 #include <zToolsets/natpower/zTsNatpowerSDF.h>
-
 //#include <zCore/Geometry/zExtGraph.h>
-//#include <headers/zToolsets/geometry/zTsSDFSlicer.h>
+
+//#include <zToolsets/geometry/zTsSDFSlicer.h>
 
 
-//#include <headers/include/zCore.h>
-//#include <headers/include/zGeometry.h>
-//#include <headers/include/zDisplay.h>
-//#include <headers/include/zData.h>
-//#include <headers/include/zIO.h> 
+//#include <include/zCore.h>
+//#include <include/zGeometry.h>
+//#include <include/zDisplay.h>
+//#include <include/zData.h>
+//#include <include/zIO.h> 
 //
 
 using namespace zSpace;
@@ -73,9 +73,9 @@ bool frameCHECKS = false;
 
 double background = 0.8;
 //double _slider_blockID = 57;
-double _slider_blockID = 64;
-double _slider_SDF_Func = 7;
-double _slider_SDF_Layers = 5;
+double _slider_blockID = 8;
+double _slider_SDF_Func =7;
+double _slider_SDF_Layers =5;
 double _slider_SDF_smooth = 2;
 
 ////////////////////////////////////////////////////////////////////////// zSpace Objects
@@ -84,8 +84,9 @@ double _slider_SDF_smooth = 2;
 string mainDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder";
 //string mainDir = "C:/Users/heba.eiz/source/repos/GitZHCODE/zSpace_Viewer/EXE/Data/natpower/outFolder";
 //string mainDir = "data/natpower/outFolder";
-string blockVersion = "18_4";
-//string blockVersion = "17_7";
+//string blockVersion = "16_1";
+// string blockVersion = "18_4";
+string blockVersion = "19_2";
 //string cablesDir = mainDir + "/cableGraphs";
 string cablesDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder/V17_6/shared/cableGraphs";
 //string blockDir = "data/NatPower/blocks/v13/";
@@ -103,18 +104,18 @@ zDomain<zPoint> bb;
 int resX = 200;
 int resY = 200;
 
-float printPlaneSpace = 0.008f;
-float printLayerWidth = 0.048f;
-float raftLayerWidth = 0.048f;
+float printPlaneSpace = 0.008;
+float printLayerWidth = 0.048;
+float raftLayerWidth = 0.048;
 
-zDomainFloat neopreneOffset(0.0f, 0.0f);
+zDomainFloat neopreneOffset(0, 0);
 
 int SDFFunc_Num = 2;
 int SDFFunc_NumSmooth = 1;
 int numSDFLayers = 5;
 bool allSDFLayers = false;
 
-zDomainFloat printHeightDomain(0.0057f, 0.0123f);
+zDomainFloat printHeightDomain(0.0057, 0.0123);
 //zDomainFloat printHeightDomain(0.0055, 0.013);
 
 
@@ -154,7 +155,7 @@ void setup()
 	B = *new ButtonGroup(vec(50, 450, 0));
 
 	int bcounter = 0;
-
+	
 
 	B.addButton(&allSDFLayers, "all_sdf_layer");
 	B.buttons[bcounter++].attachToVariable(&allSDFLayers);
@@ -212,14 +213,8 @@ void setup()
 	B.addButton(&dCritical, "dCritical");
 	B.buttons[bcounter++].attachToVariable(&dCritical);
 
-	blockID = 79;
-	readJson = true;
-	computeFRAMES = true;
-	computeSDF = true;
 
-	exportSections = true;
-	exportSDF = true;
-	allSDFLayers = true;
+
 }
 
 zFloatArray getArrayFromTransform(zTransform& transform)
@@ -253,16 +248,53 @@ void get2DArrayFromTransform(zTransform& transform, vector<zDoubleArray>& arr)
 
 void update(int value)
 {
-	if (blockID > 82)
+	if (selectBlockFolder)
 	{
-		std::cout << "####### DONE #######" << std::endl;
-		system("pause");
+		selectBlockFolder = !selectBlockFolder;
+
+		string readCIN = "n";
+		cout << "\n Current main directory is: \n " << mainDir << endl;
+		cout << "Change main dir? 'y' or 'n'" << endl;
+		cin >> readCIN;
+
+		string tempMainDir = mainDir;
+		if (readCIN == "y" || readCIN == "Y")
+		{
+			cout << "\n Enter main directory";
+			cin >> tempMainDir;
+		}
+
+
+		cout << "\n Enter blocks version number: (for example; 13_1 or 13) " << endl;
+		cin >> blockVersion;
+
+		//check if the directory exist
+		//string tempDir = tempMainDir + "/" + "V" + blockVersion + "/shared/blocks/";
+		string tempDir = tempMainDir + "/" + blockVersion + "/shared/blocks/";
+
+		if (!filesystem::exists(tempDir))
+		{
+			cout << "\n the following directory does NOT exist! \n " << tempDir;
+			cout << "\n Try again? 'y' or 'n' ";
+			cin >> readCIN;
+
+			if (readCIN == "y" || readCIN == "Y")
+			{
+				selectBlockFolder = true;
+			}
+
+		}
+		else
+		{
+			blockDir = tempDir;
+			cout << "\n Block Directory updated! " << endl << blockDir;
+		}
+
+
 	}
-
-	std::cout << "### BLOCK " << blockID << " ###" << std::endl;
-
 	if (readJson)
 	{
+		blockID = (int)_slider_blockID;
 		_slider_blockID = blockID;
 		mySlicer = zTsNatpowerSDF();
 		mySlicer.setFromJSON(blockDir, blockID, runBothPlanes, runPlaneLeft);
@@ -271,7 +303,7 @@ void update(int value)
 		//mySlicer.createFieldMesh(bb, resX, resY);
 		mySlicer.createFieldMeshFromMeshBounds(0.01f, 0.1);
 		//get cable graph
-
+		
 		mySlicer.setCableGraph(cablesDir);
 
 		toLOCAL = true;
@@ -279,9 +311,33 @@ void update(int value)
 		zFnMesh fnm(mySlicer.o_GuideMesh);
 		zDomainColor col_domain(zRED, zBLUE);
 
-		//readJson = !readJson;
-	}
 
+
+		//zDoubleArray vertexCurvature;
+		//fnm.getGaussianCurvature(vertexCurvature);
+
+		/*float min_gc = core.zMin(vertexCurvature);
+		float max_gc = core.zMax(vertexCurvature);
+
+		zDomainFloat gc_domain(min_gc, max_gc);
+		zDomainFloat out_domain(0.0, 1.0);*/
+
+		//printf("\n GaussianCurvature Min | Max %1.4f | %1.4f", min_gc, max_gc);
+
+		//for (zItMeshVertex v(mySlicer.o_GuideMesh); !v.end(); v++)
+		//{
+		//	zColor v_blendColor = core.blendColor(vertexCurvature[v.getId()], gc_domain, col_domain, zHSV);
+		//	v.setColor(v_blendColor);
+
+		//	float remapValue = core.ofMap((float)vertexCurvature[v.getId()], gc_domain, out_domain);
+		//	vertexCurvature[v.getId()] = remapValue;
+
+		//}
+
+		//fnm.computeFaceColorfromVertexColor();
+
+		readJson = !readJson;
+	}
 	if (computeFRAMES)
 	{
 		mySlicer._interpolateFramesOrigins = interpolateOrigins;
@@ -292,7 +348,7 @@ void update(int value)
 		//printf("\n layerChk = %s | chkSDF %s | chkGeo %s", to_string(layerChk), to_string(chkSDF), to_string(chkGeo));
 		float cellSize = 0.007f;
 		//printf("\n ", mySlicer.)
-		if (mySlicer.planarBlock) mySlicer.createFieldMeshFromSectionBounds(cellSize, 0.2);
+		if(mySlicer.planarBlock) mySlicer.createFieldMeshFromSectionBounds(cellSize, 0.2);
 		else
 		{
 			bb = zDomain<zPoint>(zPoint(-0.3, -0.3, 0), zPoint(1.8, 0.8, 0));
@@ -303,29 +359,54 @@ void update(int value)
 			mySlicer.createFieldMesh(bb, resx, resy);
 
 		}
+		//if (mySlicer.planarBlock) mySlicer.createFieldMeshFromSectionBounds(0.01f, 0.2);
 
-		//computeFRAMES = !computeFRAMES;
+
+		/*int numMinPts = 0;
+		zFnPointCloud fn;
+		zObjPointCloud* o_minPts = mySlicer.getRawCriticalPoints(false);
+		fn = zFnPointCloud(*o_minPts);
+		zPointArray maxPoints;
+		fn.getVertexPositions(maxPoints);
+		for (auto& p : maxPoints)
+		{
+			cout << endl << p;
+		}*/
+
+		computeFRAMES = !computeFRAMES;
 	}
-
 	if (computeSDF)
 	{
 		printf("\n SDF smooth %i", SDFFunc_NumSmooth);
 		mySlicer.compute_PrintBlocks(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, false, true);
 
-		//computeSDF = !computeSDF;
+		//mySlicer.computeSDF(allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, printLayerWidth, 0, raftLayerWidth);;
+
+		computeSDF = !computeSDF;
 	}
 
 	if (computeHEIGHTS_Folder)
 	{
+		//bool chkSDF = false;
+		//bool chkGeo = true;
+		//bool layerChk = natpower.checkPrintLayerHeights(chkSDF, chkGeo);
+		//natpower.computePrintBlocks(printHeightDomain, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, neopreneOffset, true, false);
+		//printf("\n layerChk = %s | chkSDF %s | chkGeo %s", to_string(layerChk), to_string(chkSDF), to_string(chkGeo));
 
 		mySlicer.check_PrintLayerHeights_Folder(blockDir, printHeightDomain, neopreneOffset, runBothPlanes, runPlaneLeft);
 
 		computeHEIGHTS_Folder = !computeHEIGHTS_Folder;
 	}
+	if (computeTRANSFORM)
+	{
+		mySlicer.setTransforms(toLOCAL);
+		toLOCAL = !toLOCAL;
 
+		computeTRANSFORM = !computeTRANSFORM;
+	}
 	if (exportSlice)
 	{
-		//expBlockDir = blockDir + "exported";
+		expBlockDir = blockDir + "exported";
 
 		if (!filesystem::is_directory(expBlockDir) || !filesystem::exists(expBlockDir)) filesystem::create_directory(expBlockDir);
 
@@ -347,7 +428,7 @@ void update(int value)
 	if (exportSections)
 	{
 
-		//expBlockDir = blockDir + "exportedSDF";
+		expBlockDir = blockDir + "exportedSDF";
 
 
 		if (!filesystem::is_directory(expBlockDir) || !filesystem::exists(expBlockDir)) filesystem::create_directory(expBlockDir);
@@ -369,7 +450,7 @@ void update(int value)
 
 
 		}*/
-		string OutputFolder = expBlockDir + "/" + to_string(blockID) + "/";
+		string OutputFolder = expBlockDir +"/" + to_string(blockID) + "/";
 
 		cout << endl << "ExportDir: \n" << OutputFolder;
 
@@ -398,17 +479,22 @@ void update(int value)
 			core.json_write(path, j);
 
 			//try to read one of the json
-			//string path2 = OutputFolder + "section_" + core.getPaddedIndexString(0, 3) + ".json";
-			char* chr = path.data();
+			//zExtGraph extGraph;
+			////string path2 = OutputFolder + "section_" + core.getPaddedIndexString(0, 3) + ".json";
+			//char* chr = path.data();
+
+			//ext_graph_from(chr, extGraph);
+
 		}
 
-		//exportSections = !exportSections;
+		exportSections = !exportSections;
 	}
-
+	
 	if (exportSDF)
 	{
-		//exportSDF = !exportSDF;
-		expBlockDir = blockDir + "exportedSDF";
+		exportSDF = !exportSDF;
+		expBlockDir = blockDir + "exportedSDF_2";
+
 
 		bool chkTransform = false;
 
@@ -430,7 +516,6 @@ void update(int value)
 		//mySlicer.exportJSON(blockDir, OutputFolder, "3dp_block", printLayerWidth, raftLayerWidth);
 		mySlicer.exportJSON_update(blockDir, OutputFolder);
 	}
-
 	if (readSDF)
 	{
 		readSDF = !readSDF;
@@ -439,7 +524,7 @@ void update(int value)
 
 
 
-
+		
 
 	}
 	if (SDFFunc_Num != _slider_SDF_Func)
@@ -464,7 +549,7 @@ void update(int value)
 		SDFFunc_NumSmooth = (int)_slider_SDF_smooth;
 	}
 
-	blockID++;
+
 }
 
 
@@ -570,8 +655,8 @@ void draw()
 			zObjMeshArray geo = mySlicer.o_sectionMeshes;
 			int numGraphs = geo.size();
 
-			int i = (currentGraphId - 1);
-
+			int i = (currentGraphId -1);
+			
 			if (numGraphs > 0 && i >= 0 & i < numGraphs)
 			{
 				geo[i].setDisplayElements(true, true, true);
@@ -635,7 +720,7 @@ void draw()
 		//printf("\n d %i", fn.numVertices());
 	}
 
-	bool pentagon = !mySlicer.isRegular && dOtherSide;
+	bool pentagon = !mySlicer.isRegular&& dOtherSide;
 
 	if (dSectionGraphs)
 	{
@@ -699,8 +784,8 @@ void draw()
 
 					for (zItGraphVertex v(*graphs[i + end]); !v.end(); v++)
 					{
-						if (!(v.getColor() == zBLACK))
-							model.displayUtils.drawPoint(v.getPosition(), v.getColor(), 15);
+						if(!(v.getColor() == zBLACK))
+						model.displayUtils.drawPoint(v.getPosition(), v.getColor(), 15);
 
 					}
 				}
@@ -805,15 +890,15 @@ void draw()
 	{
 		mySlicer.o_GuideMesh.draw();
 	}
-
+	
 	if (dCable)
 	{
-		for (auto c : mySlicer.o_CableGraphs)
+		for(auto c: mySlicer.o_CableGraphs)
 		{
 			c.draw();
 		}
 	}
-
+	
 	//////////////////////////////////////////////////////////
 
 	setup2d();
