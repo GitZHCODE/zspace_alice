@@ -55,6 +55,9 @@
     <ClInclude Include="src\userSrc\tzSketches\ConfiguratorField\zTsConfiguratorField.h">
       <Filter>Sketches\tzSketches\configuratorField</Filter>
     </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Landuse\zTsConfiguratorLanduse.h">
+      <Filter>Sketches\tzSketches\landuse</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MVC">
@@ -167,6 +170,12 @@
     </Filter>
     <Filter Include="Sketches\tzSketches\FDM">
       <UniqueIdentifier>{78789a83-0ef4-4368-ae7b-5cd5ff33c617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\TNA">
+      <UniqueIdentifier>{1b216579-9fcd-44d3-9096-a298d2461694}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\landuse">
+      <UniqueIdentifier>{539f4e5d-6507-4173-9697-3fb47c0cc340}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -517,6 +526,15 @@
     </ClCompile>
     <ClCompile Include="src\userSrc\tzSketches\FDM\sketch_zSpace_FDM_Mesh.cpp">
       <Filter>Sketches\tzSketches\FDM</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TNA\sketch_zSpace_TNA.cpp">
+      <Filter>Sketches\tzSketches\TNA</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Landuse\sketch_Beeah.cpp">
+      <Filter>Sketches\tzSketches\landuse</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Landuse\zTsConfiguratorLanduse.cpp">
+      <Filter>Sketches\tzSketches\landuse</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -27,7 +27,7 @@ namespace zSpace
 			double theta = i * angleIncrement;
 			double x = center.x + radius * std::cos(theta);
 			double y = center.y + radius * std::sin(theta);
-			circlePoints.push_back(zVector(x,y,0));
+			circlePoints.push_back(zVector(x,y,center.z));
 		}
 
 		return circlePoints;
@@ -132,6 +132,14 @@ namespace zSpace
 		usd_openStage(path_assets, stage);
 
 		zObjMeshPointerArray meshPtrArr;
+		vector<VtArray<int>> arr_creaseIndices;
+		vector<VtArray<int>> arr_creaseLengths;
+		vector<VtArray<float>> arr_creaseSharpnesses;
+		arr_creaseIndices.reserve(50);
+		arr_creaseLengths.reserve(50);
+		arr_creaseSharpnesses.reserve(50);
+
+		int counter = 0;
 		if (stage)
 			for (UsdPrim prim : stage->Traverse())
 			{
@@ -141,8 +149,34 @@ namespace zSpace
 					meshPtrArr.push_back(mPtr);
 					zFnMesh fn(*mPtr);
 					fn.from(prim);
+
+					UsdGeomMesh usdMesh(prim);
+
+					VtArray<int> creaseIndices;
+					VtArray<int> creaseLengths;
+					VtArray<float> creaseSharpnesses;
+
+					// Check if the attributes are valid before getting their values
+					if (usdMesh.GetCreaseIndicesAttr().Get(&creaseIndices))
+						arr_creaseIndices.push_back(creaseIndices);
+					else
+						arr_creaseIndices.emplace_back(); // Push an empty array
+
+					if (usdMesh.GetCreaseLengthsAttr().Get(&creaseLengths))
+						arr_creaseLengths.push_back(creaseLengths);
+					else
+						arr_creaseLengths.emplace_back(); // Push an empty array
+
+					if (usdMesh.GetCreaseSharpnessesAttr().Get(&creaseSharpnesses))
+						arr_creaseSharpnesses.push_back(creaseSharpnesses);
+					else
+						arr_creaseSharpnesses.emplace_back(); // Push an empty array
 				}
 			}
+
+		arr_creaseIndices.shrink_to_fit();
+		arr_creaseLengths.shrink_to_fit();
+		arr_creaseSharpnesses.shrink_to_fit();
 
 		int numAssets = meshPtrArr.size();
 		for (auto& parcel : parcels)
@@ -150,9 +184,27 @@ namespace zSpace
 			int id = parcel.assetId > numAssets - 1 ? numAssets - 1 : parcel.assetId;
 			parcel.assetMesh = zObjMesh(*meshPtrArr[id]);
 
+			if (id < arr_creaseIndices.size())
+				parcel.creaseIndices = arr_creaseIndices[id];
+			else
+				parcel.creaseIndices = VtArray<int>();
+
+			if (id < arr_creaseLengths.size())
+				parcel.creaseLengths = arr_creaseLengths[id];
+			else
+				parcel.creaseLengths = VtArray<int>();
+
+			if (id < arr_creaseSharpnesses.size())
+				parcel.creaseSharpnesses = arr_creaseSharpnesses[id];
+			else
+				parcel.creaseSharpnesses = VtArray<float>();
+
 			parcel.updateTransform();
 		}
 
+		// Clean up dynamically allocated meshes if necessary
+		for (auto& meshPtr : meshPtrArr)
+			delete meshPtr;
 	}
 
 	void zTsConfiguratorField:: exportAssets()
@@ -173,6 +225,11 @@ namespace zSpace
 
 					zFnMesh fn(parcel.assetMesh);
 					fn.to(prim);
+
+					UsdGeomMesh usdMesh(prim);
+					usdMesh.CreateCreaseIndicesAttr().Set(parcel.creaseIndices);
+					usdMesh.CreateCreaseLengthsAttr().Set(parcel.creaseLengths);
+					usdMesh.CreateCreaseSharpnessesAttr().Set(parcel.creaseSharpnesses);
 
 					counter++;
 				}
@@ -223,6 +280,17 @@ namespace zSpace
 				zPointArray pos;
 				e.getVertexPositions(pos);
 				display.drawLine(pos[0], pos[1], zRED, 4);
+			}
+
+
+			for (zItMeshEdge e(graphMesh); !e.end(); e++)
+			{
+				if (e.onBoundary())
+				{
+					zPointArray pos;
+					e.getVertexPositions(pos);
+					display.drawLine(pos[0], pos[1], zBLACK, 2);
+				}
 			}
 		}
 
@@ -357,7 +425,11 @@ namespace zSpace
 				{
 					zItMeshScalarField s(scalarField, fCentre);
 
-					parcels.emplace_back(f.getCenter() + randomNumber(rndMin, rdnMax), numParcels, radius);
+					if (nf_parcels != 1)
+						parcels.emplace_back(f.getCenter() + randomNumber(rndMin, rdnMax), numParcels, radius);
+					else
+						parcels.emplace_back(f.getCenter(), numParcels, radius);
+
 					parcels[numParcels].vec = fieldVectors[s.getId()];
 					parcels[numParcels].col = colour;
 

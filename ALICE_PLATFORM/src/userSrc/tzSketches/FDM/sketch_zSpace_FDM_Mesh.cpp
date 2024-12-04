@@ -37,8 +37,11 @@ double factor = 5;
 //string path = "data/fdm_01.json";
 //string exportPath = "data/fdm_out.obj";
 
-string path = "data/FDM/fdm.usda";
-string exportPath = "data/FDM/fdm_out.usda";
+//string path = "data/FDM/fdm.usda";
+//string exportPath = "data/FDM/fdm_out.usda";
+
+string path = "data/FDM/fdm.json";
+string exportPath = "data/FDM/fdm_out.json";
 
 //string pathJSON = "C:/Users/vishu.b/Desktop/Dnipro_C01export_001.json";
 
@@ -195,13 +198,13 @@ void update(int value)
 	if (readGraph)
 	{
 		zFnMesh fnInput = zFnMesh(o_input);
-		//fnInput.from(path, zJSON);
-		fnInput.from(path, zUSD);
+		fnInput.from(path, zJSON);
+		//fnInput.from(path, zUSD);
 		fnInput.setEdgeColor(zGREEN);
 
 		zFnMesh fnresult = zFnMesh(o_result);
-		//fnresult.from(path, zJSON);
-		fnresult.from(path, zUSD);
+		fnresult.from(path, zJSON);
+		//fnresult.from(path, zUSD);
 
 
 		myVault = zTsMeshVault(o_result);
@@ -238,7 +241,8 @@ void update(int value)
 	{	
 		// export to obj
 		//myVault.fnResult.to(exportPath, zOBJ);
-		myVault.fnResult.to(exportPath, zUSD);
+		//myVault.fnResult.to(exportPath, zUSD);
+		myVault.fnResult.to(exportPath, zJSON);
 		exportResult = !exportResult;
 	}
 
