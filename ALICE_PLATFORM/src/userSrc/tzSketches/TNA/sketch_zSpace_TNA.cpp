@@ -93,6 +93,8 @@ bool FDM = false;
 
 bool walkNext = false;
 
+bool e_result = false;
+
 int currentId = 0;
 int rCnt = 0;
 
@@ -180,6 +182,9 @@ void setup()
 	B.addButton(&verticalE, "verticalE");
 	B.buttons[buttonCounter++].attachToVariable(&verticalE);
 
+	B.addButton(&e_result, "e_result");
+	B.buttons[buttonCounter++].attachToVariable(&e_result);
+
 	//////////////////////////////////////////////////////////////////////////
 
 	operateObj.setDisplayElements(true, true, true);
@@ -191,7 +196,7 @@ void update(int value)
 	
 	if (c_form)
 	{
-		
+		myVault.fnForm.clear();
 		myVault.fnForm.from(path, zUSD);
 
 		//Get constraints (based on vertex color in this case
@@ -215,7 +220,10 @@ void update(int value)
 
 
 		
-		for (zItMeshHalfEdge he(*myVault.formObj); !he.end(); he++) if(he.onBoundary()) tensionEdges.push_back(he.getId());
+		for (zItMeshHalfEdge he(*myVault.formObj); !he.end(); he++) 
+			if(he.getStartVertex().getColor() == zColor(1,1,1,1) &&
+				he.getVertex().getColor() == zColor(1,1,1,1)) 
+				tensionEdges.push_back(he.getId());
 		myVault.setTensionEdges(zFormDiagram, tensionEdges);
 
 		formObj.setDisplayElements(true, true, false);
@@ -225,6 +233,7 @@ void update(int value)
 
 	if (c_force)
 	{
+		myVault.fnForce.clear();
 		myVault.createForceFromForm(rotate90);
 
 		myVault.translateForceDiagram(2.0);
@@ -250,6 +259,9 @@ void update(int value)
 
 	if (c_Result)
 	{		
+		zFnMesh fn(resultObj);
+		fn.clear();
+
 		myVault.createResultFromForm();
 
 		// set vertexWeights 
@@ -266,10 +278,18 @@ void update(int value)
 		// set vertex thickness
 		myVault.setVertexThickness(vThickness);
 
-		bool out = myVault.equilibriumVertical(computeFD,forceDiagramScale);
+		bool out = myVault.equilibriumVertical(computeFD, forceDiagramScale);
 
 		verticalE = !out;
 
+	}
+
+	if (e_result)
+	{
+		zFnMesh fnMesh(resultObj);
+		fnMesh.to(exportPath, zUSD);
+
+		e_result = !e_result;
 	}
 }
 

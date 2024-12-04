@@ -83,7 +83,7 @@ void update(int value)
 {
 	if (compute)
 	{
-		configurator.compute(1000, 0.1, 0.001);
+		configurator.compute(1000, 0.05, 0.001);
 
 		compute = !compute;
 
@@ -165,41 +165,26 @@ void keyPress(unsigned char k, int xm, int ym)
 		{
 			for (int j = 0; j < configurator.COLS; ++j)
 			{
+				string s;
+
 				zItMeshFace f(configurator.displayMesh, configurator.gridFaceIds[i][j]);
 
-				char c;
-				switch (configurator.grid[i][j])
-				{
-				case RESIDENTIAL:
-					c = 'R';
-					break;
-				case OFFICE:
-					c = 'O';
-					break;
-				case COM_SHOP:
-					c = 'S';
-					break;
-				case COM_CAFE:
-					c = 'C';
-					break;
-				case TRANSPORT:
-					c = 'T';
-					break;
-				case PUBLIC:
-					c = 'P';
-					break;
-				case LANDSCAPE:
-					c = 'L';
-					break;
-				case ROAD:
-					c = 'D';
-					break;
-				default:
-					c = '.';
-					break;
-				}
-				string s;
-				s.push_back(c);
+				CellAbbr abbr = configurator.cellAbbrs[configurator.grid[i][j]];
+				s = std::visit([](auto&& arg) {
+					std::cout << arg << std::endl;
+
+					using T = std::decay_t<decltype(arg)>;
+					if constexpr (std::is_same_v<T, std::string>) {
+						return arg;
+					}
+					else if constexpr (std::is_same_v<T, char>) {
+						return std::string(1, arg);
+					}
+					else {
+						return std::to_string(arg);
+					}
+					}, abbr);
+
 				fTypes.push_back(s);
 				fCentres.push_back(f.getCenter());
 			}

@@ -90,10 +90,10 @@ namespace zSpace
                 gridFaceIds[ct_row][ct_col] = he_col.getFace().getId();
 
                 //if (col == zColor(1, 1, 1)) grid[ROWS][COLS] = EMPTY;
-				if      (color == zColor(0, 0, 0, 1)) grid[ct_row][ct_col] = ROAD;
+				if      (color == zColor(0, 0, 0, 1)) grid[ct_row][ct_col] = ROAD_VEHICLE;
+				else if (color == zColor(1, 0, 1, 1)) grid[ct_row][ct_col] = ROAD_PEDESTRIAN;
+				else if (color == zColor(0, 1, 0, 1)) grid[ct_row][ct_col] = OPEN_LANDSCAPE;
 				else if (color == zColor(1, 0, 0, 1)) grid[ct_row][ct_col] = TRANSPORT;
-				else if (color == zColor(0, 1, 0, 1)) grid[ct_row][ct_col] = LANDSCAPE;
-				else if (color == zColor(1, 0, 1, 1)) grid[ct_row][ct_col] = PUBLIC;
 
                 //cout << "-------" << endl;
                 //cout << ct_row << "," << ct_col << endl;
@@ -173,38 +173,8 @@ namespace zSpace
             //for (auto& cell = row.rbegin(); cell != row.rend(); ++cell)
             for (const auto& cell : row)
             {
-                char c;
-                switch (cell)
-                {
-                case RESIDENTIAL:
-                    c = 'R';
-                    break;
-                case OFFICE:
-                    c = 'O';
-                    break;
-                case COM_SHOP:
-                    c = 'S';
-                    break;
-                case COM_CAFE:
-                    c = 'C';
-                    break;
-                case TRANSPORT:
-                    c = 'T';
-                    break;
-                case PUBLIC:
-                    c = 'P';
-                    break;
-                case LANDSCAPE:
-                    c = 'L';
-                    break;
-                case ROAD:
-                    c = 'D';
-                    break;
-                default:
-                    c = '.';
-                    break;
-                }
-                cout << c << ' ';
+                CellAbbr abbr = cellAbbrs[cell];
+                std::visit([](auto&& arg) { std::cout << arg << " "; }, abbr);
             }
             cout << endl;
         }
@@ -218,37 +188,7 @@ namespace zSpace
             for (int j = 0; j < COLS; ++j)
             {
                 zItMeshFace f(displayMesh, gridFaceIds[i][j]);
-
-                switch (grid[i][j])
-                {
-                case RESIDENTIAL:
-                    f.setColor(zColor(1, 0.3, 0, 1));
-                    break;
-                case OFFICE:
-                    f.setColor(zColor(0, 1, 1, 1));
-                    break;
-                case COM_SHOP:
-                    f.setColor(zColor(0, 0.3, 1, 1));
-                    break;
-                case COM_CAFE:
-                    f.setColor(zColor(1, 1, 0, 1));
-                    break;
-                case TRANSPORT:
-                    f.setColor(zColor(1, 0, 0, 1));
-                    break;
-                case PUBLIC:
-                    f.setColor(zColor(1, 0, 1, 1));
-                    break;
-                case LANDSCAPE:
-                    f.setColor(zColor(0, 1, 0, 1));
-                    break;
-                case ROAD:
-                    f.setColor(zColor(0, 0, 0, 1));
-                    break;
-                default:
-                    f.setColor(zColor(1, 1, 1, 1));
-                    break;
-                }
+                f.setColor(cellColors[grid[i][j]]);
             }
         }
     }
