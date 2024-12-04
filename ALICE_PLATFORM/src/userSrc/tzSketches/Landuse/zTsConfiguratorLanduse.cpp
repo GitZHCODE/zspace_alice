@@ -112,6 +112,19 @@ namespace zSpace
         cout << "Input Grid:" << endl;
         printGrid(grid);
 
+        // assign random green
+        int numGreenCells = (ROWS * COLS) / 25; // Adjust as needed
+
+        for (int i = 0; i < numGreenCells; ++i)
+        {
+            int x, y;
+            x = rand() % ROWS;
+            y = rand() % COLS;
+
+            if (grid[x][y] == EMPTY)
+                grid[x][y] = OPEN_LANDSCAPE;
+        }
+
         // Compute distance maps
         auto distanceStart = high_resolution_clock::now();
         distanceMaps = computeDistanceMaps(grid);
@@ -128,6 +141,7 @@ namespace zSpace
 
         generateGrid_input(grid, agentPercentages);
         //generateGrid_heuristic(grid, agentPercentages, distanceMaps);
+
         cout << "Initial Grid:" << endl;
         printGrid(grid);
     }
@@ -173,8 +187,7 @@ namespace zSpace
             //for (auto& cell = row.rbegin(); cell != row.rend(); ++cell)
             for (const auto& cell : row)
             {
-                CellAbbr abbr = cellAbbrs[cell];
-                std::visit([](auto&& arg) { std::cout << arg << " "; }, abbr);
+                std::cout << cellAbbrs[cell].second << " ";
             }
             cout << endl;
         }

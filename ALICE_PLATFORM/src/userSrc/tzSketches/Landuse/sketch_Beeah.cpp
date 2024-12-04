@@ -41,6 +41,16 @@ string path_export = "data/Landuse/result.usda";
 vector<zPoint> fCentres;
 vector<string> fTypes;
 
+map<CellType,std::pair<string,zColor>> legendTable;
+
+
+std::string to_string_two_decimals(double value)
+{
+	std::stringstream stream;
+	stream << std::fixed << std::setprecision(2) << value;
+	return stream.str();
+}
+
 void setup()
 {
 	////////////////////////////////////////////////////////////////////////// Enable smooth display
@@ -77,13 +87,26 @@ void setup()
 
 	//configurator
 	configurator.initialise(path_underlayMesh);
+
+	//legend
+	for (auto& cell : configurator.cellColors)
+	{
+		string percentage = "    ";
+
+		auto it = configurator.agentPercentages.find(cell.first);
+		if (it != configurator.agentPercentages.end())
+			percentage = to_string_two_decimals(configurator.agentPercentages[cell.first]);
+
+		legendTable[cell.first].first = percentage  + "  " + configurator.cellAbbrs[cell.first].first;
+		legendTable[cell.first].second = cell.second;
+	}
 }
 
 void update(int value)
 {
 	if (compute)
 	{
-		configurator.compute(1000, 0.05, 0.001);
+		configurator.compute(1000, 0.02, 0.001);
 
 		compute = !compute;
 
@@ -106,6 +129,9 @@ void update(int value)
 
 void draw()
 {
+	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_MULTISAMPLE);
+	glEnable(GL_MULTISAMPLE);
+
 	backGround(background);
 	//drawGrid(50);
 
@@ -134,6 +160,20 @@ void draw()
 	glColor3f(0, 0, 0);
 	drawString("Best Score:" + to_string(configurator.finalScore), vec(winW - 350, winH - 500, 0));
 	drawString("Current Iteration:" + to_string((int)configurator.finalIteration), vec(winW - 350, winH - 475, 0));
+
+	// draw legend
+	vec pos_icon(winW - 350, winH - 100, 0);
+	vec pos_legend(pos_icon.x + 20, pos_icon.y, pos_icon.z);
+	vec move(0,-15,0);
+	for (auto& legend :legendTable)
+	{
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		drawString(legend.second.first, pos_legend);
+		glColor4f(legend.second.second.r, legend.second.second.g, legend.second.second.b, legend.second.second.a);
+		drawRectangle(vec(pos_icon.x - 5, pos_icon.y - 5, 0), vec(pos_icon.x + 5, pos_icon.y + 5, 0));
+		pos_legend += move;
+		pos_icon += move;
+	}
 
 	restore3d();
 
@@ -165,25 +205,9 @@ void keyPress(unsigned char k, int xm, int ym)
 		{
 			for (int j = 0; j < configurator.COLS; ++j)
 			{
-				string s;
+				string s = configurator.cellAbbrs[configurator.grid[i][j]].second;
 
 				zItMeshFace f(configurator.displayMesh, configurator.gridFaceIds[i][j]);
-
-				CellAbbr abbr = configurator.cellAbbrs[configurator.grid[i][j]];
-				s = std::visit([](auto&& arg) {
-					std::cout << arg << std::endl;
-
-					using T = std::decay_t<decltype(arg)>;
-					if constexpr (std::is_same_v<T, std::string>) {
-						return arg;
-					}
-					else if constexpr (std::is_same_v<T, char>) {
-						return std::string(1, arg);
-					}
-					else {
-						return std::to_string(arg);
-					}
-					}, abbr);
 
 				fTypes.push_back(s);
 				fCentres.push_back(f.getCenter());
