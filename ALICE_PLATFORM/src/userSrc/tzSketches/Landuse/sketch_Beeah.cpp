@@ -106,7 +106,7 @@ void update(int value)
 {
 	if (compute)
 	{
-		configurator.compute(1000, 0.02, 0.001);
+		configurator.compute(1000, 0.005, 0.001);
 
 		compute = !compute;
 

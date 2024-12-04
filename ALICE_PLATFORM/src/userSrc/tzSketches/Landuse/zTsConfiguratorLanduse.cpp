@@ -113,17 +113,17 @@ namespace zSpace
         printGrid(grid);
 
         // assign random green
-        int numGreenCells = (ROWS * COLS) / 25; // Adjust as needed
+        //int numGreenCells = (ROWS * COLS) / 25; // Adjust as needed
 
-        for (int i = 0; i < numGreenCells; ++i)
-        {
-            int x, y;
-            x = rand() % ROWS;
-            y = rand() % COLS;
+        //for (int i = 0; i < numGreenCells; ++i)
+        //{
+        //    int x, y;
+        //    x = rand() % ROWS;
+        //    y = rand() % COLS;
 
-            if (grid[x][y] == EMPTY)
-                grid[x][y] = OPEN_LANDSCAPE;
-        }
+        //    if (grid[x][y] == EMPTY)
+        //        grid[x][y] = OPEN_LANDSCAPE;
+        //}
 
         // Compute distance maps
         auto distanceStart = high_resolution_clock::now();
@@ -166,6 +166,10 @@ namespace zSpace
         cout << "Optimised Score Computation Time: " << finalScoreDuration.count() << " milliseconds" << endl;
 
         cout << "Optimisation Time: " << optimisationDuration.count() << " milliseconds" << endl;
+
+        // Call the final greedy swap to further optimize the grid
+        //finalGreedySwap(1000, 10);
+
     }
 
     void zTsConfiguratorLanduse::to(string path)
@@ -396,6 +400,115 @@ namespace zSpace
         }
 
         grid = bestGrid;
+    }
+
+    // Implementation of the Greedy Swap Optimization Method
+    void zTsConfiguratorLanduse::finalGreedySwap(int maxIterations, int maxConsecutiveNoImprovements)
+    {
+        bool improved = false;
+        int iteration = 0;
+        int consecutiveNoImprovements = 0;
+
+        std::cout << "\nStarting Final Greedy Swap Optimization..." << std::endl;
+
+        do
+        {
+            improved = false;
+            double currentBestScore = finalScore;
+            int best_i1 = -1, best_j1 = -1;
+            int best_i2 = -1, best_j2 = -1;
+
+            // Iterate through each cell in the grid
+            for (int i = 0; i < ROWS; ++i)
+            {
+                for (int j = 0; j < COLS; ++j)
+                {
+                    // Iterate through all other cells to find a potential swap
+                    for (int k = i; k < ROWS; ++k)
+                    {
+                        // To avoid redundant swaps, start j from 0 if k > i
+                        int startCol = (k == i) ? j + 1 : 0;
+                        for (int l = startCol; l < COLS; ++l)
+                        {
+                            // Skip swapping the cell with itself
+                            if (i == k && j == l)
+                                continue;
+
+                            bool check1 = find(agentTypes.begin(), agentTypes.end(), grid[i][j]) != agentTypes.end();
+                            bool check2 = find(agentTypes.begin(), agentTypes.end(), grid[k][l]) != agentTypes.end();
+
+                            // Both are agents
+                            if (check1 && check2)
+                            {
+                                // Swap the two cells
+                                std::swap(grid[i][j], grid[k][l]);
+
+                                // Calculate the new score after the swap
+                                double newScore = calculateScore(grid, distanceMaps);
+
+                                // Check if the swap improves the score
+                                if (newScore > currentBestScore)
+                                {
+                                    // Update the best swap found in this iteration
+                                    currentBestScore = newScore;
+                                    best_i1 = i;
+                                    best_j1 = j;
+                                    best_i2 = k;
+                                    best_j2 = l;
+                                    improved = true;
+                                }
+
+                                // Revert the swap as we are still searching for the best possible swap
+                                std::swap(grid[i][j], grid[k][l]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // If an improvement was found, perform the best swap
+            if (improved && best_i1 != -1)
+            {
+                std::swap(grid[best_i1][best_j1], grid[best_i2][best_j2]);
+                finalScore = calculateScore(grid, distanceMaps); // Update the final score
+                //std::cout << "Iteration " << (iteration + 1) << ": Swapped ("
+                //    << best_i1 << "," << best_j1 << ") with ("
+                //    << best_i2 << "," << best_j2 << ") to improve score to "
+                //    << finalScore << std::endl;
+                consecutiveNoImprovements = 0; // Reset the counter
+            }
+            else
+            {
+                consecutiveNoImprovements++;
+            }
+
+            iteration++;
+
+            // Check if the maximum number of iterations or consecutive no improvements has been reached
+            if (iteration >= maxIterations)
+            {
+                std::cout << "Reached maximum iterations (" << maxIterations << "). Stopping further swaps." << std::endl;
+                break;
+            }
+
+            if (consecutiveNoImprovements >= maxConsecutiveNoImprovements)
+            {
+                std::cout << "No improvements in the last " << maxConsecutiveNoImprovements << " iterations. Stopping further swaps." << std::endl;
+                break;
+            }
+
+        } while (improved && iteration < maxIterations);
+
+        if (!improved)
+        {
+            std::cout << "Final Greedy Swap: No further improvements found after "
+                << iteration << " iterations." << std::endl;
+        }
+        else
+        {
+            std::cout << "Final Greedy Swap: Optimization stopped after reaching the maximum iterations ("
+                << maxIterations << ")." << std::endl;
+        }
     }
 
     void zTsConfiguratorLanduse::draw()
