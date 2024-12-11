@@ -38,6 +38,9 @@ namespace zSpace
 
     void zTsConfiguratorLanduse::initialise(string path)
     {
+        finalScore = 0;
+        finalIteration = 0;
+
         zFnMesh fnMesh(underlayMesh);
         fnMesh.from(path, zUSD);
 
@@ -270,6 +273,7 @@ namespace zSpace
     double zTsConfiguratorLanduse::calculateScore(const vector<vector<CellType>>& grid, const map<CellType, vector<vector<double>>>& distanceMaps)
     {
         double totalScore = 0.0;
+        gridFaceScores = vector<vector<double>>(ROWS, vector<double>(COLS, numeric_limits<double>::min()));
 
         // Calculate score for each agent cell
         for (int i = 0; i < ROWS; ++i)
@@ -282,14 +286,14 @@ namespace zSpace
                     continue; // Not an agent cell
                 }
 
-                const vector<float>& preferences = agentPreferences[agentCell];
+                const vector<double>& preferences = agentPreferences[agentCell];
                 double agentScore = 0.0;
 
                 // For each land use type
                 for (size_t k = 0; k < landUseTypes.size(); ++k)
                 {
                     CellType landUseType = landUseTypes[k];
-                    float preference = preferences[k];
+                    double preference = preferences[k];
 
                     double distance = distanceMaps.at(landUseType)[i][j];
 
@@ -297,6 +301,7 @@ namespace zSpace
                     if (distance > 0.0 && distance < numeric_limits<double>::max())
                     {
                         agentScore += preference / distance;
+                        gridFaceScores[i][j] = agentScore;
                     }
                 }
 
@@ -400,6 +405,7 @@ namespace zSpace
         }
 
         grid = bestGrid;
+        colorGridFaces(grid);
     }
 
     // Implementation of the Greedy Swap Optimization Method
@@ -672,7 +678,7 @@ namespace zSpace
         map<CellType, vector<tuple<double, int, int>>> agentCellScores;
         for (CellType agentType : agentTypes)
         {
-            const vector<float>& preferences = agentPreferences[agentType];
+            const vector<double>& preferences = agentPreferences[agentType];
             vector<tuple<double, int, int>> cellScores; // (score, x, y)
 
             for (const auto& cell : emptyCells)
@@ -685,7 +691,7 @@ namespace zSpace
                 for (size_t k = 0; k < landUseTypes.size(); ++k)
                 {
                     CellType landUseType = landUseTypes[k];
-                    float preference = preferences[k];
+                    double preference = preferences[k];
                     double distance = distanceMaps.at(landUseType)[i][j];
 
                     if (distance > 0.0 && distance < numeric_limits<double>::max())

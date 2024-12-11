@@ -27,6 +27,7 @@ bool d_scanline = false;
 bool exportTo = false;
 
 bool drawType = false;
+bool drawScore = false;
 
 double background = 1.0;
 double cooldown = 1000;
@@ -45,6 +46,7 @@ string path_export = "data/Landuse/result.usda";
 // landuse
 vector<zPoint> fCentres;
 vector<string> fTypes;
+vector<string> fScores;
 
 map<CellType,std::pair<string,zColor>> legendTable;
 
@@ -99,6 +101,12 @@ void setup()
 	B.addButton(&exportTo, "exportTo");
 	B.buttons[5].attachToVariable(&exportTo);
 
+	//static_assert(alignof(zSpace::zColor) <= 8, "zColor alignment exceeds 8 bytes.");
+	//static_assert(alignof(zSpace::zObjMesh) <= 8, "zObjMesh alignment exceeds 8 bytes.");
+
+	//std::cout << "zColor Alignment: " << alignof(zSpace::zColor) << " bytes\n";
+	//std::cout << "zObjMesh Alignment: " << alignof(zSpace::zObjMesh) << " bytes\n";
+
 	//scanline
 	rects.reserve(1000);
 
@@ -112,6 +120,7 @@ void setup()
 		string percentage = "    ";
 
 		auto it = configurator.agentPercentages.find(cell.first);
+
 		if (it != configurator.agentPercentages.end())
 			percentage = to_string_two_decimals(configurator.agentPercentages[cell.first]);
 
@@ -126,6 +135,8 @@ void update(int value)
 	{
 		configurator.compute(1000, 0.005, 0.001);
 
+		c_scanline = true;
+
 		compute = !compute;
 
 		//std::exit(1);
@@ -133,6 +144,11 @@ void update(int value)
 
 	if (c_scanline)
 	{
+		rects.clear();
+		rects.reserve(1000);
+		matrix.clear();
+		positions.clear();
+
 		int rows = configurator.ROWS;
 		int cols = configurator.COLS;
 
@@ -142,7 +158,8 @@ void update(int value)
 		{
 			for (int j = 0; j < cols; j++)
 			{
-				if (configurator.grid[i][j] == RESI_MODULAR)
+				//if (configurator.grid[i][j] == RESI_MODULAR)
+				if (find(configurator.agentTypes.begin(), configurator.agentTypes.end(), configurator.grid[i][j]) != configurator.agentTypes.end())
 					matrix[i * cols + j] = true;
 
 				zItMeshFace f(configurator.displayMesh, configurator.gridFaceIds[i][j]);
@@ -187,6 +204,8 @@ void update(int value)
 	if (reset)
 	{
 		configurator.initialise(path_underlayMesh);
+		cooldown = 1000;
+
 		reset = !reset;
 	}
 
@@ -222,6 +241,12 @@ void draw()
 	{
 		for (int i = 0; i < fCentres.size(); i++)
 			model.displayUtils.drawTextAtPoint(fTypes[i], fCentres[i]);
+	}
+
+	if (drawScore)
+	{
+		for (int i = 0; i < fCentres.size(); i++)
+			model.displayUtils.drawTextAtPoint(fScores[i], fCentres[i]);
 	}
 
 	if (d_scanline)
@@ -303,9 +328,9 @@ void keyPress(unsigned char k, int xm, int ym)
 		configurator.compute(1000, cooldown, 0.001);
 		if (cooldown <= 100) cooldown -= 10;
 		else if (cooldown <= 5) cooldown -= 1;
-		else if (cooldown <= 1) cooldown -= 0.1;
+		else if (cooldown <= 1) cooldown -= 0.01;
 		else cooldown -= 100;
-		if (cooldown <= 0) cooldown = 0.1;
+		if (cooldown <= 0) cooldown = 0.005;
 	}
 
 	if (k == 't')
@@ -331,10 +356,34 @@ void keyPress(unsigned char k, int xm, int ym)
 		drawType = true;
 	}
 
+	if (k == 's')
+	{
+		configurator.displayMesh.setDisplayElements(false, true, false);
+
+		fScores.clear();
+		fCentres.clear();
+		// Print types
+		for (int i = 0; i < configurator.ROWS; ++i)
+		{
+			for (int j = 0; j < configurator.COLS; ++j)
+			{
+				string s = to_string_two_decimals(configurator.gridFaceScores[i][j]);
+
+				zItMeshFace f(configurator.displayMesh, configurator.gridFaceIds[i][j]);
+
+				fScores.push_back(s);
+				fCentres.push_back(f.getCenter());
+			}
+		}
+
+		drawScore = true;
+	}
+
 	if (k == 'r')
 	{
 		configurator.displayMesh.setDisplayElements(false, true, true);
 		drawType = false;
+		drawScore = false;
 	}
 
 
