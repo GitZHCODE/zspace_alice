@@ -166,12 +166,3 @@ project "ALICE"
         "{COPYFILE} %{wks.location}%{viewer_deps_path}\\gl2ps\\bin\\gl2ps.dll %{wks.location}%{exe_path}\\lib_zspace\\gl2ps.dll",
         "{COPYFILE} %{wks.location}%{viewer_deps_path}\\glew\\bin\\glew32.dll %{wks.location}%{exe_path}\\lib_zspace\\glew32.dll",
     }
-
-    --zSpace Post Build commands
-    postbuildcommands
-    {
-        "{COPYFILE} %{wks.location}%{zspace_core_path}\\bin\\%{cfg.buildcfg}\\%{cfg.platform}\\zSpace_Core.dll %{wks.location}%{exe_path}\\lib_zspace\\zSpace_Core.dll",
-        "{COPYFILE} %{wks.location}%{zspace_core_path}\\bin\\%{cfg.buildcfg}\\%{cfg.platform}\\zSpace_Interface.dll %{wks.location}%{exe_path}\\lib_zspace\\zSpace_Interface.dll",
-        "{COPYFILE} %{wks.location}%{zspace_core_path}\\bin\\%{cfg.buildcfg}\\%{cfg.platform}\\zSpace_InterOp.dll %{wks.location}%{exe_path}\\lib_zspace\\zSpace_InterOp.dll",
-        "{COPYFILE} %{wks.location}%{zspace_toolsets_path}\\bin\\%{cfg.buildcfg}\\%{cfg.platform}\\zSpace_Toolsets.dll %{wks.location}%{exe_path}\\lib_zspace\\zSpace_Toolsets.dll",
-    }

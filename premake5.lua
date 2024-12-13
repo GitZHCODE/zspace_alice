@@ -24,6 +24,9 @@ include (zspace_deps_path.."/zspace_deps.lua")
 -- Load Alice dependency lists
 include (viewer_deps_path.."/alice_deps.lua")
 
+--Define zSpace_Libs folder name
+zSpace_Libs_Folder = "lib_zspace"
+
 -- Set up viewer workspace
 workspace "ALICE"
     architecture "x64"

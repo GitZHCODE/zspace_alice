@@ -17,6 +17,10 @@ EXE/lib_omniverse/*
 # Data
 EXE/data/NatPower/*
 
+#Clangd stuff
+compile_commands.json
+.cache/
+
 # Visual studio files and solution files
 .vs/
 *.sln

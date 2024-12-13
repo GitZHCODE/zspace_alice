@@ -73,7 +73,7 @@ bool frameCHECKS = false;
 
 double background = 0.8;
 //double _slider_blockID = 57;
-double _slider_blockID = 8;
+double _slider_blockID = 64;
 double _slider_SDF_Func =7;
 double _slider_SDF_Layers =5;
 double _slider_SDF_smooth = 2;
@@ -85,8 +85,8 @@ string mainDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_N
 //string mainDir = "C:/Users/heba.eiz/source/repos/GitZHCODE/zSpace_Viewer/EXE/Data/natpower/outFolder";
 //string mainDir = "data/natpower/outFolder";
 //string blockVersion = "16_1";
-// string blockVersion = "18_4";
-string blockVersion = "19_2";
+ //string blockVersion = "18_4";
+string blockVersion = "19_5";
 //string cablesDir = mainDir + "/cableGraphs";
 string cablesDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder/V17_6/shared/cableGraphs";
 //string blockDir = "data/NatPower/blocks/v13/";
@@ -148,7 +148,7 @@ void setup()
 	S.sliders[3].attachToVariable(&_slider_SDF_smooth, 0, 7);
 
 	S.addSlider(&_slider_SDF_Layers, "SDF_Layers");
-	S.sliders[4].attachToVariable(&_slider_SDF_Layers, 0, 31);
+	S.sliders[4].attachToVariable(&_slider_SDF_Layers, 0, 100);
 
 	////////////////////////////////////////////////////////////////////////// Buttons
 
@@ -383,6 +383,8 @@ void update(int value)
 		//mySlicer.computeSDF(allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, printLayerWidth, 0, raftLayerWidth);;
 
 		computeSDF = !computeSDF;
+
+
 	}
 
 	if (computeHEIGHTS_Folder)
@@ -560,6 +562,8 @@ void draw()
 
 	S.draw();
 	B.draw();
+
+	mySlicer.debug_graph.draw();
 
 	if (dSliceLeft)
 	{
