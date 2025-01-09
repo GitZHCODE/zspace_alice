@@ -1,5 +1,5 @@
 
-//#define _MAIN_
+#define _MAIN_
 
 
 #ifdef _MAIN_
@@ -133,6 +133,8 @@ void setup()
 	model = zModel(100000);
 
 	string s;
+
+	cout << "Please give folder name of the input force polyhedras: \n";
 	cin >> s;
 
 	dirPath += "/";

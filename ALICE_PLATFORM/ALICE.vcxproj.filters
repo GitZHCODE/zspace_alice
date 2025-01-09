@@ -536,5 +536,8 @@
     <ClCompile Include="src\userSrc\tzSketches\Landuse\zTsConfiguratorLanduse.cpp">
       <Filter>Sketches\tzSketches\landuse</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\SDF\sketch_zspace_smooth_min.cpp">
+      <Filter>Sketches\tzSketches\sdf</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -54,7 +54,7 @@ map<CellType,std::pair<string,zColor>> legendTable;
 zPointArray positions;
 std::vector<bool> matrix;
 std::vector<bool> matrix_original;
-vector<pair<pair<int, int>, pair<int, int>>> rects;
+vector<zSpace::Rectangle> rects;
 
 
 std::string to_string_two_decimals(double value)
@@ -181,8 +181,8 @@ void update(int value)
 
 			rects.push_back(result);
 
-			std::cout << "MinBB: (" << result.first.first << ", " << result.first.second << ") ";
-			std::cout << "MaxBB: (" << result.second.first << ", " << result.second.second << ")\n";
+			std::cout << "MinBB: (" << result.minPos.rowId << ", " << result.minPos.colId << ") ";
+			std::cout << "MaxBB: (" << result.maxPos.rowId << ", " << result.maxPos.colId << ")\n";
 		}
 		else
 		{
@@ -251,19 +251,19 @@ void draw()
 
 	if (d_scanline)
 	{
-		for (int i = 0; i < positions.size(); i++)
-		{
-			zColor col;
-			if (matrix_original[i]) col = zBLUE;
-			else col = zRED;
-			model.displayUtils.drawPoint(positions[i], col, 5);
-		}
+		//for (int i = 0; i < positions.size(); i++)
+		//{
+		//	zColor col;
+		//	if (matrix_original[i]) col = zBLUE;
+		//	else col = zRED;
+		//	model.displayUtils.drawPoint(positions[i], col, 5);
+		//}
 
 		for (auto& rect : rects)
 		{
-			vector<pair<int,int>> edgeIds;
+			vector<zSpace::Position> edgeIds;
 
-			if (rect.first.first == rect.second.first || rect.first.second == rect.second.second)
+			if (rect.minPos.rowId == rect.maxPos.rowId || rect.minPos.colId == rect.maxPos.colId)
 				edgeIds = scanline.getIdsWithinRectangle(rect);
 			else
 			{
@@ -274,13 +274,16 @@ void draw()
 
 			for (int i = 0; i < edgeIds.size() - 1; i++)
 			{
-				int id_a = configurator.gridFaceIds[edgeIds[i].first][edgeIds[i].second];
-				int id_b = configurator.gridFaceIds[edgeIds[i + 1].first][edgeIds[i + 1].second];
+				int id_a = configurator.gridFaceIds[edgeIds[i].rowId][edgeIds[i].colId];
+				int id_b = configurator.gridFaceIds[edgeIds[i + 1].rowId][edgeIds[i + 1].colId];
 
 				zItMeshFace fa(configurator.displayMesh, id_a);
 				zItMeshFace fb(configurator.displayMesh, id_b);
 
-				model.displayUtils.drawLine(fa.getCenter(), fb.getCenter(), zBLACK, 8);
+				if (rect.maxPos.rowId - rect.minPos.rowId > 1 && rect.maxPos.colId - rect.minPos.colId > 1)
+					model.displayUtils.drawLine(fa.getCenter(), fb.getCenter(), zBLACK, 8);
+				else
+					model.displayUtils.drawLine(fa.getCenter(), fb.getCenter(), zGREEN, 8);
 			}
 
 			//if (rect.first.first != -1)
@@ -331,6 +334,11 @@ void keyPress(unsigned char k, int xm, int ym)
 		else if (cooldown <= 1) cooldown -= 0.01;
 		else cooldown -= 100;
 		if (cooldown <= 0) cooldown = 0.005;
+	}
+
+	if (k == 'w')
+	{
+		configurator.displayMesh.setDisplayElements(false, true, false);
 	}
 
 	if (k == 't')
