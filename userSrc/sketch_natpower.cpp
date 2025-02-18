@@ -1,3 +1,4 @@
+#include "zInterface/objects/zObjMeshField.h"
 #define _MAIN_
 #define _HAS_STD_BYTE 0
 
@@ -72,34 +73,25 @@ bool frameCHECKS = false;
 
 
 double background = 0.8;
-//double _slider_blockID = 57;
-double _slider_blockID = 64;
-double _slider_SDF_Func =7;
-double _slider_SDF_Layers =5;
-double _slider_SDF_smooth = 2;
+double _slider_blockID = 26;
+//double _slider_blockID = 64;
+double _slider_SDF_Func = 7;
+double _slider_SDF_Layers = 123;
+double _slider_SDF_smooth = 1;
 
 ////////////////////////////////////////////////////////////////////////// zSpace Objects
 
-//string mainDir = "C:/Users/heba.eiz/source/repos/GitZHCODE/0_APPS/Natpower_stereotomy/V2/Data/natpower/outFolder";
 string mainDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder";
-//string mainDir = "C:/Users/heba.eiz/source/repos/GitZHCODE/zSpace_Viewer/EXE/Data/natpower/outFolder";
-//string mainDir = "data/natpower/outFolder";
-//string blockVersion = "16_1";
- //string blockVersion = "18_4";
-string blockVersion = "19_5";
-//string cablesDir = mainDir + "/cableGraphs";
-string cablesDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder/V17_6/shared/cableGraphs";
-//string blockDir = "data/NatPower/blocks/v13/";
+
+string blockVersion = "20_1";
+//string blockVersion = "20_2";
+
+string cablesDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder/V19_11/shared/cableGraphs";
 string blockDir = mainDir + "/V" + blockVersion + "/shared/blocks/";
-//string expBlockDir = "data/NatPower/testSliceMesh/";
 string expBlockDir = "data/NatPower/testSliceMesh/";
 int blockID = 0;
 
-//string cableGraphDir = blockDir + "inCableGraphs/";
-
-
 zDomain<zPoint> bb;
-
 
 int resX = 200;
 int resY = 200;
@@ -108,14 +100,14 @@ float printPlaneSpace = 0.008;
 float printLayerWidth = 0.048;
 float raftLayerWidth = 0.048;
 
-zDomainFloat neopreneOffset(0, 0);
+zDomainFloat neopreneOffset(0.0f, 0.0f);
 
 int SDFFunc_Num = 2;
 int SDFFunc_NumSmooth = 1;
 int numSDFLayers = 5;
 bool allSDFLayers = false;
 
-zDomainFloat printHeightDomain(0.0057, 0.0123);
+zDomainFloat printHeightDomain(0.0057f, 0.0123f);
 //zDomainFloat printHeightDomain(0.0055, 0.013);
 
 
@@ -148,7 +140,7 @@ void setup()
 	S.sliders[3].attachToVariable(&_slider_SDF_smooth, 0, 7);
 
 	S.addSlider(&_slider_SDF_Layers, "SDF_Layers");
-	S.sliders[4].attachToVariable(&_slider_SDF_Layers, 0, 100);
+	S.sliders[4].attachToVariable(&_slider_SDF_Layers, 0, 150);
 
 	////////////////////////////////////////////////////////////////////////// Buttons
 
@@ -212,9 +204,6 @@ void setup()
 
 	B.addButton(&dCritical, "dCritical");
 	B.buttons[bcounter++].attachToVariable(&dCritical);
-
-
-
 }
 
 zFloatArray getArrayFromTransform(zTransform& transform)
@@ -297,6 +286,10 @@ void update(int value)
 		blockID = (int)_slider_blockID;
 		_slider_blockID = blockID;
 		mySlicer = zTsNatpowerSDF();
+
+		if (blockID == 0)
+			mySlicer.isCableBlock = true;
+
 		mySlicer.setFromJSON(blockDir, blockID, runBothPlanes, runPlaneLeft);
 
 		bb = zDomain<zPoint>(zPoint(-2.5, -2.5, 0), zPoint(2.5, 2.5, 0));
@@ -338,6 +331,7 @@ void update(int value)
 
 		readJson = !readJson;
 	}
+
 	if (computeFRAMES)
 	{
 		mySlicer._interpolateFramesOrigins = interpolateOrigins;
@@ -346,7 +340,7 @@ void update(int value)
 		//bool layerChk = natpower.checkPrintLayerHeights(chkSDF, chkGeo);
 		mySlicer.compute_PrintBlocks(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, true, false);
 		//printf("\n layerChk = %s | chkSDF %s | chkGeo %s", to_string(layerChk), to_string(chkSDF), to_string(chkGeo));
-		float cellSize = 0.007f;
+		float cellSize = 0.006f;
 		//printf("\n ", mySlicer.)
 		if(mySlicer.planarBlock) mySlicer.createFieldMeshFromSectionBounds(cellSize, 0.2);
 		else
@@ -495,7 +489,7 @@ void update(int value)
 	if (exportSDF)
 	{
 		exportSDF = !exportSDF;
-		expBlockDir = blockDir + "exportedSDF_2";
+		expBlockDir = blockDir + "exportedSDF_9";
 
 
 		bool chkTransform = false;
@@ -563,7 +557,13 @@ void draw()
 	S.draw();
 	B.draw();
 
-	mySlicer.debug_graph.draw();
+	mySlicer.o_debug_sectiongraph.draw();
+	mySlicer.o_debug_slotgraph.draw();
+	mySlicer.o_debug_splitgraph.draw();
+	mySlicer.o_debug_bracinggraph.draw();
+	mySlicer.o_debug_bracingslotsgraph.draw();
+	mySlicer.o_debug_trims.draw();
+	mySlicer.o_debug_cutout.draw();
 
 	if (dSliceLeft)
 	{
