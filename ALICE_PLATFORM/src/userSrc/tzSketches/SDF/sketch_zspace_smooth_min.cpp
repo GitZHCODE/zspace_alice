@@ -325,6 +325,8 @@ void update(int value)
 			fnField_result.setFieldValues(scalars_result, zFieldColorType::zFieldSDF, 0.01f);
 			fnField_result.getIsocontour(graphs[i], 0.01f);
 
+			//for (auto& v : scalars_result) cout << v << "\n";
+
 			zFnGraph fnGraph(graphs[i]);
 			fnGraph.setEdgeColor(cols[i], true);
 		}

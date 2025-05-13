@@ -55,6 +55,8 @@ vector<int> fixedVertices;
 int presFac = 1;
 double minEdgefac = 0.1;
 double offset = 0.1;
+double meshWidth = 0.1;
+double meshParam = 0.2;
 double angleTolerance = .01;
 double dT = 0.5;
 zIntergrationType intType = zRK4;
@@ -192,6 +194,11 @@ void setup()
 	S.addSlider(&minEdgefac, "minEdgefac");
 	S.sliders[6].attachToVariable(&minEdgefac, 0.001, 10.0);
 
+	S.addSlider(&meshWidth, "meshWidth");
+	S.sliders[7].attachToVariable(&meshWidth, 0.001, 2);
+
+	S.addSlider(&meshParam, "meshParam");
+	S.sliders[8].attachToVariable(&meshParam, 0.001, 0.999);
 
 	/////////////////////////////
 
@@ -207,7 +214,7 @@ void setup()
 	B.buttons[2].attachToVariable(&equilibrium);
 
 	B.addButton(&c_Polytopal, "c_Polytopal");
-	B.buttons[03].attachToVariable(&c_Polytopal);
+	B.buttons[3].attachToVariable(&c_Polytopal);
 
 	B.addButton(&closePolytopal, "closePolytopal");
 	B.buttons[4].attachToVariable(&closePolytopal);
@@ -475,9 +482,9 @@ void update(int value)
 
 	if (c_Polytopal)
 	{		
-		myPolytopal.createPolytopalsFromForce_profile(4, 0.1, 0.05, 0.3, subDIVS);
+		//myPolytopal.createPolytopalsFromForce_profile(4, 0.1, 0.05, 0.3, subDIVS);
 
-		//myPolytopal.createPolytopalsFromForce(0.1, 0.3, subDIVS);
+		myPolytopal.createPolytopalsFromForce(meshWidth, meshParam, subDIVS);
 
 		if (closePolytopal) myPolytopal.closePolytopals();
 

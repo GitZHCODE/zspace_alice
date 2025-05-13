@@ -58,6 +58,36 @@
     <ClInclude Include="src\userSrc\tzSketches\Landuse\zTsConfiguratorLanduse.h">
       <Filter>Sketches\tzSketches\landuse</Filter>
     </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\TJU\zTsTowerMaker.h">
+      <Filter>Sketches\tzSketches\TJU</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\TJU\zSMin.h">
+      <Filter>Sketches\tzSketches\TJU</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Natpower\include\zSlicer.h">
+      <Filter>Sketches\tzSketches\natpower\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Natpower\include\zTsSlicer.h">
+      <Filter>Sketches\tzSketches\natpower\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Natpower\include\zLayer.h">
+      <Filter>Sketches\tzSketches\natpower\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Natpower\include\zUnroller.h">
+      <Filter>Sketches\tzSketches\natpower\include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\TechLabSlicer\RapidMaker.h">
+      <Filter>Sketches\tzSketches\techlabSlicer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Algebra\RamerDouglasPeucker.h">
+      <Filter>Sketches\tzSketches\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Algebra\PolynomialRegression.h">
+      <Filter>Sketches\tzSketches\algebra</Filter>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Algebra\polynomialFitting.h">
+      <Filter>Sketches\tzSketches\algebra</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MVC">
@@ -176,6 +206,24 @@
     </Filter>
     <Filter Include="Sketches\tzSketches\landuse">
       <UniqueIdentifier>{539f4e5d-6507-4173-9697-3fb47c0cc340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\TJU">
+      <UniqueIdentifier>{9d3c1950-00d9-4d52-a267-805d9d9ed535}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\natpower">
+      <UniqueIdentifier>{2ff50ab0-06d2-41cf-bb5b-34298b849afd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\natpower\include">
+      <UniqueIdentifier>{d95fded5-5ff9-478a-ac65-0dde5a3c5bb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\natpower\src">
+      <UniqueIdentifier>{1919c6f4-a45b-4530-bb56-b35cfc9246fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\techlabSlicer">
+      <UniqueIdentifier>{48402c68-cdba-4308-a932-73e4ae2fb17c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sketches\tzSketches\algebra">
+      <UniqueIdentifier>{d0251883-a33e-4aff-9fdd-f0ed9cd48d38}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -538,6 +586,51 @@
     </ClCompile>
     <ClCompile Include="src\userSrc\tzSketches\SDF\sketch_zspace_smooth_min.cpp">
       <Filter>Sketches\tzSketches\sdf</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TJU\sketch_zspace_towerMaker.cpp">
+      <Filter>Sketches\tzSketches\TJU</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TJU\zTsTowerMaker.cpp">
+      <Filter>Sketches\tzSketches\TJU</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TJU\zSMin.cpp">
+      <Filter>Sketches\tzSketches\TJU</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\SDF\sketch_zspace_sdf_spinning.cpp">
+      <Filter>Sketches\tzSketches\sdf</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\sketch_zspace_Blend.cpp">
+      <Filter>Sketches\tzSketches\natpower</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\src\zSlicer.cpp">
+      <Filter>Sketches\tzSketches\natpower\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\src\zTsSlicer.cpp">
+      <Filter>Sketches\tzSketches\natpower\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\src\zLayer.cpp">
+      <Filter>Sketches\tzSketches\natpower\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\src\zUnroller.cpp">
+      <Filter>Sketches\tzSketches\natpower\src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\sketch_zspace_geodesic_heat_slicer.cpp">
+      <Filter>Sketches\tzSketches\techlabSlicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\zSpatialField.cpp">
+      <Filter>Sketches\tzSketches\techlabSlicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\RapidMaker.cpp">
+      <Filter>Sketches\tzSketches\techlabSlicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\test_rapid_main.cpp">
+      <Filter>Sketches\tzSketches\techlabSlicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\GraphProcessor.cpp">
+      <Filter>Sketches\tzSketches\techlabSlicer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Algebra\sketch_polynomialFit.cpp">
+      <Filter>Sketches\tzSketches\algebra</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

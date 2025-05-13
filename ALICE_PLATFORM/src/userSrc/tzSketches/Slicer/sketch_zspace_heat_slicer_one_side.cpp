@@ -1,4 +1,4 @@
-//#define _MAIN_
+#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -150,9 +150,10 @@ zObjGraphArray o_contours;
 zFloatArray geodesics_start;
 zIntArray start_boundary_ids;
 
-string inPath_obj = "data/Slicer/sliceMesh3.obj";
-string inPath = "data/Slicer/sliceMesh3.json";
+//string inPath_obj = "data/Slicer/chair.obj";
+//string inPath = "data/Slicer/chair.json";
 string outPath = "data/Slicer/outFolder";
+string inPath_usda = "data/Slicer/chair.usda";
 
 ////// --- GUI OBJECTS ----------------------------------------------------
 
@@ -164,26 +165,52 @@ void fromFile()
 	start_boundary_ids.clear();
 
 	//read mesh
-	fnSliceMesh.from(inPath_obj, zOBJ);
+	//fnSliceMesh.from(inPath_obj, zOBJ);
+	//myMeshParam = zTsMeshParam();
+	//myMeshParam.setFromFile(inPath_obj, zOBJ);
+
+	fnSliceMesh.from(inPath_usda, zUSD);
 	myMeshParam = zTsMeshParam();
-	myMeshParam.setFromFile(inPath_obj, zOBJ);
+	myMeshParam.setFromFile(inPath_usda, zUSD);
+
+	cout << "mesh loaded \n";
 
 	//read properties
-	json j;
-	bool chk = core.json_read(inPath, j);
+	//json j;
+	//bool chk = core.json_read(inPath, j);
 
-	if (chk)
+	//if (chk)
+	//{
+	//	const auto& j_startVIds = j["StartVIds"].get<vector<int>>();
+	//	const auto& j_numGraphs = j["NumGraphs"].get<int>();
+
+	//	//assign start vids
+	//	for (auto& id : j_startVIds)
+	//		start_boundary_ids.push_back(id);
+
+	//	//assign total num graphs
+	//	totalGraphs = j_numGraphs;
+	//}
+	
+	for (zItMeshVertex v(*myMeshParam.getRawInMesh()); !v.end(); v++)
 	{
-		const auto& j_startVIds = j["StartVIds"].get<vector<int>>();
-		const auto& j_numGraphs = j["NumGraphs"].get<int>();
-
-		//assign start vids
-		for (auto& id : j_startVIds)
-			start_boundary_ids.push_back(id);
-
-		//assign total num graphs
-		totalGraphs = j_numGraphs;
+		//if (v.onBoundary())
+		if (v.getColor().r > 0.9)
+		{
+			start_boundary_ids.push_back(v.getId());
+		}
 	}
+
+	//for (zItMeshEdge e(*myMeshParam.getRawInMesh()); !e.end(); e++)
+	//{
+	//	//if (v.onBoundary())
+	//	if (e.getWeight()>0)
+	//	{
+	//		zIntArray vs;
+	//		e.getVertices(vs);
+	//		start_boundary_ids.push_back(vs[0]);
+	//	}
+	//}
 
 	o_contours.clear();
 	o_contours.assign(totalGraphs, zObjGraph());
@@ -256,7 +283,7 @@ void setup()
 	S.sliders[0].attachToVariable(&background, 0, 1);
 
 	S.addSlider(&totalGraphs, "totalGraphs");
-	S.sliders[1].attachToVariable(&totalGraphs, 0, 100);
+	S.sliders[1].attachToVariable(&totalGraphs, 0, 300);
 
 	////////////////////////////////////////////////////////////////////////// Buttons
 

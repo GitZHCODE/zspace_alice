@@ -1,5 +1,43 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\) contains files shared from another project (ALICE_CUDA.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  sketch_zSpace_Polytopal.cpp
+  sketch_polynomialFit.cpp
+C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\xmemory(700,103): warning C4244: 'argument': conversion from '_Ty' to 'float', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\xmemory(700,103): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\xmemory(700,103): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\xmemory(700,103): warning C4244:             _Ty=int
+C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\xmemory(700,103): warning C4244:         ]
+  (compiling source file 'src/userSrc/tzSketches/Algebra/sketch_polynomialFit.cpp')
+      C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\xmemory(700,103):
+      the template instantiation context (the oldest one first) is
+          C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\src\userSrc\tzSketches\Algebra\sketch_polynomialFit.cpp(239,9):
+          see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::emplace_back<double&,double&,int>(double &,double &,int &&)' being compiled
+          with
+          [
+              _Ty=zSpace::zVector
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\vector(858,24):
+          see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_one_at_back<double&,double&,int>(double &,double &,int &&)' being compiled
+          with
+          [
+              _Ty=zSpace::zVector
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\vector(776,20):
+          see reference to function template instantiation '_Ty &std::vector<_Ty,std::allocator<_Ty>>::_Emplace_back_with_unused_capacity<double&,double&,int>(double &,double &,int &&)' being compiled
+          with
+          [
+              _Ty=zSpace::zVector
+          ]
+          C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\vector(794,27):
+          see reference to function template instantiation 'void std::_Default_allocator_traits<_Alloc>::construct<_Ty,double&,double&,int>(_Alloc &,_Objty *const ,double &,double &,int &&)' being compiled
+          with
+          [
+              _Alloc=std::allocator<zSpace::zVector>,
+              _Ty=zSpace::zVector,
+              _Objty=zSpace::zVector
+          ]
+  
+C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.41.34120\include\xmemory(700,103): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  (compiling source file 'src/userSrc/tzSketches/Algebra/sketch_polynomialFit.cpp')
+  
 C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(1392,5): warning MSB8012: TargetPath(C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\ALICE_PLATFORM.exe) does not match the Linker's OutputFile property value (C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\ALICE_PLATFORM\x64\Release\EXE\ALICE_PLATFORM.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
 LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
   Generating code

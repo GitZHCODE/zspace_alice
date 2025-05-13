@@ -80,15 +80,18 @@ public:
 
 	void create(string path)
 	{
-		path += ".usda";
+		//path += ".usda";
+		path += ".json";
 
 		zFnMesh fnMesh_in(oMesh_in);
-		fnMesh_in.from(path, zUSD);
+		//fnMesh_in.from(path, zUSD);
+		fnMesh_in.from(path, zJSON);
 		fnMesh_in.setEdgeColor(zColor(0.5, 0.5, 0.5, 1));
 		fnMesh_in.setEdgeWeight(1.0);
 
 		zFnMesh fnMesh(oMesh);
-		fnMesh.from(path, zUSD);
+		//fnMesh.from(path, zUSD);
+		fnMesh.from(path, zJSON);
 
 		fnDyMesh.create(oMesh, false);
 		fnDyMesh.getCenters(zHEData::zFaceData, fCens);
@@ -282,13 +285,17 @@ public:
 	{
 		fnDyMesh.setVertexColor(BLUE);
 
-		string fPath_unroll = path + "_out_unroll.usda";
+		//string fPath_unroll = path + "_out_unroll.usda";
+		string fPath_unroll = path + "_out_unroll.json";
 		zFnMesh fnMesh_unroll(oMesh_unroll);
-		fnMesh_unroll.to(fPath_unroll, zUSD);
+		//fnMesh_unroll.to(fPath_unroll, zUSD);
+		fnMesh_unroll.to(fPath_unroll, zJSON);
 
-		string fPath = path + "_out.usda";
+		//string fPath = path + "_out.usda";
+		string fPath = path + "_out.json";
 		zFnMesh fnMesh(oMesh);
-		fnMesh.to(fPath, zUSD);
+		//fnMesh.to(fPath, zUSD);
+		fnMesh.to(fPath, zJSON);
 	}
 
 private:

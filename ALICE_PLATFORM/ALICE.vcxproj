@@ -27,6 +27,9 @@
     <ClInclude Include="src\alice\MODEL.h" />
     <ClInclude Include="src\alice\object.h" />
     <ClInclude Include="src\alice\utilities.h" />
+    <ClInclude Include="src\userSrc\tzSketches\Algebra\polynomialFitting.h" />
+    <ClInclude Include="src\userSrc\tzSketches\Algebra\PolynomialRegression.h" />
+    <ClInclude Include="src\userSrc\tzSketches\Algebra\RamerDouglasPeucker.h" />
     <ClInclude Include="src\userSrc\tzSketches\CityEngine\line.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
@@ -97,6 +100,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Natpower\include\zLayer.h" />
+    <ClInclude Include="src\userSrc\tzSketches\Natpower\include\zSlicer.h" />
+    <ClInclude Include="src\userSrc\tzSketches\Natpower\include\zTsSlicer.h" />
+    <ClInclude Include="src\userSrc\tzSketches\Natpower\include\zUnroller.h" />
     <ClInclude Include="src\userSrc\tzSketches\OV\zTsOVdataProcessor.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
@@ -125,6 +132,27 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\TechLabSlicer\RapidMaker.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\TJU\zSMin.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\TJU\zTsTowerMaker.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="src\userSrc\zspace_drl\VoxelSystem.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
@@ -148,6 +176,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Algebra\sketch_polynomialFit.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\CityEngine\line.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
@@ -331,11 +360,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\userSrc\tzSketches\GraphPolyhedra\sketch_zSpace_Polytopal.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\userSrc\tzSketches\GrowingParcels\sketch_parcel_sb.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
@@ -365,6 +394,17 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\sketch_zspace_Blend.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\src\zLayer.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\src\zSlicer.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\src\zTsSlicer.cpp" />
+    <ClCompile Include="src\userSrc\tzSketches\Natpower\src\zUnroller.cpp" />
     <ClCompile Include="src\userSrc\tzSketches\OV\sketch_zspace_OV_chicago.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
@@ -498,6 +538,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\SDF\sketch_zspace_sdf_spinning.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\userSrc\tzSketches\SDF\sketch_zspace_smooth_min.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
@@ -609,6 +656,62 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\GraphProcessor.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\RapidMaker.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\sketch_zspace_geodesic_heat_slicer.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\test_rapid_main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TechLabSlicer\zSpatialField.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TJU\sketch_zspace_towerMaker.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TJU\zSMin.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\TJU\zTsTowerMaker.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\userSrc\tzSketches\TNA\sketch_zSpace_TNA.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">true</ExcludedFromBuild>
