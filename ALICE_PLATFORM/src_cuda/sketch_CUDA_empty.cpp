@@ -5,11 +5,9 @@
 
 #include "main.h"
 
-#include <headers/include/zCore.h>
-#include <headers/include/zGeometry.h>
-#include <headers/include/zDisplay.h>
-#include <headers/include/zData.h>
-#include <headers/include/zIO.h> 
+#include <headers/zApp/include/zObjects.h>
+#include <headers/zApp/include/zFnSets.h>
+#include <headers/zApp/include/zViewer.h> 
 
 using namespace zSpace;
 

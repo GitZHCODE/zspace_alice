@@ -23,5 +23,8 @@
     <ClCompile Include="src\userSrc\zspace_cuda\striatus\sketch_zspaceCuda_Striatus_Slicer.cpp">
       <Filter>Sketches\Striatus</Filter>
     </ClCompile>
+    <ClCompile Include="src_cuda\sketch_zspaceCuda_solarOcclusion_clean.cpp">
+      <Filter>Sketches</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

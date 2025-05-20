@@ -58,6 +58,7 @@ Global
 		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_Rhino|x64.ActiveCfg = Release_zSpace_OV|x64
 		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release_Rhino|x86.ActiveCfg = Release_zSpace_OV|x64
 		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release|x64.ActiveCfg = Release|x64
+		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release|x64.Build.0 = Release|x64
 		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Release|x86.ActiveCfg = Release|x64
 		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Template|x64.ActiveCfg = Debug|x64
 		{A2F19A39-E34F-4CA6-8A45-522F0E41D32F}.Template|x64.Build.0 = Debug|x64

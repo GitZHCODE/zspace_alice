@@ -10,7 +10,7 @@
     <LocalDebuggerCommand>$(OutDir)EXE\$(ProjectName).exe</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>$(OutDir)EXE\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerEnvironment>PATH=%PATH%;$(ovConnectorDir)\_build\windows-x86_64\release;</LocalDebuggerEnvironment>
+    <LocalDebuggerEnvironment>PATH=%PATH%;$(ovConnectorDir)\_build\windows-x86_64\release;$(zspaceLibDir);$(SolutionDir)$(Platform)\Release\EXE\lib_omniverse;</LocalDebuggerEnvironment>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">
     <LocalDebuggerCommand>$(OutDir)EXE\$(ProjectName).exe</LocalDebuggerCommand>

@@ -1,4 +1,4 @@
-#define _MAIN_
+//#define _MAIN_
 
 #ifdef _MAIN_
 
@@ -578,17 +578,27 @@ void setup()
 	zStringArray split = core.splitString(inPath, "\"");
 	filePath = split[0];
 		
-	cout << "Please enter start vertexID 0: ";
-	cin >> startID0;
 
-	cout << "Please enter start vertexID 1: ";
-	cin >> startID1;
+	ifstream jsonFile(inPath);
+	json j;
+	jsonFile >> j;
+	startID0 = j["StartEnd"][0];
+	startID1 = j["StartEnd"][1];
+	contourDistance = j["ContourDist"];
+	contourGap = j["ContourGap"];
 
-	cout << "Please enter contour distance: ";
-	cin >> contourDistance;
 
-	cout << "Please enter contour gap: ";
-	cin >> contourGap;
+	//cout << "Please enter start vertexID 0: ";
+	//cin >> startID0;
+
+	//cout << "Please enter start vertexID 1: ";
+	//cin >> startID1;
+
+	//cout << "Please enter contour distance: ";
+	//cin >> contourDistance;
+
+	//cout << "Please enter contour gap: ";
+	//cin >> contourGap;
 
 	zFnMesh fnInmesh(o_inMesh);
 	fnInmesh.from(filePath, zJSON);
