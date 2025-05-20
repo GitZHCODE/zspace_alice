@@ -25,6 +25,7 @@ bool computeMap = false;
 bool display = true;
 double polynomialDegree = 3; // Default degree for polynomial fitting
 bool userPressed = false;
+bool constrainEndpoints = false; // New toggle for endpoint constraint
 
 double background = 0.85;
 double eps = 1.0;
@@ -76,7 +77,8 @@ void setup()
 	B.buttons[0].attachToVariable(&compute);
 	B.addButton(&display, "display");
 	B.buttons[1].attachToVariable(&display);
-
+	B.addButton(&constrainEndpoints, "constrain endpoints");
+	B.buttons[2].attachToVariable(&constrainEndpoints);
 	
 }
 
@@ -142,7 +144,11 @@ void update(int value)
 			curveFitter.setPolynomialDegree(static_cast<int>(polynomialDegree));
 		}
 		
+		// Set the endpoint constraint based on UI toggle
+		curveFitter.setConstrainEndpoints(constrainEndpoints);
+		
 		std::cout << "\n----- Curve Fitting Results -----\n";
+		std::cout << "Constrain endpoints: " << (constrainEndpoints ? "Yes" : "No") << "\n";
 		
 		// Solve using the curve fitter
 		if (curveFitter.solve()) {
@@ -272,6 +278,15 @@ void draw()
 		for (auto& p : pointListOut)
 			model.displayUtils.drawPoint(zPoint(p.x(), p.y(), 0),zBLUE,5);
 
+		// Highlight start and end points when constrained
+		if (constrainEndpoints && !pointList.empty()) {
+			// Draw start point
+			model.displayUtils.drawPoint(zPoint(pointList.front().x(), pointList.front().y(), 0), zGREEN, 10);
+			
+			// Draw end point
+			model.displayUtils.drawPoint(zPoint(pointList.back().x(), pointList.back().y(), 0), zGREEN, 10);
+		}
+
 		// Draw kink points
 		for (std::size_t k = 0; k < kinkIds.size(); k++)
 		{
@@ -311,6 +326,9 @@ void draw()
 	}
 	
 	drawString("Active: " + methodName, vec(winW - 1200, winH - 200, 0));
+	
+	// Show endpoint constraint status
+	drawString("Constrain endpoints: " + string(constrainEndpoints ? "Yes" : "No"), vec(winW - 1200, winH - 180, 0));
 	
 	// Show equation if available
 	if (!pointListOut.empty()) {
@@ -364,6 +382,10 @@ void keyPress(unsigned char k, int xm, int ym)
 			goto END;
 		case '6': 
 			curveFitter.setMethod(CurveFitter::Method::Linear); 
+			goto END;
+		case 'c':
+		case 'C':
+			constrainEndpoints = !constrainEndpoints;
 			goto END;
 		default: 			
 			goto END;

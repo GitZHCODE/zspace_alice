@@ -632,5 +632,8 @@
     <ClCompile Include="src\userSrc\tzSketches\Algebra\sketch_polynomialFit.cpp">
       <Filter>Sketches\tzSketches\algebra</Filter>
     </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Algebra\sketch_polynomialFit_slab.cpp">
+      <Filter>Sketches\tzSketches\algebra</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
