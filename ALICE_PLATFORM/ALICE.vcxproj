@@ -378,7 +378,7 @@
     <_ProjectFileVersion>11.0.61030.0</_ProjectFileVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\Release\EXE\</OutDir>
     <IntDir>$(Platform)\Release\_intermediate\</IntDir>
     <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
@@ -389,7 +389,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_OV|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\Release\EXE\</OutDir>
     <IntDir>$(Platform)\Release\_intermediate\</IntDir>
     <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
@@ -400,7 +400,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Rhino|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\Release\EXE\</OutDir>
     <IntDir>$(Platform)\Release\_intermediate\</IntDir>
     <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
@@ -411,7 +411,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\Release\EXE\</OutDir>
     <IntDir>$(Platform)\Release\_intermediate\</IntDir>
     <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
@@ -422,7 +422,7 @@
     <LinkIncremental>true</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_DLL_OV|x64'">
-    <OutDir>$(SolutionDir)$(Platform)\Release\</OutDir>
+    <OutDir>$(SolutionDir)$(Platform)\Release\EXE\</OutDir>
     <IntDir>$(Platform)\Release\_intermediate\</IntDir>
     <ProgramDatabaseFile>$(IntDir)$(TargetName).pdb</ProgramDatabaseFile>
     <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
@@ -610,6 +610,7 @@ REM CALL "$(SolutionDir)scripts\"zspace_includedeploy.bat "$(SolutionDir)project
       <StackReserveSize>8000000</StackReserveSize>
       <HeapReserveSize>
       </HeapReserveSize>
+      <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
@@ -658,6 +659,7 @@ REM CALL "$(SolutionDir)scripts\"zspace_includedeploy.bat "$(SolutionDir)project
       <StackReserveSize>8000000</StackReserveSize>
       <HeapReserveSize>
       </HeapReserveSize>
+      <ImportLibrary>$(IntDir)$(TargetName).lib</ImportLibrary>
       <DelayLoadDLLs>
       </DelayLoadDLLs>
     </Link>
