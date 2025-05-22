@@ -19,7 +19,11 @@
     <zspacecudatoolsetDir>$(codeRepoDir)\zspace_cuda\cpp</zspacecudatoolsetDir>
   </PropertyGroup>
   <PropertyGroup />
-  <ItemDefinitionGroup />
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <ScanSourceForModuleDependencies>true</ScanSourceForModuleDependencies>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <BuildMacro Include="codeRepoDir">
       <Value>$(codeRepoDir)</Value>

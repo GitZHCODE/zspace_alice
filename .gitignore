@@ -1,5 +1,8 @@
 ## Ignore USER Provide files
 tzSketch/
+*.pdb
+_intermediate/
+*.tlog/
 
 ##projects/
 ##*.sln
