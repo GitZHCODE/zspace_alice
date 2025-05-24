@@ -35,6 +35,7 @@ void setup()
 
 	model = zModel(100000);
 	
+	cout << "hello world \n";
 
 
 	////////////////////////////////////////////////////////////////////////// Enable smooth display
