@@ -104,8 +104,8 @@ public:
 				float y = ofMap(j, 0, RES - 1, -halfSize, halfSize);
 				grid[i][j] = zVector(x, y, 0);
 
-				float fx = -1.0f - 5 * x * x + 5*y;
-				float fy = 1.0f + x - 20*y * y;
+				float fx = -1.0f - 5 * x * x + 5 * y;
+				float fy = 1.0f + x - 20 * y * y;
 				field[i][j] = zVector(fx, fy, 0);
 			}
 		}
@@ -304,7 +304,7 @@ public:
 	float getSpacing(const zVector& pt)
 	{
 		float dist = distanceBetween(pt, zVector(0, 0, 0));
-		
+
 		// normalize based on field radius
 		//float t = ofClamp(dist / 25.0f, 0.0f, 1.0f);  
 
@@ -410,7 +410,7 @@ public:
 		{
 			zVector pPrev = points[i - 1];
 			zVector pCurr = points[i];
-			zVector pNext = points[i + 1];			
+			zVector pNext = points[i + 1];
 
 			float dist = distanceBetween(pCurr, zVector(0, 0, 0));
 			float t = exp(-0.05f * dist);
@@ -449,7 +449,7 @@ public:
 			zIntArray pCounts = { 4 };
 			zIntArray pConnects = { 0, 1, 2, 3 };
 
-	
+
 			zObjMesh* mesh = new zObjMesh();
 			zFnMesh fnMesh(*mesh);
 			fnMesh.create(verts, pCounts, pConnects);
@@ -517,6 +517,13 @@ public:
 	float verticalShift = 0.0f;        // Z offset
 	bool alignToDirection = false;
 
+	std::vector<zObjMesh> extrudedMeshes;
+	float minHeight = 0.2f;
+	float maxHeight = 2.0f;
+
+	bool enableExtrusion = true;
+
+
 	void setup(zModel* model) {
 		modelRef = model;
 	}
@@ -531,21 +538,33 @@ public:
 			zVector pCurr = points[i];
 			zVector pNext = points[i + 1];
 
-			zVector tangent = pNext - pPrev;
-			tangent.normalize(); 
+
+
+			// Compute tangent with smoothing
+			if (distanceBetween(pPrev, pNext) < 0.1f) continue;
+			zVector forward = pNext - pCurr;
+			zVector backward = pCurr - pPrev;
+			zVector tangent = (forward + backward) * 0.5f;
+			tangent.normalize();
+
+			// Scalar-based controls
+			float dist = distanceBetween(pCurr, zVector(0, 0, 0));
+			float t = exp(-0.05f * dist);
+
+			float widthFactor = ofLerp(0.5f, 1.0f, t);     // tighter near center
+			float lengthFactor = ofLerp(0.2f, 1.8f, 1.0f - t); // longer at edge
+			float rotFactor = ofLerp(0.0f, 120.0f, 1.0f - t);   // 0° near center, 90° near edge
+
+			float w = width * widthFactor;
+			float clampedLength = ofClamp(length * lengthFactor, 0.2f, maxLength);
 
 			if (!alignToDirection) tangent = zVector(1, 0, 0);
 
-			zVector normal(-tangent.y, tangent.x, 0);
-
-			// Apply user-defined rotation in XY
-			float theta = degToRad(rotationDeg);
+			// Rotate tangent
+			float theta = degToRad(rotFactor);
 			float cs = cos(theta), sn = sin(theta);
 			zVector rotTangent(cs * tangent.x - sn * tangent.y, sn * tangent.x + cs * tangent.y, 0);
 			zVector rotNormal(-rotTangent.y, rotTangent.x, 0);
-
-			float clampedLength = ofClamp(length, 0.2f, maxLength);
-			float w = width;
 
 			zVector center = pCurr + zVector(0, 0, verticalShift);
 
@@ -567,63 +586,52 @@ public:
 		}
 	}
 
+	void generateExtrudedMeshes()
+	{
+		extrudedMeshes.clear();
+
+		for (auto& baseMesh : transformedMeshes)
+		{
+			zFnMesh fnBase(baseMesh);
+			zPointArray verts;
+			fnBase.getVertexPositions(verts);
+
+			zVector center = (verts[0] + verts[1] + verts[2] + verts[3]) * 0.25f;
+			float dist = distanceBetween(center, zVector(0, 0, 0));
+			float t = exp(-0.06f * dist);
+			float height = ofLerp(minHeight, maxHeight, t);
+
+			zPointArray newVerts = verts;
+			for (auto& v : newVerts)
+				v.z += height;
+
+			zPointArray finalVerts = verts;
+			finalVerts.insert(finalVerts.end(), newVerts.begin(), newVerts.end());
+
+			zIntArray faceCounts = { 4, 4, 4, 4, 4, 4 };
+			zIntArray faceConnects = {
+				0,1,2,3,         // base
+				0,1,5,4,
+				1,2,6,5,
+				2,3,7,6,
+				3,0,4,7,
+				4,5,6,7          // top
+			};
+
+			zObjMesh* extruded = new zObjMesh();
+			zFnMesh fnExtruded(*extruded);
+			fnExtruded.create(finalVerts, faceCounts, faceConnects);
+
+			extrudedMeshes.push_back(*extruded);
+			if (modelRef) modelRef->addObject(*extruded);
+		}
+	}
+
+
 private:
 	float degToRad(float deg) { return deg * 0.0174533f; }
 };
 
-
-
-//class SmoothSDFGenerator {
-//public:
-//	zObjMeshScalarField scalarField;
-//	zObjGraph isoOutline;
-//	zSMin smin;
-//
-//	zModel* modelRef = nullptr;
-//
-//	int resolution = 100;
-//	float isoThreshold = 0.05f;
-//	float blendRadius = 3.0f;
-//	float falloff = 0.2f;
-//
-//	void setup(zModel* model)
-//	{
-//		modelRef = model;
-//
-//		zFnMeshScalarField fnField(scalarField);
-//		fnField.create(zPoint(-25, -25, 0), zPoint(25, 25, 0), resolution, resolution, 1, true, false);
-//
-//		scalarField.setDisplayElements(false, false, false);
-//		model->addObject(scalarField);
-//
-//		isoOutline.setDisplayElements(false, true);
-//		model->addObject(isoOutline);
-//	}
-//
-//	void computeUnionFromPoints(std::vector<zVector>& points)
-//	{
-//
-//		// Generate a circular field per point
-//		for (auto& p : points)
-//		{
-//			zFnMeshScalarField fn(scalarField);
-//
-//			zScalarArray s;
-//			fn.getScalars_Circle(s, p, blendRadius);
-//			scalarFields.push_back(s);
-//		}
-//
-//		// Perform smooth min union
-//		zScalarArray resultField;
-//		smin.smin_multiple(scalarFields, resultField, falloff, zSMin::MODE::exponential);
-//
-//		// Assign values and get outline
-//		zFnMeshScalarField fnResult(scalarField);
-//		fnResult.normliseValues(resultField);
-//		fnResult.setFieldValues(resultField);
-//		fnResult.getIsocontour(isoOutline, isoThreshold);
-//	}
-//};
 
 
 ////////////////////////////////////////////////////////////////////////// Global Declaration
@@ -645,7 +653,7 @@ void setup()
 	model = zModel(100000);
 
 	////////////////////////////////////////////////////////////////////////// Enable smooth display
-	
+
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_POINT_SMOOTH);
@@ -676,7 +684,7 @@ void setup()
 	B.buttons[2].attachToVariable(&displaySampledPoints);
 	B.buttons[3].attachToVariable(&displayRects);
 	B.buttons[4].attachToVariable(&displayExtrusions);
-	
+
 
 	////////////////////////////////////////////////////////////////////////// Intialize the variables
 
@@ -692,6 +700,7 @@ void setup()
 
 	customRects.setup(&model);
 	customRects.generateTransformedRects(mySampler.sampledPoints);
+	customRects.generateExtrudedMeshes();
 
 
 	//mySDF.setup(&model);
@@ -704,8 +713,8 @@ void update(int value)
 
 	if (compute)
 	{
-		
-		
+
+
 	}
 }
 
@@ -728,9 +737,6 @@ void draw()
 			model.draw();
 		}
 
-
-
-
 	}
 
 	//////////////////////////////////////////////////////////
@@ -751,11 +757,11 @@ void keyPress(unsigned char k, int xm, int ym)
 
 void mousePress(int b, int s, int x, int y)
 {
-	
+
 }
 
 void mouseMotion(int x, int y)
-{	
+{
 
 }
 
