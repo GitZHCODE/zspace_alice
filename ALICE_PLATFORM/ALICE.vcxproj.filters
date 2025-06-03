@@ -88,6 +88,9 @@
     <ClInclude Include="src\userSrc\tzSketches\Algebra\polynomialFitting.h">
       <Filter>Sketches\tzSketches\algebra</Filter>
     </ClInclude>
+    <ClInclude Include="src\userSrc\tzSketches\Algebra\zBuilding.h">
+      <Filter>Sketches\tzSketches\algebra</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MVC">
@@ -633,6 +636,12 @@
       <Filter>Sketches\tzSketches\algebra</Filter>
     </ClCompile>
     <ClCompile Include="src\userSrc\tzSketches\Algebra\sketch_polynomialFit_slab.cpp">
+      <Filter>Sketches\tzSketches\algebra</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Algebra\sketch_buildingRationalization.cpp">
+      <Filter>Sketches\tzSketches\algebra</Filter>
+    </ClCompile>
+    <ClCompile Include="src\userSrc\tzSketches\Algebra\zBuilding.cpp">
       <Filter>Sketches\tzSketches\algebra</Filter>
     </ClCompile>
   </ItemGroup>

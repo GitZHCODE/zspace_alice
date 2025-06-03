@@ -47,7 +47,7 @@ vector<zObjMesh> outputMeshes;
 CurveFitter curveFitter;
 map<CurveFitter::Method, std::pair<string, zColor>> legendTable;
 
-string filePath = "data/algebra/test_slabs.usda";
+string filePath = "data/algebra/test_slabs_all.usda";
 UsdStageRefPtr stage;
 
 void setup()
