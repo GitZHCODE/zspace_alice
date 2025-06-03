@@ -297,7 +297,7 @@ void update(int value)
 
 						for (size_t j = 0; j < pointListOut.size(); j++)
 						{
-							pos.emplace_back(pointListOut[j].x(), pointListOut[j].y(), height);
+							pos.emplace_back(pointListOut[j].x(), pointListOut[j].y(), 0);
 
 							if (j != 0)
 							{
