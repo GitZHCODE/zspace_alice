@@ -29,7 +29,7 @@ public:
         // This is called once when the sketch is loaded
         
         // Example: Set background color
-        scene().setBackgroundColor(Vec3(0.2f, 0.2f, 0.3f));
+        scene().setBackgroundColor(Vec3(0.95f, 0.95f, 0.95f));
         
         // Example: Enable grid
         scene().setShowGrid(true);
@@ -43,6 +43,8 @@ public:
         // Example: Set camera position
         camera().setPosition(Vec3(5, 5, 5));
         camera().lookAt(Vec3(0, 0, 0));
+
+        camera().setProjectionType(ProjectionType::Orthographic);
     }
 
     void update(float deltaTime) override {
@@ -95,7 +97,20 @@ public:
             case 'G':
                 // Example: Toggle grid
                 scene().setShowGrid(!scene().getShowGrid());
+                std::cout << "Grid toggled" << std::endl;
                 break;
+
+            case 'P':
+                Vec3 pos = camera().getPosition();
+                std::cout << std::to_string(pos.x)
+                    << ", " << std::to_string(pos.y)
+                    << ", " << std::to_string(pos.z) << std::endl;
+
+                pos.x += 0.1f;
+                camera().setPosition(pos);
+                break;
+
+
             case 27: // ESC key
                 // Example: Exit application
                 break;

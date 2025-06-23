@@ -205,6 +205,7 @@ namespace alice2 {
 
     void InputManager::updateMouseDelta() {
         m_mouseState.delta = m_mouseState.position - m_mouseState.lastPosition;
+        m_mouseState.lastPosition = m_mouseState.position;
     }
 
 } // namespace alice2
