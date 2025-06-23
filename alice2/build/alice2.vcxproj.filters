@@ -34,10 +34,25 @@
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Vector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Matrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Quaternion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\sketches\SketchManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\userSrc\sketch_base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\userSrc\sketch_geometry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\userSrc\sketch_particles.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\main.cpp">
@@ -84,7 +99,22 @@
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\sketches\SketchManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\sketches\SketchRegistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Math.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Vector.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\MathUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\OpenGL.h">

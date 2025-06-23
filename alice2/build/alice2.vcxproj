@@ -343,8 +343,13 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\input\InputManager.cpp" />
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\input\CameraController.cpp" />
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Math.cpp" />
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Vector.cpp" />
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Matrix.cpp" />
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Quaternion.cpp" />
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\sketches\SketchManager.cpp" />
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\userSrc\sketch_base.cpp" />
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\userSrc\sketch_geometry.cpp" />
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\userSrc\sketch_particles.cpp" />
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\main.cpp" />
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\include\alice2.h" />
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\core\Application.h" />
@@ -359,7 +364,12 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\input\CameraController.h" />
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\sketches\ISketch.h" />
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\sketches\SketchManager.h" />
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\sketches\SketchRegistry.h" />
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Math.h" />
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Vector.h" />
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Matrix.h" />
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Quaternion.h" />
+    <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\MathUtils.h" />
     <ClInclude Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\OpenGL.h" />
   </ItemGroup>
   <ItemGroup />
