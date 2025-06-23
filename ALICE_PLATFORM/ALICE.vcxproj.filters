@@ -13,9 +13,6 @@
     <ClInclude Include="src\alice\object.h">
       <Filter>MVC</Filter>
     </ClInclude>
-    <ClInclude Include="src\userSrc\zspace_drl\VoxelSystem.h">
-      <Filter>Sketches\zspace_drl</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="MVC">
@@ -24,139 +21,10 @@
     <Filter Include="Sketches">
       <UniqueIdentifier>{42e9bdea-f426-477b-9649-d4fdaa1c0525}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Sketches\zspace_module_sketches">
-      <UniqueIdentifier>{70c7892c-9071-413a-966b-dadd30879b20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sketches\zspace_sketches">
-      <UniqueIdentifier>{44310b44-b2f8-4576-850b-6a4b02351788}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sketches\zspace_drl">
-      <UniqueIdentifier>{ecdf8316-c9ac-4500-972c-c366ac0e4f25}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sketches\zspace_ov">
-      <UniqueIdentifier>{091fb78c-4acf-47e6-87bb-5e4efd9bc27c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sketches\zspace_Rhino">
-      <UniqueIdentifier>{9b6a1dab-4e4d-4e5a-bc56-ba073d6fde26}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sketches\zspace_Rhino\PanelSketch">
-      <UniqueIdentifier>{a431e68f-b0e5-4c0d-9fab-a03cdb061f67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sketches\zspace_tutorials">
-      <UniqueIdentifier>{4ef6a6a0-5948-43b0-b7d6-9cee08343afd}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\userSrc\sketch_empty.cpp">
-      <Filter>Sketches</Filter>
-    </ClCompile>
     <ClCompile Include="src\userSrc\sketch_zspace_Base.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_CurvatureDirections.cpp">
-      <Filter>Sketches\zspace_module_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_Tutorial_1.cpp">
-      <Filter>Sketches\zspace_drl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_drl\sketch_zspace_VoxelSystem.cpp">
-      <Filter>Sketches\zspace_drl</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphPolyhedra_WIP.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_HKBridge.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_HKBridge_TNA.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_toStad2.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphMesh.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_GraphLoftMesh.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Striatus_Slicer.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Parameterization.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer_Osaka.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_Robot.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_heat_slicer.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_PanelSplit.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_RobotFab.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_PlanarityCheck.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_PanelAnalysis.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_OV_Base.cpp">
-      <Filter>Sketches\zspace_ov</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_CCF.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_SDFSlicer_BJ.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_BJ_Mapper.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_rhino\sketch_zSpace_NurbsCurve.cpp">
-      <Filter>Sketches\zspace_Rhino</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_USD_Base.cpp">
-      <Filter>Sketches\zspace_ov</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_KMeans.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_module\sketch_zspaceModule_KMeans.cpp">
-      <Filter>Sketches\zspace_module_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_OV_Core.cpp">
-      <Filter>Sketches\zspace_ov</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_ov\sketch_zspace_OV_Core_live.cpp">
-      <Filter>Sketches\zspace_ov</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_NanshaRoof.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_planarityCheck.cpp">
-      <Filter>Sketches\zspace_tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_sanyaMeshWalk.cpp">
-      <Filter>Sketches\zspace_tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_sketches\sketch_zspace_heat_slicer_Sanya.cpp">
-      <Filter>Sketches\zspace_sketches</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_creatMesh.cpp">
-      <Filter>Sketches\zspace_tutorials</Filter>
-    </ClCompile>
-    <ClCompile Include="src\userSrc\zspace_tutorials\sketch_zspace_sanyaMeshStream.cpp">
-      <Filter>Sketches\zspace_tutorials</Filter>
+      <Filter>Sketches</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
