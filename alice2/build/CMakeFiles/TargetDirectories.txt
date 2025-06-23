@@ -1,0 +1,4 @@
+C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/CMakeFiles/alice2.dir
+C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/CMakeFiles/INSTALL.dir
+C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/CMakeFiles/ZERO_CHECK.dir

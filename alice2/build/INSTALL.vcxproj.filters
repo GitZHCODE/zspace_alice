@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\build\CMakeFiles\fdf2fcb531e2ebe133b44853303c7afd\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{D486A7AA-1F2F-3E26-84B1-B7D520A54570}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
