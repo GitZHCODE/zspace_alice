@@ -75,10 +75,16 @@ set(ALICE2_SOURCES
     # Input
     src/input/InputManager.cpp
     src/input/CameraController.cpp
-    
+
+    # Utils
+    src/utils/Math.cpp
+
     # Sketches
     src/sketches/SketchManager.cpp
-    
+
+    # User sketches
+    userSrc/sketch_base.cpp
+
     # Main
     src/main.cpp
 )

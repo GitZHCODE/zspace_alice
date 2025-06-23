@@ -3,9 +3,9 @@
 
 namespace alice2 {
 
-    Transform::Transform() 
+    Transform::Transform()
         : m_position(0, 0, 0)
-        , m_rotation(0, 0, 0)
+        , m_rotation(0, 0, 0, 1)  // Identity quaternion
         , m_scale(1, 1, 1)
         , m_dirty(true)
         , m_worldDirty(true)
@@ -13,7 +13,7 @@ namespace alice2 {
     {
     }
 
-    Transform::Transform(const Vec3& position, const Vec3& rotation, const Vec3& scale)
+    Transform::Transform(const Vec3& position, const Quaternion& rotation, const Vec3& scale)
         : m_position(position)
         , m_rotation(rotation)
         , m_scale(scale)
@@ -38,14 +38,11 @@ namespace alice2 {
     }
 
     Mat4 Transform::getInverseMatrix() const {
-        // For now, implement a simple inverse for TRS matrices
-        // This is not a general matrix inverse but works for transform matrices
+        // For TRS matrices: inverse = S^-1 * R^-1 * T^-1
         Mat4 invScale = Mat4::scale(Vec3(1.0f / m_scale.x, 1.0f / m_scale.y, 1.0f / m_scale.z));
-        Mat4 invRotation = Mat4::rotation(Vec3(1, 0, 0), -m_rotation.x * DEG_TO_RAD) *
-                          Mat4::rotation(Vec3(0, 1, 0), -m_rotation.y * DEG_TO_RAD) *
-                          Mat4::rotation(Vec3(0, 0, 1), -m_rotation.z * DEG_TO_RAD);
+        Mat4 invRotation = m_rotation.conjugate().toMatrix();  // Quaternion conjugate is the inverse rotation
         Mat4 invTranslation = Mat4::translation(-m_position);
-        
+
         return invScale * invRotation * invTranslation;
     }
 
@@ -103,17 +100,9 @@ namespace alice2 {
     }
 
     Vec3 Transform::transformDirection(const Vec3& direction) const {
-        // Transform direction (ignore translation)
-        Mat4 rotScale = Mat4::scale(m_scale) * 
-                       Mat4::rotation(Vec3(1, 0, 0), m_rotation.x * DEG_TO_RAD) *
-                       Mat4::rotation(Vec3(0, 1, 0), m_rotation.y * DEG_TO_RAD) *
-                       Mat4::rotation(Vec3(0, 0, 1), m_rotation.z * DEG_TO_RAD);
-        
-        return Vec3(
-            rotScale.m[0] * direction.x + rotScale.m[4] * direction.y + rotScale.m[8] * direction.z,
-            rotScale.m[1] * direction.x + rotScale.m[5] * direction.y + rotScale.m[9] * direction.z,
-            rotScale.m[2] * direction.x + rotScale.m[6] * direction.y + rotScale.m[10] * direction.z
-        );
+        // Transform direction using quaternion rotation and scale
+        Vec3 scaledDirection = Vec3(direction.x * m_scale.x, direction.y * m_scale.y, direction.z * m_scale.z);
+        return m_rotation.rotate(scaledDirection);
     }
 
     Vec3 Transform::inverseTransformPoint(const Vec3& point) const {
@@ -131,34 +120,28 @@ namespace alice2 {
 
     void Transform::lookAt(const Vec3& target, const Vec3& up) {
         Vec3 forward = (target - m_position).normalized();
-        Vec3 right = forward.cross(up).normalized();
-        Vec3 newUp = right.cross(forward);
-
-        // Convert to Euler angles (simplified)
-        m_rotation.y = std::atan2(forward.x, forward.z) * RAD_TO_DEG;
-        m_rotation.x = -std::asin(forward.y) * RAD_TO_DEG;
-        m_rotation.z = 0; // Assume no roll for simplicity
-
-        m_dirty = true;
+        m_rotation = Quaternion::lookAt(forward, up);
+        markDirty();
     }
 
     Vec3 Transform::forward() const {
-        return transformDirection(Vec3(0, 0, 1));
+        // Z-up convention: +Y forward
+        return m_rotation.rotate(Vec3(0, 1, 0));
     }
 
     Vec3 Transform::right() const {
-        return transformDirection(Vec3(1, 0, 0));
+        // Z-up convention: +X right
+        return m_rotation.rotate(Vec3(1, 0, 0));
     }
 
     Vec3 Transform::up() const {
-        return transformDirection(Vec3(0, 1, 0));
+        // Z-up convention: +Z up
+        return m_rotation.rotate(Vec3(0, 0, 1));
     }
 
     void Transform::updateMatrix() const {
         Mat4 translation = Mat4::translation(m_position);
-        Mat4 rotation = Mat4::rotation(Vec3(1, 0, 0), m_rotation.x * DEG_TO_RAD) *
-                       Mat4::rotation(Vec3(0, 1, 0), m_rotation.y * DEG_TO_RAD) *
-                       Mat4::rotation(Vec3(0, 0, 1), m_rotation.z * DEG_TO_RAD);
+        Mat4 rotation = m_rotation.toMatrix();
         Mat4 scale = Mat4::scale(m_scale);
 
         m_localMatrix = translation * rotation * scale;

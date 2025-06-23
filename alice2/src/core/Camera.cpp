@@ -4,7 +4,7 @@
 #include <iostream>
 
 // Debug logging flag - set to true to enable detailed camera matrix logging
-#define DEBUG_CAMERA_MATRIX_LOGGING false
+#define DEBUG_CAMERA_MATRIX_LOGGING true
 
 namespace alice2 {
 
@@ -20,12 +20,23 @@ namespace alice2 {
         , m_orthoTop(10.0f)
         , m_viewDirty(true)
         , m_orbitCenter(0, 0, 0)
-        , m_orbitDistance(10.0f)
-        , m_orbitPitch(0.0f)
-        , m_orbitYaw(0.0f)
+        , m_orbitDistance(15.0f)
+        , m_orbitRotation(0, 0, 0, 1)  // Identity quaternion
     {
-        m_transform.setPosition(Vec3(0, 0, 10));
+        std::cout << "[CAMERA] Initializing camera with Z-up coordinate system" << std::endl;
+
+        // Set initial orbit rotation for a good default view
+        // Looking down at origin from a 45-degree angle, slightly elevated
+        Quaternion yawRotation = Quaternion::fromAxisAngle(ZUp::UP, 45.0f * DEG_TO_RAD);
+        Quaternion pitchRotation = Quaternion::fromAxisAngle(ZUp::RIGHT, -25.0f * DEG_TO_RAD);
+        m_orbitRotation = yawRotation * pitchRotation;
+
+        std::cout << "[CAMERA] Initial orbit rotation set: yaw=-45°, pitch=25°" << std::endl;
+
+        updateOrbitPosition();
         updateProjection();
+
+        std::cout << "[CAMERA] Camera initialization complete" << std::endl;
     }
 
     void Camera::setPerspective(float fov, float aspect, float nearPlane, float farPlane) {
@@ -59,26 +70,55 @@ namespace alice2 {
     }
 
     void Camera::orbit(const Vec3& center, float deltaX, float deltaY, float distance) {
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "[CAMERA] Orbit: deltaX=" << deltaX << ", deltaY=" << deltaY << ", distance=" << distance << std::endl;
+        }
+
         m_orbitCenter = center;
         m_orbitDistance = distance;
-        
-        m_orbitYaw += deltaX;
-        m_orbitPitch += deltaY;
-        
-        // Clamp pitch to avoid gimbal lock
-        m_orbitPitch = clamp(m_orbitPitch, -89.0f, 89.0f);
-        
+
+        // Yaw: world Z
+        Quaternion yawRotation = Quaternion::fromAxisAngle(ZUp::UP, -deltaX * DEG_TO_RAD);
+
+        // Pitch: camera's right
+        Vec3 currentRight = m_orbitRotation.rotate(ZUp::RIGHT);
+        Quaternion pitchRotation = Quaternion::fromAxisAngle(currentRight, -deltaY * DEG_TO_RAD); // Note the sign
+
+        // Apply as: yaw, then pitch, then current
+        m_orbitRotation = yawRotation * pitchRotation * m_orbitRotation;
+        m_orbitRotation = m_orbitRotation.normalized();
+
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "[CAMERA] New orbit rotation: (" << m_orbitRotation.x << ", " << m_orbitRotation.y << ", " << m_orbitRotation.z << ", " << m_orbitRotation.w << ")" << std::endl;
+        }
+
         updateOrbitPosition();
     }
 
     void Camera::pan(float deltaX, float deltaY) {
-        Vec3 right = getRight();
-        Vec3 up = getUp();
-        
-        Vec3 offset = right * deltaX + up * deltaY;
-        m_transform.translate(offset);
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "[CAMERA] Pan: deltaX=" << deltaX << ", deltaY=" << deltaY << std::endl;
+        }
+
+        // Get camera's right and up vectors for screen-space panning
+        Vec3 right = m_transform.right();
+        Vec3 up = m_transform.up();
+
+        // Scale pan speed based on distance from target and field of view
+        // This provides more intuitive panning that scales with zoom level
+        float fovScale = std::tan(m_fov * DEG_TO_RAD * 0.5f);
+        float panScale = m_orbitDistance * fovScale * 0.002f;
+        Vec3 offset = (right * deltaX + up * deltaY) * panScale;
+
+        // Move both camera and orbit center
         m_orbitCenter += offset;
-        m_viewDirty = true;
+
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "[CAMERA] Pan offset: (" << offset.x << ", " << offset.y << ", " << offset.z << ")" << std::endl;
+            std::cout << "[CAMERA] New orbit center: (" << m_orbitCenter.x << ", " << m_orbitCenter.y << ", " << m_orbitCenter.z << ")" << std::endl;
+        }
+
+        updateOrbitPosition();
     }
 
     void Camera::zoom(float delta) {
@@ -96,7 +136,16 @@ namespace alice2 {
     }
 
     void Camera::dolly(float delta) {
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "[CAMERA] Dolly: delta=" << delta << ", distance before=" << m_orbitDistance << std::endl;
+        }
+
         m_orbitDistance = std::max(0.1f, m_orbitDistance + delta);
+
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "[CAMERA] Distance after=" << m_orbitDistance << std::endl;
+        }
+
         updateOrbitPosition();
     }
 
@@ -156,41 +205,52 @@ namespace alice2 {
             std::cout << "[CAMERA] updateOrbitPosition:" << std::endl;
             std::cout << "  Orbit center: (" << m_orbitCenter.x << ", " << m_orbitCenter.y << ", " << m_orbitCenter.z << ")" << std::endl;
             std::cout << "  Orbit distance: " << m_orbitDistance << std::endl;
-            std::cout << "  Pitch/Yaw: " << m_orbitPitch << "/" << m_orbitYaw << std::endl;
+            std::cout << "  Orbit rotation: (" << m_orbitRotation.x << ", " << m_orbitRotation.y << ", " << m_orbitRotation.z << ", " << m_orbitRotation.w << ")" << std::endl;
         }
 
-        float pitchRad = m_orbitPitch * DEG_TO_RAD;
-        float yawRad = m_orbitYaw * DEG_TO_RAD;
+        // Calculate offset from center using quaternion (Z-up: start looking along -Y)
+        Vec3 baseOffset(0, -m_orbitDistance, 0);
+        Vec3 offset = m_orbitRotation.rotate(baseOffset);
 
-        Vec3 position;
-        position.x = m_orbitCenter.x + m_orbitDistance * std::cos(pitchRad) * std::sin(yawRad);
-        position.y = m_orbitCenter.y + m_orbitDistance * std::sin(pitchRad);
-        position.z = m_orbitCenter.z + m_orbitDistance * std::cos(pitchRad) * std::cos(yawRad);
-
-        if (DEBUG_CAMERA_MATRIX_LOGGING) {
-            Vec3 oldPos = m_transform.getPosition();
-            std::cout << "  Position change: from (" << oldPos.x << ", " << oldPos.y << ", " << oldPos.z << ") to (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
-        }
-
+        Vec3 position = m_orbitCenter + offset;
         m_transform.setPosition(position);
-        m_transform.lookAt(m_orbitCenter);
+        // m_transform.lookAt(m_orbitCenter, ZUp::UP);
+        m_transform.setRotation(m_orbitRotation);
+
         m_viewDirty = true;
 
         if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "  Base offset: (" << baseOffset.x << ", " << baseOffset.y << ", " << baseOffset.z << ")" << std::endl;
+            std::cout << "  Rotated offset: (" << offset.x << ", " << offset.y << ", " << offset.z << ")" << std::endl;
+            std::cout << "  Camera position: (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
             std::cout << "  View matrix marked dirty" << std::endl;
         }
+    }
+
+    void Camera::smoothOrbitTo(const Vec3& center, const Quaternion& targetRotation, float distance, float t) {
+        m_orbitCenter = Vec3::lerp(m_orbitCenter, center, t);
+        m_orbitDistance = lerp(m_orbitDistance, distance, t);
+        m_orbitRotation = Quaternion::slerp(m_orbitRotation, targetRotation, t);
+
+        updateOrbitPosition();
     }
 
     void Camera::updateViewMatrix() const {
         Vec3 pos = m_transform.getPosition();
         Vec3 forward = m_transform.forward();
+        Vec3 right = m_transform.right();
         Vec3 up = m_transform.up();
 
         if (DEBUG_CAMERA_MATRIX_LOGGING) {
             std::cout << "[CAMERA] updateViewMatrix:" << std::endl;
             std::cout << "  Position: (" << pos.x << ", " << pos.y << ", " << pos.z << ")" << std::endl;
             std::cout << "  Forward: (" << forward.x << ", " << forward.y << ", " << forward.z << ")" << std::endl;
+            std::cout << "  Right: (" << right.x << ", " << right.y << ", " << right.z << ")" << std::endl;
             std::cout << "  Up: (" << up.x << ", " << up.y << ", " << up.z << ")" << std::endl;
+
+            // Print transform rotation quaternion
+            Quaternion rot = m_transform.getRotation();
+            std::cout << "  Transform rotation: (" << rot.x << ", " << rot.y << ", " << rot.z << ", " << rot.w << ")" << std::endl;
         }
 
         m_viewMatrix = GLMatrix::lookAt(pos, pos + forward, up);
@@ -198,6 +258,25 @@ namespace alice2 {
 
         if (DEBUG_CAMERA_MATRIX_LOGGING) {
             std::cout << "  View matrix updated, dirty flag cleared" << std::endl;
+            // Print view matrix elements
+            std::cout << "  View matrix:" << std::endl;
+            for (int i = 0; i < 4; i++) {
+                std::cout << "    [" << m_viewMatrix.m[i*4] << ", " << m_viewMatrix.m[i*4+1] << ", " << m_viewMatrix.m[i*4+2] << ", " << m_viewMatrix.m[i*4+3] << "]" << std::endl;
+            }
+
+            // Print projection matrix elements
+            std::cout << "  Projection matrix:" << std::endl;
+            for (int i = 0; i < 4; i++) {
+                std::cout << "    [" << m_projectionMatrix.m[i*4] << ", " << m_projectionMatrix.m[i*4+1] << ", " << m_projectionMatrix.m[i*4+2] << ", " << m_projectionMatrix.m[i*4+3] << "]" << std::endl;
+            }
+
+            // Print camera parameters
+            std::cout << "  Camera parameters:" << std::endl;
+            std::cout << "    FOV: " << m_fov << "°" << std::endl;
+            std::cout << "    Aspect ratio: " << m_aspectRatio << std::endl;
+            std::cout << "    Near plane: " << m_nearPlane << std::endl;
+            std::cout << "    Far plane: " << m_farPlane << std::endl;
+            std::cout << "    Projection type: " << (m_projectionType == ProjectionType::Perspective ? "Perspective" : "Orthographic") << std::endl;
         }
     }
 

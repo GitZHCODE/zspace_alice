@@ -31,7 +31,13 @@
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\input\CameraController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\utils\Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\sketches\SketchManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\userSrc\sketch_base.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="C:\Users\taizhong_chen\source\repos\GitZHCODE\zspace_alice\alice2\src\main.cpp">

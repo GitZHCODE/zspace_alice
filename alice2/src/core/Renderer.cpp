@@ -219,8 +219,28 @@ namespace alice2 {
         GLDraw::drawPoint(position, m_pointSize);
     }
 
+    void Renderer::drawPoint(const Vec3& position, const Vec3& color, float size) {
+        Vec3 oldColor = m_currentColor;
+        float oldSize = m_pointSize;
+        setColor(color);
+        setPointSize(size);
+        GLDraw::drawPoint(position, size);
+        setColor(oldColor);
+        setPointSize(oldSize);
+    }
+
     void Renderer::drawLine(const Vec3& start, const Vec3& end) {
         GLDraw::drawLine(start, end);
+    }
+
+    void Renderer::drawLine(const Vec3& start, const Vec3& end, const Vec3& color, float width) {
+        Vec3 oldColor = m_currentColor;
+        float oldWidth = m_lineWidth;
+        setColor(color);
+        setLineWidth(width);
+        GLDraw::drawLine(start, end);
+        setColor(oldColor);
+        setLineWidth(oldWidth);
     }
 
     void Renderer::drawTriangle(const Vec3& v1, const Vec3& v2, const Vec3& v3) {
@@ -229,6 +249,17 @@ namespace alice2 {
         glVertex3f(v2.x, v2.y, v2.z);
         glVertex3f(v3.x, v3.y, v3.z);
         glEnd();
+    }
+
+    void Renderer::drawTriangle(const Vec3& v1, const Vec3& v2, const Vec3& v3, const Vec3& color) {
+        Vec3 oldColor = m_currentColor;
+        setColor(color);
+        glBegin(GL_TRIANGLES);
+        glVertex3f(v1.x, v1.y, v1.z);
+        glVertex3f(v2.x, v2.y, v2.z);
+        glVertex3f(v3.x, v3.y, v3.z);
+        glEnd();
+        setColor(oldColor);
     }
 
     void Renderer::drawQuad(const Vec3& v1, const Vec3& v2, const Vec3& v3, const Vec3& v4) {
@@ -240,14 +271,42 @@ namespace alice2 {
         glEnd();
     }
 
+    void Renderer::drawQuad(const Vec3& v1, const Vec3& v2, const Vec3& v3, const Vec3& v4, const Vec3& color) {
+        Vec3 oldColor = m_currentColor;
+        setColor(color);
+        glBegin(GL_QUADS);
+        glVertex3f(v1.x, v1.y, v1.z);
+        glVertex3f(v2.x, v2.y, v2.z);
+        glVertex3f(v3.x, v3.y, v3.z);
+        glVertex3f(v4.x, v4.y, v4.z);
+        glEnd();
+        setColor(oldColor);
+    }
+
     void Renderer::drawCube(float size) {
         GLDraw::drawWireCube(size);
+    }
+
+    void Renderer::drawCube(float size, const Vec3& color) {
+        Vec3 oldColor = m_currentColor;
+        setColor(color);
+        GLDraw::drawWireCube(size);
+        setColor(oldColor);
     }
 
     void Renderer::drawSphere(float radius, int segments) {
         // TODO: Implement custom sphere rendering without GLUT
         // For now, draw a simple wireframe cube as placeholder
         drawCube(radius * 2.0f);
+    }
+
+    void Renderer::drawSphere(float radius, int segments, const Vec3& color) {
+        Vec3 oldColor = m_currentColor;
+        setColor(color);
+        // TODO: Implement custom sphere rendering without GLUT
+        // For now, draw a simple wireframe cube as placeholder
+        GLDraw::drawWireCube(radius * 2.0f);
+        setColor(oldColor);
     }
 
     void Renderer::drawCylinder(float radius, float height, int segments) {
@@ -262,6 +321,21 @@ namespace alice2 {
         }
     }
 
+    void Renderer::drawCylinder(float radius, float height, int segments, const Vec3& color) {
+        Vec3 oldColor = m_currentColor;
+        setColor(color);
+        // Simple cylinder implementation using GLUT
+        GLUquadric* quad = gluNewQuadric();
+        if (quad) {
+            glPushMatrix();
+            glTranslatef(0, -height * 0.5f, 0);
+            gluCylinder(quad, radius, radius, height, segments, 1);
+            gluDeleteQuadric(quad);
+            glPopMatrix();
+        }
+        setColor(oldColor);
+    }
+
     void Renderer::drawGrid(float size, int divisions, const Vec3& color) {
         Vec3 oldColor = m_currentColor;
         setColor(color);
@@ -271,6 +345,13 @@ namespace alice2 {
 
     void Renderer::drawAxes(float length) {
         GLDraw::drawAxes(length);
+    }
+
+    void Renderer::drawAxes(float length, const Vec3& color) {
+        Vec3 oldColor = m_currentColor;
+        setColor(color);
+        GLDraw::drawAxes(length);
+        setColor(oldColor);
     }
 
     void Renderer::setupOpenGL() {

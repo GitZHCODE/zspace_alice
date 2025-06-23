@@ -69,8 +69,7 @@ namespace alice2 {
 
         // Setup camera
         m_camera->setPerspective(45.0f, (float)m_windowWidth / m_windowHeight, 0.1f, 1000.0f);
-        m_camera->setPosition(Vec3(5, 5, 5));
-        m_camera->lookAt(Vec3(0, 0, 0));
+        // Camera initialization is handled by the Camera constructor with proper Z-up quaternion setup
 
         // Initialize sketch manager
         m_sketchManager->initialize(m_scene.get(), m_renderer.get(), m_camera.get(), m_inputManager.get());
@@ -336,36 +335,40 @@ namespace alice2 {
                 s_instance->m_inputManager->setModifiers(mods);
                 s_instance->m_inputManager->processKeyboard(charKey, (int)xpos, (int)ypos);
 
-                // Handle global application keys
-                switch (charKey) {
-                    case 'r':
-                    case 'R':
-                        // Reset camera
-                        s_instance->m_cameraController->resetToDefault();
-                        break;
-                    case 'g':
-                    case 'G':
-                        // Toggle grid
-                        s_instance->m_scene->setShowGrid(!s_instance->m_scene->getShowGrid());
-                        break;
-                    case 'a':
-                    case 'A':
-                        // Toggle axes
-                        s_instance->m_scene->setShowAxes(!s_instance->m_scene->getShowAxes());
-                        break;
-                    case 'f':
-                    case 'F':
-                        // Focus on scene bounds
-                        s_instance->m_scene->calculateBounds();
-                        s_instance->m_cameraController->focusOnBounds(
-                            s_instance->m_scene->getBoundsMin(),
-                            s_instance->m_scene->getBoundsMax()
-                        );
-                        break;
+                // First, let the sketch handle the key
+                bool handled = false;
+                if (s_instance->m_sketchManager->hasCurrentSketch()) {
+                    handled = s_instance->m_sketchManager->forwardKeyPress(charKey, (int)xpos, (int)ypos);
                 }
 
-                if (s_instance->m_sketchManager->hasCurrentSketch()) {
-                    s_instance->m_sketchManager->forwardKeyPress(charKey, (int)xpos, (int)ypos);
+                // If the sketch didn't handle it, process default behaviors
+                if (!handled) {
+                    switch (charKey) {
+                        case 'r':
+                        case 'R':
+                            // Reset camera
+                            s_instance->m_cameraController->resetToDefault();
+                            break;
+                        case 'g':
+                        case 'G':
+                            // Toggle grid
+                            s_instance->m_scene->setShowGrid(!s_instance->m_scene->getShowGrid());
+                            break;
+                        case 'a':
+                        case 'A':
+                            // Toggle axes
+                            s_instance->m_scene->setShowAxes(!s_instance->m_scene->getShowAxes());
+                            break;
+                        case 'f':
+                        case 'F':
+                            // Focus on scene bounds
+                            s_instance->m_scene->calculateBounds();
+                            s_instance->m_cameraController->focusOnBounds(
+                                s_instance->m_scene->getBoundsMin(),
+                                s_instance->m_scene->getBoundsMax()
+                            );
+                            break;
+                    }
                 }
             }
         }

@@ -29,22 +29,24 @@ public:
         // This is called once when the sketch is loaded
         
         // Example: Set background color
-        scene().setBackgroundColor(Vec3(0.95f, 0.95f, 0.95f));
-        
+        scene().setBackgroundColor(Vec3(0.15f, 0.15f, 0.15f));
+        std::cout << "Background color set to light gray" << std::endl;
+
+        // Note: alice2 uses Z-up coordinate system by default (zspace compatibility)
+
         // Example: Enable grid
         scene().setShowGrid(true);
         scene().setGridSize(10.0f);
         scene().setGridDivisions(10);
-        
+
         // Example: Enable axes
         scene().setShowAxes(true);
         scene().setAxesLength(2.0f);
-        
-        // Example: Set camera position
-        camera().setPosition(Vec3(5, 5, 5));
-        camera().lookAt(Vec3(0, 0, 0));
 
-        camera().setProjectionType(ProjectionType::Orthographic);
+        // Example: Set camera position for Z-up view
+        // camera().setPosition(Vec3(0, -10, 5));  // Y-back, Z-up view
+        // camera().lookAt(Vec3(0, 0, 0));  // Look at origin with Z-up default
+        // std::cout << "Camera positioned for Z-up view" << std::endl;
     }
 
     void update(float deltaTime) override {
@@ -58,23 +60,25 @@ public:
     void draw(Renderer& renderer, Camera& camera) override {
         // Draw your custom content here
         // This is called every frame after update()
-        
-        // Example: Draw a simple cube
-        renderer.setColor(Vec3(1.0f, 0.5f, 0.2f)); // Orange color
-        renderer.pushMatrix();
-        renderer.drawCube(1.0f);
-        renderer.popMatrix();
-        
-        // Example: Draw some points
-        renderer.setColor(Vec3(0.2f, 1.0f, 0.5f)); // Green color
-        renderer.setPointSize(5.0f);
+
+        // Example: Draw a simple cube using enhanced renderer method
+        // renderer.pushMatrix();
+        // renderer.drawCube(1.0f, Vec3(1.0f, 0.5f, 0.2f)); // Orange cube
+        // renderer.popMatrix();
+
+        // Example: Draw some points using enhanced renderer methods
         for (int i = 0; i < 10; i++) {
-            Vec3 pos(
-                std::sin(i * 0.5f) * 3.0f,
-                i * 0.3f - 1.5f,
-                std::cos(i * 0.5f) * 3.0f
-            );
-            renderer.drawPoint(pos);
+            Vec3 pos(0, 0, i);
+            Vec3 color(0.2f, 1.0f, 0.5f); // Green color
+            renderer.drawPoint(pos, color, 5.0f); // Position, color, size
+        }
+
+        // Example: Draw some lines using enhanced renderer methods
+        for (int i = 0; i < 5; i++) {
+            Vec3 start(i, 0, 0);
+            Vec3 end(i, 2, 0);
+            Vec3 color(1.0f, 0.2f, 0.8f); // Pink color
+            renderer.drawLine(start, end, color, 2.0f); // Start, end, color, width
         }
     }
 
@@ -84,47 +88,46 @@ public:
     }
 
     // Input handling (optional)
-    void onKeyPress(unsigned char key, int x, int y) override {
+    bool onKeyPress(unsigned char key, int x, int y) override {
         // Handle keyboard input
         switch (key) {
             case 'r':
             case 'R':
-                // Example: Reset camera
+                // Example: Reset camera (override default behavior)
                 camera().setPosition(Vec3(5, 5, 5));
                 camera().lookAt(Vec3(0, 0, 0));
-                break;
-            case 'g':
-            case 'G':
-                // Example: Toggle grid
-                scene().setShowGrid(!scene().getShowGrid());
-                std::cout << "Grid toggled" << std::endl;
-                break;
+                std::cout << "User sketch: Camera reset" << std::endl;
+                return true; // Handled - don't process default reset
 
             case 'P':
-                Vec3 pos = camera().getPosition();
-                std::cout << std::to_string(pos.x)
-                    << ", " << std::to_string(pos.y)
-                    << ", " << std::to_string(pos.z) << std::endl;
+                {
+                    Vec3 pos = camera().getPosition();
+                    std::cout << std::to_string(pos.x)
+                        << ", " << std::to_string(pos.y)
+                        << ", " << std::to_string(pos.z) << std::endl;
 
-                pos.x += 0.1f;
-                camera().setPosition(pos);
-                break;
-
+                    pos.x += 0.1f;
+                    camera().setPosition(pos);
+                    return true; // Handled
+                }
 
             case 27: // ESC key
                 // Example: Exit application
-                break;
+                return false; // Not handled - allow default exit
         }
+        return false; // Not handled
     }
 
-    void onMousePress(int button, int state, int x, int y) override {
+    bool onMousePress(int button, int state, int x, int y) override {
         // Handle mouse button input
         // button: 0=left, 1=middle, 2=right
         // state: 0=down, 1=up
+        return false; // Not handled - allow default camera controls
     }
 
-    void onMouseMove(int x, int y) override {
+    bool onMouseMove(int x, int y) override {
         // Handle mouse movement
+        return false; // Not handled - allow default camera controls
     }
 };
 
