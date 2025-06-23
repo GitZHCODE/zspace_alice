@@ -23,7 +23,7 @@ namespace alice2 {
         , m_orbitDistance(15.0f)
         , m_orbitRotation(0, 0, 0, 1)  // Identity quaternion
     {
-        std::cout << "[CAMERA] Initializing camera with Z-up coordinate system" << std::endl;
+        //std::cout << "[CAMERA] Initializing camera with Z-up coordinate system" << std::endl;
 
         // Set initial orbit rotation for a good default view
         // Looking down at origin from a 45-degree angle, slightly elevated
@@ -31,12 +31,12 @@ namespace alice2 {
         Quaternion pitchRotation = Quaternion::fromAxisAngle(ZUp::RIGHT, -25.0f * DEG_TO_RAD);
         m_orbitRotation = yawRotation * pitchRotation;
 
-        std::cout << "[CAMERA] Initial orbit rotation set: yaw=-45°, pitch=25°" << std::endl;
+        //std::cout << "[CAMERA] Initial orbit rotation set: yaw=-45°, pitch=25°" << std::endl;
 
         updateOrbitPosition();
         updateProjection();
 
-        std::cout << "[CAMERA] Camera initialization complete" << std::endl;
+        //std::cout << "[CAMERA] Camera initialization complete" << std::endl;
     }
 
     void Camera::setPerspective(float fov, float aspect, float nearPlane, float farPlane) {

@@ -1,7 +1,7 @@
 // alice2 Particle System Sketch
 // Demonstrates a simple particle system with physics
 
-//#define __MAIN__
+#define __MAIN__
 #ifdef __MAIN__
 
 #include "../include/alice2.h"
@@ -11,18 +11,18 @@
 
 using namespace alice2;
 
-struct Particle
-{
-    Vec3 position;
-    Vec3 velocity;
-    Vec3 color;
-    float life;
-    float maxLife;
-    float size;
-};
-
 class ParticleSketch : public ISketch
 {
+    struct Particle
+    {
+        Vec3 position;
+        Vec3 velocity;
+        Vec3 color;
+        float life;
+        float maxLife;
+        float size;
+    };
+
 private:
     std::vector<Particle> m_particles;
     std::mt19937 m_rng;

@@ -1,7 +1,7 @@
 // alice2 Geometry Sketch
 // Demonstrates basic geometric shapes and transformations
 
-//#define __MAIN__
+#define __MAIN__
 #ifdef __MAIN__
 
 #include "../include/alice2.h"

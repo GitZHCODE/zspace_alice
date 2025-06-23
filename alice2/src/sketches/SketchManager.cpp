@@ -65,7 +65,7 @@ namespace alice2 {
             m_availableSketches.push_back(baseSketch);
         }
 
-        std::cout << "Found " << m_availableSketches.size() << " sketches available" << std::endl;
+        std::cout << "\nFound " << m_availableSketches.size() << " sketches available" <<std::endl;
         for (const auto& sketch : m_availableSketches) {
             std::cout << "  - " << sketch.name << " by " << sketch.author << std::endl;
         }

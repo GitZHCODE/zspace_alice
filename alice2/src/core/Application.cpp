@@ -79,7 +79,7 @@ namespace alice2 {
         setupCallbacks();
 
         m_initialized = true;
-        std::cout << "alice2 initialized successfully" << std::endl;
+        std::cout << "\nalice2 initialized successfully" << std::endl;
         return true;
     }
 
