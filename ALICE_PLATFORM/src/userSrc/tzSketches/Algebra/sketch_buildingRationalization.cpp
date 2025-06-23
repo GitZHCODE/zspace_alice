@@ -16,7 +16,6 @@ using namespace NS_hangzhou;
 bool readUSD = false;
 bool compute = false;
 bool display = true;
-bool exportToFile = false;
 double background = 0.85;
 
 zModel model;
@@ -26,8 +25,8 @@ zUtilsCore core;
 unique_ptr<zBuilding> building;
 
 // File paths
-string importPath = "data/algebra/test_slabs_all.usda";
-string exportPath = "data/algebra/rationalized_slabs_all.usda";
+string importPath = "data/algebra/";
+string exportPath = "data/algebra/";
 
 void setup()
 {
@@ -55,8 +54,6 @@ void setup()
     B.buttons[1].attachToVariable(&compute);
     B.addButton(&display, "display");
     B.buttons[2].attachToVariable(&display);
-    B.addButton(&exportToFile, "export");
-    B.buttons[3].attachToVariable(&exportToFile);
 }
 
 void update(int value)
@@ -66,8 +63,20 @@ void update(int value)
         // Create new building
         building = make_unique<zBuilding>("Test Building");
         
+        std::cout << "type in file name:\n";
+        string s;
+        std::cin >> s;
+        importPath += s;
+        exportPath += s;
+        importPath += ".usda";
+        exportPath += "_out.usda";
+
+        if (fs::exists(exportPath)) fs::remove(exportPath);
+
+        fs::copy_file(importPath, exportPath);
+
         // Import from USD
-        building->read(importPath);
+        building->read(exportPath);
         
         readUSD = !readUSD;
     }
@@ -111,12 +120,6 @@ void keyPress(unsigned char k, int xm, int ym)
     case 'i':
     case 'I':
         // TODO: Add file dialog for import path
-        compute = true;
-        break;
-    case 'e':
-    case 'E':
-        // TODO: Add file dialog for export path
-        exportToFile = true;
         compute = true;
         break;
     }

@@ -16,23 +16,24 @@ using namespace pxr;
 
 namespace NS_hangzhou {
 
-    void zFloor::rationaliseSlabEdges(double eps,bool constrainEndpoints)
+    void zFloor::rationaliseSlabEdges(
+		pxr::UsdStageRefPtr& stage, 
+		double eps,
+		bool constrainEndpoints)
     {
 		rationalizedCurves.clear();
 		rationalizedMeshes.clear();
-		curveTypes.clear();
 
 		// Divide input point list into multiple
 		vector<vector<Eigen::Vector2d>> pointList_segment;
 		pointList_segment.reserve(kinkIds.size());
 		rationalizedCurves.assign(kinkIds.size(), zObjGraph());
 		rationalizedMeshes.assign(kinkIds.size(), zObjMesh());
-		curveTypes.assign(kinkIds.size(), CurveType::LINE);
 
-		std::cout << "pointList size: " << points.size() << "\n";
-		std::cout << "kinkIds size: " << kinkIds.size() << "\n";
-		for (auto& id : kinkIds)
-			std::cout << "kinkId: " << id << "\n";
+		//std::cout << "pointList size: " << points.size() << "\n";
+		//std::cout << "kinkIds size: " << kinkIds.size() << "\n";
+		//for (auto& id : kinkIds)
+		//	std::cout << "kinkId: " << id << "\n";
 
 
 		for (size_t i = 1; i < kinkIds.size(); ++i)
@@ -41,7 +42,7 @@ namespace NS_hangzhou {
 				points.begin() + kinkIds[i - 1],
 				points.begin() + kinkIds[i] + 1);
 
-			std::cout << "sub list size: " << pointList_segment.back().size() << "\n";
+			//std::cout << "sub list size: " << pointList_segment.back().size() << "\n";
 		}
 
 		// last seg
@@ -60,7 +61,7 @@ namespace NS_hangzhou {
 
 		pointList_segment.push_back(std::move(seg));
 
-		std::cout << "pointList_segment size: " << pointList_segment.size() << "\n";
+		//std::cout << "pointList_segment size: " << pointList_segment.size() << "\n";
 
 
 		// Solver
@@ -78,6 +79,7 @@ namespace NS_hangzhou {
 			std::cout << "Constrain endpoints: " << (constrainEndpoints ? "Yes" : "No") << "\n";
 
 			vector<Eigen::Vector2d> pointListOut;
+			double val_MSE = 0.0;
 
 			if (curveFitter.solve()) {
 				// Get the fitted points
@@ -95,9 +97,11 @@ namespace NS_hangzhou {
 							<< (i == 0 ? " ← SELECTED" : "") << std::endl;
 					}
 
+					// Get MSE
+					val_MSE = allResults[0].variance;
+
 					// Update current method to show the right result info
 					currentMethod = bestMethod;
-					if(bestMethod == CurveFitter::Method::Arc) curveTypes[i] = CurveType::ARC;
 				}
 
 				// Only create the graph if we have points to display
@@ -119,6 +123,10 @@ namespace NS_hangzhou {
 
 					fnGraph.create(pos, pConnects);
 					zColor col = zBLACK;
+
+					if (currentMethod == CurveFitter::Method::Arc) col = zBLUE;
+					else if (currentMethod == CurveFitter::Method::Linear) col = zRED;
+
 					//col = legendTable[currentMethod].second;
 					//std::cout << legendTable[currentMethod].first << "\n";
 
@@ -172,12 +180,12 @@ namespace NS_hangzhou {
 
 			// write to usd
 			string edgeName = "edge_" + to_string(i);
-			SdfPath edgePath = floorMesh.GetPath().AppendChild(TfToken(edgeName));
-			UsdGeomXform edgeXf = UsdGeomXform::Define(stagePtr, edgePath);
+			SdfPath edgePath = floorPrim.GetPath().AppendChild(TfToken(edgeName));
+			UsdGeomXform edgeXf = UsdGeomXform::Define(stage, edgePath);
 
 			string edgeMeshName = "edgeMesh";
 			SdfPath edgeMeshPath = edgeXf.GetPath().AppendChild(TfToken(edgeMeshName));
-			UsdGeomMesh edgeMesh = UsdGeomMesh::Define(stagePtr, edgeMeshPath);
+			UsdGeomMesh edgeMesh = UsdGeomMesh::Define(stage, edgeMeshPath);
 
 
 			if (currentMethod == CurveFitter::Method::Arc)
@@ -217,6 +225,10 @@ namespace NS_hangzhou {
 				fnMesh.to(edgeMesh.GetPrim());
 			}
 
+			// MSE
+			UsdAttribute mseAttr = edgeXf.GetPrim().CreateAttribute(TfToken("mse"), SdfValueTypeNames->Double);
+			mseAttr.Set(val_MSE);
+
 			// z value
 			UsdAttribute zValueAttr = edgeXf.GetPrim().CreateAttribute(TfToken("zValue"), SdfValueTypeNames->Double);
 			zValueAttr.Set(height);
@@ -232,7 +244,7 @@ void zFloor::draw() {
     // original geometries
     for (auto& p : points)
     {
-		display.drawPoint(zPoint(p.x(), p.y(), height), zGREY, 5);
+		display.drawPoint(zPoint(p.x(), p.y(), height), zGREY, 3);
     }
 
     // Draw kink points
@@ -254,11 +266,12 @@ void zFloor::draw() {
     //}
 }
 
-void zFloor::read(const UsdGeomMesh& usdMesh) {
+void zFloor::read(UsdPrim prim, const UsdGeomMesh& usdMesh) {
     // Read points and kink IDs
     points.clear();
     kinkIds.clear();
 
+	floorPrim = prim;
 	floorMesh = usdMesh;
     
     VtArray<GfVec3d> u_pts;
@@ -286,10 +299,14 @@ void zFloor::save() {
 }
 
 void zBuilding::rationalise() {
+	auto stage = UsdStage::Open(stagePath);
+	if (!stage) return;
+
     for (auto& floor : floors)
     {
-        floor->rationaliseSlabEdges();
+        floor->rationaliseSlabEdges(stage);
     }
+	stage->Save();
 }
 
 void zBuilding::draw() {
@@ -299,6 +316,9 @@ void zBuilding::draw() {
 }
 
 void zBuilding::read(const std::string& usdPath) {
+
+	stagePath = usdPath;
+
     auto stage = UsdStage::Open(usdPath);
     if (!stage) return;
     
@@ -320,11 +340,13 @@ void zBuilding::read(const std::string& usdPath) {
         if (!usdMesh) continue;
         
         // Create and import floor
-        auto floor = std::make_unique<zFloor>(name, 0.0);
-        floor->read(usdMesh);
-		floor->stagePtr = stage;
+		auto floor = std::make_unique<zFloor>(name, 0.0);
+
+        floor->read(prim,usdMesh);
         addFloor(std::move(floor));
     }
+
+	stage->Save();
 }
 
 void zBuilding::save() {
