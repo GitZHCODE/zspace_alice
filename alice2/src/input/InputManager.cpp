@@ -1,9 +1,10 @@
 #include "InputManager.h"
-#ifdef _WIN32
-    #include <freeglut.h>
-#else
-    #include <GL/freeglut.h>
-#endif
+#include <GLFW/glfw3.h>
+#include <iostream>
+
+// Debug logging flag - set to true to enable detailed input logging
+#define DEBUG_INPUT_LOGGING false
+#define DEBUG_MOUSE_BUTTON_LOGGING true
 
 namespace alice2 {
 
@@ -23,18 +24,35 @@ namespace alice2 {
     }
 
     void InputManager::update() {
+        if (DEBUG_INPUT_LOGGING) {
+            std::cout << "[INPUT] InputManager::update() - Before update:" << std::endl;
+            std::cout << "  Mouse pos: (" << m_mouseState.position.x << ", " << m_mouseState.position.y << ")" << std::endl;
+            std::cout << "  Mouse delta: (" << m_mouseState.delta.x << ", " << m_mouseState.delta.y << ")" << std::endl;
+            std::cout << "  Buttons: L=" << m_mouseState.buttons[0] << " M=" << m_mouseState.buttons[1] << " R=" << m_mouseState.buttons[2] << std::endl;
+            std::cout << "  Wheel delta: " << m_mouseState.wheelDelta << std::endl;
+        }
+
         // Update last states
         m_lastKeyStates = m_keyStates;
-        
+
         for (int i = 0; i < 3; i++) {
             m_mouseState.lastButtons[i] = m_mouseState.buttons[i];
         }
-        
+
         // Update mouse delta
         updateMouseDelta();
-        
+
+        if (DEBUG_INPUT_LOGGING) {
+            std::cout << "[INPUT] InputManager::update() - After delta update:" << std::endl;
+            std::cout << "  Mouse delta: (" << m_mouseState.delta.x << ", " << m_mouseState.delta.y << ")" << std::endl;
+        }
+
         // Reset wheel delta
         m_mouseState.wheelDelta = 0.0f;
+
+        if (DEBUG_INPUT_LOGGING) {
+            std::cout << "[INPUT] InputManager::update() - Complete" << std::endl;
+        }
     }
 
     void InputManager::setKeyState(unsigned char key, KeyState state) {
@@ -107,57 +125,79 @@ namespace alice2 {
     }
 
     bool InputManager::isShiftPressed() const {
-        return (m_modifiers & GLUT_ACTIVE_SHIFT) != 0;
+        return (m_modifiers & GLFW_MOD_SHIFT) != 0;
     }
 
     bool InputManager::isCtrlPressed() const {
-        return (m_modifiers & GLUT_ACTIVE_CTRL) != 0;
+        return (m_modifiers & GLFW_MOD_CONTROL) != 0;
     }
 
     bool InputManager::isAltPressed() const {
-        return (m_modifiers & GLUT_ACTIVE_ALT) != 0;
+        return (m_modifiers & GLFW_MOD_ALT) != 0;
     }
 
     void InputManager::processKeyboard(unsigned char key, int x, int y) {
-        m_modifiers = glutGetModifiers();
+        // Note: modifiers will be set by the application when calling this function
         setKeyState(key, KeyState::Pressed);
-        
+
         if (m_keyCallback) {
             m_keyCallback(key, x, y);
         }
     }
 
     void InputManager::processMouseButton(int button, int state, int x, int y) {
-        m_modifiers = glutGetModifiers();
+        if (DEBUG_MOUSE_BUTTON_LOGGING) {
+            std::cout << "[INPUT] processMouseButton: button=" << button << " state=" << state << " pos=(" << x << "," << y << ")" << std::endl;
+        }
+
+        // Note: modifiers will be set by the application when calling this function
         setMousePosition(x, y);
-        
+
         MouseButton mb;
         switch (button) {
-            case GLUT_LEFT_BUTTON: mb = MouseButton::Left; break;
-            case GLUT_MIDDLE_BUTTON: mb = MouseButton::Middle; break;
-            case GLUT_RIGHT_BUTTON: mb = MouseButton::Right; break;
+            case GLFW_MOUSE_BUTTON_LEFT: mb = MouseButton::Left; break;
+            case GLFW_MOUSE_BUTTON_MIDDLE: mb = MouseButton::Middle; break;
+            case GLFW_MOUSE_BUTTON_RIGHT: mb = MouseButton::Right; break;
             default: return;
         }
-        
-        KeyState ks = (state == GLUT_DOWN) ? KeyState::Pressed : KeyState::Released;
+
+        KeyState ks = (state == 0) ? KeyState::Pressed : KeyState::Released;  // 0 = pressed, 1 = released (GLUT compatibility)
         setMouseButton(mb, ks);
-        
+
+        if (DEBUG_MOUSE_BUTTON_LOGGING) {
+            const char* buttonName = (mb == MouseButton::Left) ? "LEFT" : (mb == MouseButton::Middle) ? "MIDDLE" : "RIGHT";
+            const char* stateName = (ks == KeyState::Pressed) ? "PRESSED" : "RELEASED";
+            std::cout << "[INPUT] Mouse button " << buttonName << " " << stateName << " at (" << x << "," << y << ")" << std::endl;
+        }
+
         if (m_mouseButtonCallback) {
             m_mouseButtonCallback(mb, ks, x, y);
         }
     }
 
     void InputManager::processMouseMotion(int x, int y) {
+        if (DEBUG_INPUT_LOGGING) {
+            std::cout << "[INPUT] processMouseMotion: pos=(" << x << "," << y << ")" << std::endl;
+        }
+
         setMousePosition(x, y);
-        
+
+        if (DEBUG_INPUT_LOGGING) {
+            std::cout << "[INPUT] Mouse motion delta: (" << m_mouseState.delta.x << "," << m_mouseState.delta.y << ")" << std::endl;
+        }
+
         if (m_mouseMoveCallback) {
             m_mouseMoveCallback(x, y);
         }
     }
 
     void InputManager::processMouseWheel(float delta) {
+        if (DEBUG_INPUT_LOGGING) {
+            std::cout << "[INPUT] processMouseWheel: delta=" << delta << std::endl;
+        }
+
         setMouseWheel(delta);
-        
+
         if (m_mouseWheelCallback) {
             m_mouseWheelCallback(delta);
         }

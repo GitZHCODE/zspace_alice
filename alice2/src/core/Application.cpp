@@ -1,6 +1,11 @@
 #include "Application.h"
+#include <GLFW/glfw3.h>
 #include <iostream>
 #include <chrono>
+
+// Debug logging flag - set to true to enable detailed application logging
+#define DEBUG_APPLICATION_LOGGING false
+#define DEBUG_MOUSE_BUTTON_LOGGING false
 
 namespace alice2 {
 
@@ -9,6 +14,7 @@ namespace alice2 {
     Application::Application()
         : m_running(false)
         , m_initialized(false)
+        , m_window(nullptr)
         , m_windowTitle("alice2 - 3D Scene Viewer")
         , m_windowWidth(1200)
         , m_windowHeight(800)
@@ -91,7 +97,18 @@ namespace alice2 {
         auto startTime = std::chrono::high_resolution_clock::now();
         m_lastFrameTime = 0.0f;
 
-        glutMainLoop();
+        // Main loop
+        while (!glfwWindowShouldClose(m_window) && m_running) {
+            // Poll for and process events
+            glfwPollEvents();
+
+            // Update and render
+            update();
+            render();
+
+            // Swap front and back buffers
+            glfwSwapBuffers(m_window);
+        }
     }
 
     void Application::shutdown() {
@@ -100,24 +117,54 @@ namespace alice2 {
         std::cout << "Shutting down alice2..." << std::endl;
 
         m_running = false;
-        
+
         if (m_sketchManager) {
             m_sketchManager->unloadCurrentSketch();
         }
-        
+
         if (m_renderer) {
             m_renderer->shutdown();
         }
+
+        // Clean up GLFW
+        if (m_window) {
+            glfwDestroyWindow(m_window);
+            m_window = nullptr;
+        }
+        glfwTerminate();
 
         m_initialized = false;
     }
 
     bool Application::initializeWindow(int argc, char** argv) {
-        glutInit(&argc, argv);
-        glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_MULTISAMPLE);
-        glutInitWindowSize(m_windowWidth, m_windowHeight);
-        glutInitWindowPosition(100, 100);
-        glutCreateWindow(m_windowTitle.c_str());
+        // Initialize GLFW
+        glfwSetErrorCallback(errorCallback);
+
+        if (!glfwInit()) {
+            std::cerr << "Failed to initialize GLFW" << std::endl;
+            return false;
+        }
+
+        // Configure GLFW
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+        glfwWindowHint(GLFW_SAMPLES, m_multisampleSamples);
+        glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+
+        // Create window
+        m_window = glfwCreateWindow(m_windowWidth, m_windowHeight, m_windowTitle.c_str(), nullptr, nullptr);
+        if (!m_window) {
+            std::cerr << "Failed to create GLFW window" << std::endl;
+            glfwTerminate();
+            return false;
+        }
+
+        // Make the window's context current
+        glfwMakeContextCurrent(m_window);
+
+        // Enable vsync
+        glfwSwapInterval(m_vsync ? 1 : 0);
 
         return true;
     }
@@ -136,52 +183,94 @@ namespace alice2 {
     }
 
     void Application::setupCallbacks() {
-        glutDisplayFunc(displayCallback);
-        glutReshapeFunc(reshapeCallback);
-        glutKeyboardFunc(keyboardCallback);
-        glutMouseFunc(mouseCallback);
-        glutMotionFunc(motionCallback);
-        glutPassiveMotionFunc(passiveMotionCallback);
-        glutTimerFunc(16, timerCallback, 0); // ~60 FPS
+        // Set GLFW callbacks
+        glfwSetFramebufferSizeCallback(m_window, framebufferSizeCallback);
+        glfwSetKeyCallback(m_window, keyCallback);
+        glfwSetMouseButtonCallback(m_window, mouseButtonCallback);
+        glfwSetCursorPosCallback(m_window, cursorPosCallback);
+        glfwSetScrollCallback(m_window, scrollCallback);
     }
 
     void Application::update() {
+        if (DEBUG_APPLICATION_LOGGING) {
+            std::cout << "[APP] ===== Frame " << m_frameCount << " Update Start =====" << std::endl;
+        }
+
         updateTiming();
+
+        if (DEBUG_APPLICATION_LOGGING) {
+            std::cout << "[APP] Delta time: " << m_deltaTime << "s" << std::endl;
+            std::cout << "[APP] Updating CameraController..." << std::endl;
+        }
 
         // Update camera controller BEFORE resetting input states
         m_cameraController->update(m_deltaTime);
 
+        if (DEBUG_APPLICATION_LOGGING) {
+            std::cout << "[APP] Updating InputManager (will reset deltas)..." << std::endl;
+        }
+
         // Update input manager (this resets mouse delta and wheel delta)
         m_inputManager->update();
+
+        if (DEBUG_APPLICATION_LOGGING) {
+            std::cout << "[APP] Updating Scene..." << std::endl;
+        }
 
         m_scene->update(m_deltaTime);
 
         if (m_sketchManager->hasCurrentSketch()) {
+            if (DEBUG_APPLICATION_LOGGING) {
+                std::cout << "[APP] Updating current sketch..." << std::endl;
+            }
             m_sketchManager->updateCurrentSketch(m_deltaTime);
         }
 
         updateFPS();
+
+        if (DEBUG_APPLICATION_LOGGING) {
+            std::cout << "[APP] ===== Frame " << m_frameCount << " Update End =====" << std::endl;
+        }
     }
 
     void Application::render() {
+        if (DEBUG_APPLICATION_LOGGING) {
+            std::cout << "[APP] ===== Frame " << m_frameCount << " Render Start =====" << std::endl;
+        }
+
         m_renderer->beginFrame();
         m_renderer->setViewport(0, 0, m_windowWidth, m_windowHeight);
+
+        if (DEBUG_APPLICATION_LOGGING) {
+            std::cout << "[APP] Setting camera on renderer..." << std::endl;
+        }
         m_renderer->setCamera(*m_camera);
-        
+
         // Set background color
         Vec3 bgColor = m_scene->getBackgroundColor();
         glClearColor(bgColor.x, bgColor.y, bgColor.z, 1.0f);
         m_renderer->clear();
-        
+
+        if (DEBUG_APPLICATION_LOGGING) {
+            std::cout << "[APP] Rendering scene..." << std::endl;
+        }
+
         // Render scene
         m_scene->render(*m_renderer, *m_camera);
-        
+
         // Render current sketch
         if (m_sketchManager->hasCurrentSketch()) {
+            if (DEBUG_APPLICATION_LOGGING) {
+                std::cout << "[APP] Rendering current sketch..." << std::endl;
+            }
             m_sketchManager->drawCurrentSketch(*m_renderer, *m_camera);
         }
-        
+
         m_renderer->endFrame();
+
+        if (DEBUG_APPLICATION_LOGGING) {
+            std::cout << "[APP] ===== Frame " << m_frameCount << " Render End =====" << std::endl;
+        }
     }
 
     void Application::updateTiming() {
@@ -207,81 +296,113 @@ namespace alice2 {
     }
 
     // Static callback implementations
-    void Application::displayCallback() {
-        if (s_instance) {
-            s_instance->update();
-            s_instance->render();
-        }
+    void Application::errorCallback(int error, const char* description) {
+        std::cerr << "GLFW Error " << error << ": " << description << std::endl;
     }
 
-    void Application::reshapeCallback(int width, int height) {
+    void Application::framebufferSizeCallback(GLFWwindow* window, int width, int height) {
         if (s_instance) {
             s_instance->m_windowWidth = width;
             s_instance->m_windowHeight = height;
             s_instance->m_camera->setAspectRatio((float)width / height);
+            glViewport(0, 0, width, height);
         }
     }
 
-    void Application::keyboardCallback(unsigned char key, int x, int y) {
-        if (s_instance) {
-            s_instance->m_inputManager->processKeyboard(key, x, y);
+    void Application::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+        if (s_instance && action == GLFW_PRESS) {
+            // Convert GLFW key to character for compatibility
+            unsigned char charKey = 0;
 
-            // Handle global application keys
-            switch (key) {
-                case 27: // ESC key
-                    s_instance->quit();
-                    glutLeaveMainLoop();
-                    break;
-                case 'r':
-                case 'R':
-                    // Reset camera
-                    s_instance->m_cameraController->resetToDefault();
-                    break;
-                case 'g':
-                case 'G':
-                    // Toggle grid
-                    s_instance->m_scene->setShowGrid(!s_instance->m_scene->getShowGrid());
-                    break;
-                case 'a':
-                case 'A':
-                    // Toggle axes
-                    s_instance->m_scene->setShowAxes(!s_instance->m_scene->getShowAxes());
-                    break;
-                case 'f':
-                case 'F':
-                    // Focus on scene bounds
-                    s_instance->m_scene->calculateBounds();
-                    s_instance->m_cameraController->focusOnBounds(
-                        s_instance->m_scene->getBoundsMin(),
-                        s_instance->m_scene->getBoundsMax()
-                    );
-                    break;
+            // Handle special keys
+            if (key == GLFW_KEY_ESCAPE) {
+                s_instance->quit();
+                return;
             }
+
+            // Convert printable keys
+            if (key >= GLFW_KEY_A && key <= GLFW_KEY_Z) {
+                charKey = (mods & GLFW_MOD_SHIFT) ? ('A' + (key - GLFW_KEY_A)) : ('a' + (key - GLFW_KEY_A));
+            } else if (key >= GLFW_KEY_0 && key <= GLFW_KEY_9) {
+                charKey = '0' + (key - GLFW_KEY_0);
+            }
+
+            if (charKey != 0) {
+                // Get cursor position for compatibility
+                double xpos, ypos;
+                glfwGetCursorPos(window, &xpos, &ypos);
+
+                // Set modifiers in InputManager
+                s_instance->m_inputManager->setModifiers(mods);
+                s_instance->m_inputManager->processKeyboard(charKey, (int)xpos, (int)ypos);
+
+                // Handle global application keys
+                switch (charKey) {
+                    case 'r':
+                    case 'R':
+                        // Reset camera
+                        s_instance->m_cameraController->resetToDefault();
+                        break;
+                    case 'g':
+                    case 'G':
+                        // Toggle grid
+                        s_instance->m_scene->setShowGrid(!s_instance->m_scene->getShowGrid());
+                        break;
+                    case 'a':
+                    case 'A':
+                        // Toggle axes
+                        s_instance->m_scene->setShowAxes(!s_instance->m_scene->getShowAxes());
+                        break;
+                    case 'f':
+                    case 'F':
+                        // Focus on scene bounds
+                        s_instance->m_scene->calculateBounds();
+                        s_instance->m_cameraController->focusOnBounds(
+                            s_instance->m_scene->getBoundsMin(),
+                            s_instance->m_scene->getBoundsMax()
+                        );
+                        break;
+                }
+
+                if (s_instance->m_sketchManager->hasCurrentSketch()) {
+                    s_instance->m_sketchManager->forwardKeyPress(charKey, (int)xpos, (int)ypos);
+                }
+            }
+        }
+    }
+
+    void Application::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+        if (s_instance) {
+            // Get cursor position
+            double xpos, ypos;
+            glfwGetCursorPos(window, &xpos, &ypos);
+            int x = (int)xpos;
+            int y = (int)ypos;
+
+            // Convert GLFW button and action to GLFW constants for InputManager
+            int glfwButton = button;  // Use GLFW button constants directly
+            int glfwState = (action == GLFW_PRESS) ? 0 : 1;  // 0 = pressed, 1 = released for compatibility
+
+            if (DEBUG_MOUSE_BUTTON_LOGGING) {
+                std::cout << "[APP] mouseButtonCallback: button=" << button << " action=" << action << " pos=(" << x << "," << y << ")" << std::endl;
+                std::cout << "[APP] Processing mouse button: button=" << glfwButton << " state=" << glfwState << std::endl;
+            }
+
+            // Set modifiers in InputManager
+            s_instance->m_inputManager->setModifiers(mods);
+            s_instance->m_inputManager->processMouseButton(glfwButton, glfwState, x, y);
 
             if (s_instance->m_sketchManager->hasCurrentSketch()) {
-                s_instance->m_sketchManager->forwardKeyPress(key, x, y);
+                s_instance->m_sketchManager->forwardMousePress(glfwButton, glfwState, x, y);
             }
         }
     }
 
-    void Application::mouseCallback(int button, int state, int x, int y) {
+    void Application::cursorPosCallback(GLFWwindow* window, double xpos, double ypos) {
         if (s_instance) {
-            // Handle mouse wheel
-            if (button == 3 || button == 4) { // Mouse wheel up/down
-                float wheelDelta = (button == 3) ? 1.0f : -1.0f;
-                s_instance->m_inputManager->processMouseWheel(wheelDelta);
-            } else {
-                s_instance->m_inputManager->processMouseButton(button, state, x, y);
-            }
+            int x = (int)xpos;
+            int y = (int)ypos;
 
-            if (s_instance->m_sketchManager->hasCurrentSketch()) {
-                s_instance->m_sketchManager->forwardMousePress(button, state, x, y);
-            }
-        }
-    }
-
-    void Application::motionCallback(int x, int y) {
-        if (s_instance) {
             s_instance->m_inputManager->processMouseMotion(x, y);
             if (s_instance->m_sketchManager->hasCurrentSketch()) {
                 s_instance->m_sketchManager->forwardMouseMove(x, y);
@@ -289,16 +410,13 @@ namespace alice2 {
         }
     }
 
-    void Application::passiveMotionCallback(int x, int y) {
+    void Application::scrollCallback(GLFWwindow* window, double xoffset, double yoffset) {
         if (s_instance) {
-            s_instance->m_inputManager->processMouseMotion(x, y);
-        }
-    }
-
-    void Application::timerCallback(int value) {
-        if (s_instance && s_instance->m_running) {
-            glutPostRedisplay();
-            glutTimerFunc(16, timerCallback, 0);
+            float wheelDelta = (float)yoffset;
+            if (DEBUG_MOUSE_BUTTON_LOGGING) {
+                std::cout << "[APP] scrollCallback: yoffset=" << yoffset << " wheelDelta=" << wheelDelta << std::endl;
+            }
+            s_instance->m_inputManager->processMouseWheel(wheelDelta);
         }
     }
 

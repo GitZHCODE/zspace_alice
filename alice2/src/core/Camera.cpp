@@ -1,6 +1,10 @@
 #include "Camera.h"
 #include "../utils/OpenGL.h"
 #include <cmath>
+#include <iostream>
+
+// Debug logging flag - set to true to enable detailed camera matrix logging
+#define DEBUG_CAMERA_MATRIX_LOGGING false
 
 namespace alice2 {
 
@@ -46,6 +50,9 @@ namespace alice2 {
 
     const Mat4& Camera::getViewMatrix() const {
         if (m_viewDirty) {
+            if (DEBUG_CAMERA_MATRIX_LOGGING) {
+                std::cout << "[CAMERA] View matrix dirty, updating..." << std::endl;
+            }
             updateViewMatrix();
         }
         return m_viewMatrix;
@@ -145,26 +152,53 @@ namespace alice2 {
     }
 
     void Camera::updateOrbitPosition() {
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "[CAMERA] updateOrbitPosition:" << std::endl;
+            std::cout << "  Orbit center: (" << m_orbitCenter.x << ", " << m_orbitCenter.y << ", " << m_orbitCenter.z << ")" << std::endl;
+            std::cout << "  Orbit distance: " << m_orbitDistance << std::endl;
+            std::cout << "  Pitch/Yaw: " << m_orbitPitch << "/" << m_orbitYaw << std::endl;
+        }
+
         float pitchRad = m_orbitPitch * DEG_TO_RAD;
         float yawRad = m_orbitYaw * DEG_TO_RAD;
-        
+
         Vec3 position;
         position.x = m_orbitCenter.x + m_orbitDistance * std::cos(pitchRad) * std::sin(yawRad);
         position.y = m_orbitCenter.y + m_orbitDistance * std::sin(pitchRad);
         position.z = m_orbitCenter.z + m_orbitDistance * std::cos(pitchRad) * std::cos(yawRad);
-        
+
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            Vec3 oldPos = m_transform.getPosition();
+            std::cout << "  Position change: from (" << oldPos.x << ", " << oldPos.y << ", " << oldPos.z << ") to (" << position.x << ", " << position.y << ", " << position.z << ")" << std::endl;
+        }
+
         m_transform.setPosition(position);
         m_transform.lookAt(m_orbitCenter);
         m_viewDirty = true;
+
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "  View matrix marked dirty" << std::endl;
+        }
     }
 
     void Camera::updateViewMatrix() const {
         Vec3 pos = m_transform.getPosition();
         Vec3 forward = m_transform.forward();
         Vec3 up = m_transform.up();
-        
+
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "[CAMERA] updateViewMatrix:" << std::endl;
+            std::cout << "  Position: (" << pos.x << ", " << pos.y << ", " << pos.z << ")" << std::endl;
+            std::cout << "  Forward: (" << forward.x << ", " << forward.y << ", " << forward.z << ")" << std::endl;
+            std::cout << "  Up: (" << up.x << ", " << up.y << ", " << up.z << ")" << std::endl;
+        }
+
         m_viewMatrix = GLMatrix::lookAt(pos, pos + forward, up);
         m_viewDirty = false;
+
+        if (DEBUG_CAMERA_MATRIX_LOGGING) {
+            std::cout << "  View matrix updated, dirty flag cleared" << std::endl;
+        }
     }
 
 } // namespace alice2

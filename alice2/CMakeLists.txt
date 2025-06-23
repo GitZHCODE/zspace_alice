@@ -32,19 +32,22 @@ if(NOT EXISTS ${GLEW_LIBRARIES})
     message(FATAL_ERROR "GLEW library not found at ${GLEW_LIBRARIES}")
 endif()
 
-# Use FreeGLUT from ALICE_PLATFORM
-set(FREEGLUT_INCLUDE_DIRS "${ALICE_PLATFORM_DIR}/src/zspace/depends/freeglut")
-set(FREEGLUT_LIBRARIES "${ALICE_PLATFORM_DIR}/src/zspace/depends/freeglut/freeglut.lib")
+# Use GLFW from local depends directory
+set(GLFW_DIR "${CMAKE_CURRENT_SOURCE_DIR}/depends/glfw")
+set(GLFW_INCLUDE_DIRS "${GLFW_DIR}/include")
 
-# Check if FreeGLUT files exist
-if(NOT EXISTS ${FREEGLUT_INCLUDE_DIRS}/freeglut.h)
-    message(WARNING "FreeGLUT headers not found at ${FREEGLUT_INCLUDE_DIRS}, will try system GLUT")
-    find_package(GLUT REQUIRED)
-    set(FREEGLUT_LIBRARIES ${GLUT_LIBRARIES})
-    set(FREEGLUT_INCLUDE_DIRS ${GLUT_INCLUDE_DIR})
-else()
-    message(STATUS "Using FreeGLUT from ALICE_PLATFORM")
+# Check if GLFW files exist
+if(NOT EXISTS ${GLFW_INCLUDE_DIRS}/GLFW/glfw3.h)
+    message(FATAL_ERROR "GLFW headers not found at ${GLFW_INCLUDE_DIRS}")
 endif()
+
+# Build GLFW as a subdirectory
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+add_subdirectory(${GLFW_DIR} glfw_build)
+
+message(STATUS "Using GLFW from local depends directory")
 
 # Include directories
 include_directories(
@@ -52,7 +55,7 @@ include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${OPENGL_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
-    ${FREEGLUT_INCLUDE_DIRS}
+    ${GLFW_INCLUDE_DIRS}
 )
 
 # Source files
@@ -117,7 +120,7 @@ add_executable(alice2 ${ALICE2_SOURCES} ${ALICE2_HEADERS})
 target_link_libraries(alice2
     ${OPENGL_LIBRARIES}
     ${GLEW_LIBRARIES}
-    ${FREEGLUT_LIBRARIES}
+    glfw
 )
 
 # Compiler-specific options
@@ -164,7 +167,7 @@ message(STATUS "  Build type: ${CMAKE_BUILD_TYPE}")
 message(STATUS "  C++ standard: ${CMAKE_CXX_STANDARD}")
 message(STATUS "  OpenGL: ${OPENGL_LIBRARIES}")
 message(STATUS "  GLEW: ${GLEW_LIBRARIES}")
-message(STATUS "  FreeGLUT/GLUT: ${FREEGLUT_LIBRARIES}")
+message(STATUS "  GLFW: glfw (built from source)")
 
 # Optional: Create a build script for convenience
 if(WIN32)

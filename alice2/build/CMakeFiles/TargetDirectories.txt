@@ -2,3 +2,8 @@ C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/CMakeFil
 C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/CMakeFiles/INSTALL.dir
 C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/CMakeFiles/ALL_BUILD.dir
 C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/glfw_build/CMakeFiles/INSTALL.dir
+C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/glfw_build/CMakeFiles/ALL_BUILD.dir
+C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/glfw_build/src/CMakeFiles/glfw.dir
+C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/glfw_build/src/CMakeFiles/update_mappings.dir
+C:/Users/taizhong_chen/source/repos/GitZHCODE/zspace_alice/alice2/build/glfw_build/src/CMakeFiles/INSTALL.dir

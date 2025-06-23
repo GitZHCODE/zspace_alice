@@ -3,6 +3,9 @@
 #include <iostream>
 #include <cmath>
 
+// Debug logging flag - set to true to enable detailed renderer logging
+#define DEBUG_RENDERER_LOGGING false
+
 namespace alice2 {
 
     Renderer::Renderer()
@@ -56,8 +59,8 @@ namespace alice2 {
 
     void Renderer::endFrame() {
         if (!m_initialized) return;
-        
-        glutSwapBuffers();
+
+        // Note: Buffer swapping is now handled by GLFW in the main loop
         checkErrors();
     }
 
@@ -81,18 +84,31 @@ namespace alice2 {
     }
 
     void Renderer::setCamera(Camera& camera) {
+        if (DEBUG_RENDERER_LOGGING) {
+            Vec3 pos = camera.getPosition();
+            std::cout << "[RENDERER] setCamera: position=(" << pos.x << ", " << pos.y << ", " << pos.z << ")" << std::endl;
+        }
         setupProjection(camera);
         setupView(camera);
     }
 
     void Renderer::setupProjection(Camera& camera) {
+        if (DEBUG_RENDERER_LOGGING) {
+            std::cout << "[RENDERER] setupProjection: Loading projection matrix" << std::endl;
+        }
         glMatrixMode(GL_PROJECTION);
         GLMatrix::loadMatrix(camera.getProjectionMatrix());
     }
 
     void Renderer::setupView(Camera& camera) {
+        if (DEBUG_RENDERER_LOGGING) {
+            std::cout << "[RENDERER] setupView: Loading view matrix" << std::endl;
+        }
         glMatrixMode(GL_MODELVIEW);
         GLMatrix::loadMatrix(camera.getViewMatrix());
+        if (DEBUG_RENDERER_LOGGING) {
+            std::cout << "[RENDERER] setupView: View matrix loaded" << std::endl;
+        }
     }
 
     void Renderer::pushMatrix() {
@@ -229,8 +245,9 @@ namespace alice2 {
     }
 
     void Renderer::drawSphere(float radius, int segments) {
-        // Simple sphere implementation using GLUT
-        glutSolidSphere(radius, segments, segments);
+        // TODO: Implement custom sphere rendering without GLUT
+        // For now, draw a simple wireframe cube as placeholder
+        drawCube(radius * 2.0f);
     }
 
     void Renderer::drawCylinder(float radius, float height, int segments) {
