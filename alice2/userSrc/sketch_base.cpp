@@ -1,7 +1,12 @@
 // alice2 Base Sketch Template
 // This is a template for creating user sketches in alice2
 
+#define __MAIN__
+#ifdef __MAIN__
+
+
 #include "../include/alice2.h"
+#include "../src/sketches/SketchRegistry.h"
 
 using namespace alice2;
 
@@ -43,10 +48,6 @@ public:
         scene().setShowAxes(true);
         scene().setAxesLength(2.0f);
 
-        // Example: Set camera position for Z-up view
-        // camera().setPosition(Vec3(0, -10, 5));  // Y-back, Z-up view
-        // camera().lookAt(Vec3(0, 0, 0));  // Look at origin with Z-up default
-        // std::cout << "Camera positioned for Z-up view" << std::endl;
     }
 
     void update(float deltaTime) override {
@@ -131,5 +132,9 @@ public:
     }
 };
 
-// Register the sketch with alice2
+// Register the sketch with alice2 (both old and new systems)
 ALICE2_REGISTER_SKETCH(BaseSketch)
+ALICE2_REGISTER_SKETCH_AUTO(BaseSketch)
+
+#endif // __MAIN__
+

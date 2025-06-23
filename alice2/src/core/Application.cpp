@@ -368,6 +368,16 @@ namespace alice2 {
                                 s_instance->m_scene->getBoundsMax()
                             );
                             break;
+                        case 'n':
+                        case 'N':
+                            // Switch to next sketch
+                            s_instance->m_sketchManager->switchToNextSketch();
+                            break;
+                        case 'p':
+                        case 'P':
+                            // Switch to previous sketch
+                            s_instance->m_sketchManager->switchToPreviousSketch();
+                            break;
                     }
                 }
             }
@@ -431,8 +441,11 @@ namespace alice2 {
             return -1;
         }
         
-        // Try to load base sketch
-        app.getSketchManager().loadSketch("Base Sketch");
+        // Try to load the first available sketch
+        const auto& sketches = app.getSketchManager().getAvailableSketches();
+        if (!sketches.empty()) {
+            app.getSketchManager().loadSketch(sketches[0].name);
+        }
         
         app.run();
         return 0;

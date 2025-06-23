@@ -78,12 +78,17 @@ set(ALICE2_SOURCES
 
     # Utils
     src/utils/Math.cpp
+    src/utils/Vector.cpp
+    src/utils/Matrix.cpp
+    src/utils/Quaternion.cpp
 
     # Sketches
     src/sketches/SketchManager.cpp
 
     # User sketches
     userSrc/sketch_base.cpp
+    userSrc/sketch_geometry.cpp
+    userSrc/sketch_particles.cpp
 
     # Main
     src/main.cpp
@@ -113,9 +118,14 @@ set(ALICE2_HEADERS
     # Sketches
     src/sketches/ISketch.h
     src/sketches/SketchManager.h
+    src/sketches/SketchRegistry.h
     
     # Utils
     src/utils/Math.h
+    src/utils/Vector.h
+    src/utils/Matrix.h
+    src/utils/Quaternion.h
+    src/utils/MathUtils.h
     src/utils/OpenGL.h
 )
 

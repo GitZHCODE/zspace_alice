@@ -4,7 +4,7 @@
 #include <iostream>
 
 // Debug logging flag - set to true to enable detailed camera matrix logging
-#define DEBUG_CAMERA_MATRIX_LOGGING true
+#define DEBUG_CAMERA_MATRIX_LOGGING false
 
 namespace alice2 {
 

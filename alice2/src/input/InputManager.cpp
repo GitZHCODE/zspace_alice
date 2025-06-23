@@ -4,7 +4,7 @@
 
 // Debug logging flag - set to true to enable detailed input logging
 #define DEBUG_INPUT_LOGGING false
-#define DEBUG_MOUSE_BUTTON_LOGGING true
+#define DEBUG_MOUSE_BUTTON_LOGGING false
 
 namespace alice2 {
 
