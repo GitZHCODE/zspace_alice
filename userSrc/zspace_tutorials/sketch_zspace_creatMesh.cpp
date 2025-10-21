@@ -58,6 +58,45 @@ void createMyMesh(zObjMesh &oMesh)
 	fnMesh.create(vPositions, pCounts, pConnects);
 }
 
+void setAllVertexBlue(zObjMesh oMesh) {
+	zFnMesh fnMesh(oMesh);
+	zColorArray vColors;
+	for (int i = 0; i < fnMesh.numVertices(); i++)
+	{
+		vColors.push_back(zBLUE);
+	}
+	fnMesh.setVertexColors(vColors);
+
+}
+
+void connectVertex(zObjMesh oMesh, int id, zObjGraph &o_OutGraph) 
+{
+	zFnMesh fnMesh(oMesh);
+	zFnGraph fnGraph(o_OutGraph);
+	zPointArray vPositions;
+
+	fnMesh.getVertexPositions(vPositions);
+	zPointArray vPositionsG;
+	zIntArray vConnectsG;
+	int vconnect = 0;
+	for (int i = 0; i < vPositions.size(); i++) 
+	{
+		if(i!=id)
+		{ 
+			zPoint p0 = vPositions[id];
+			zPoint p1 = vPositions[i];
+			vPositionsG.push_back(p0);
+			vPositionsG.push_back(p1);
+			vConnectsG.push_back(2 * vconnect);
+			vConnectsG.push_back(2 * vconnect + 1);
+			vconnect++;
+		}
+
+	}
+
+	fnGraph.create(vPositionsG, vConnectsG);
+}
+
 ////////////////////////////////////////////////////////////////////////// General
 
 bool compute = false;
@@ -72,6 +111,7 @@ zModel model;
 /*!<Objects*/
 zUtilsCore core;
 zObjMesh oMesh;
+zObjGraph oGraph;
 
 
 ////// --- GUI OBJECTS ----------------------------------------------------
@@ -92,7 +132,10 @@ void setup()
 	// read mesh
 	zFnMesh fnMesh_in(oMesh);
 
+
 	createMyMesh(oMesh);
+	setAllVertexBlue(oMesh);
+	connectVertex(oMesh, 1, oGraph);
 
 	// creating duplicate
 	zObjMesh oDuplicateMesh;
@@ -102,9 +145,12 @@ void setup()
 	//////////////////////////////////////////////////////////  DISPLAY SETUP
 	// append to model for displaying the object
 	model.addObject(oMesh);
+	model.addObject(oGraph);
+
 
 	// set display element booleans
-	oMesh.setDisplayElements(false, true, true);
+	oMesh.setDisplayElements(true, true, true);
+	oGraph.setDisplayElements(true, true);
 
 	////////////////////////////////////////////////////////////////////////// Sliders
 
@@ -128,8 +174,6 @@ void update(int value)
 {
 	if (compute)
 	{
-		
-
 		compute = !compute;	
 	}
 
@@ -147,7 +191,8 @@ void draw()
 	if (display)
 	{
 		// zspace model draw
-		//model.draw();
+		model.draw();
+		oGraph.draw();
 		
 	}
 

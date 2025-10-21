@@ -1,4 +1,4 @@
-#include "zInterface/objects/zObjMeshField.h"
+//#include "zInterface/objects/zObjMeshField.h"
 #define _MAIN_
 #define _HAS_STD_BYTE 0
 
@@ -73,23 +73,24 @@ bool frameCHECKS = false;
 
 
 double background = 0.8;
-double _slider_blockID = 26;
+double _slider_blockID = 44;
 //double _slider_blockID = 64;
 double _slider_SDF_Func = 7;
-double _slider_SDF_Layers = 123;
+double _slider_SDF_Layers = 3;
 double _slider_SDF_smooth = 1;
 
 ////////////////////////////////////////////////////////////////////////// zSpace Objects
 
 string mainDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder";
 
-string blockVersion = "20_1";
+string blockVersion = "20_3";
 //string blockVersion = "20_2";
 
 string cablesDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder/V19_11/shared/cableGraphs";
 string blockDir = mainDir + "/V" + blockVersion + "/shared/blocks/";
 string expBlockDir = "data/NatPower/testSliceMesh/";
 int blockID = 0;
+vector<int> export_block_id_on_q{-1};
 
 zDomain<zPoint> bb;
 
@@ -107,13 +108,16 @@ int SDFFunc_NumSmooth = 1;
 int numSDFLayers = 5;
 bool allSDFLayers = false;
 
+zDomainFloat printHeightDomain_wall(0.006f, 0.009f);
 zDomainFloat printHeightDomain(0.0057f, 0.0123f);
 //zDomainFloat printHeightDomain(0.0055, 0.013);
+
 
 
 zTsNatpowerSDF mySlicer;
 
 zUtilsCore core;
+
 
 void setup()
 {
@@ -131,7 +135,7 @@ void setup()
 	S.sliders[0].attachToVariable(&background, 0, 1);
 
 	S.addSlider(&_slider_blockID, "blockID");
-	S.sliders[1].attachToVariable(&_slider_blockID, 0, 80);
+	S.sliders[1].attachToVariable(&_slider_blockID, 0, 82);
 
 	S.addSlider(&_slider_SDF_Func, "sdfFuncNum");
 	S.sliders[2].attachToVariable(&_slider_SDF_Func, 0, 7);
@@ -182,7 +186,8 @@ void setup()
 
 	B.addButton(&dContourGraphs, "dContourGraphs");
 	B.buttons[bcounter++].attachToVariable(&dContourGraphs);
-
+	B.addButton(&dField, "dField");
+	B.buttons[bcounter++].attachToVariable(&dField);
 
 	B.addButton(&dContourGraphs_FLT, "dContourGraphs_FLT");
 	B.buttons[bcounter++].attachToVariable(&dContourGraphs_FLT);
@@ -194,8 +199,7 @@ void setup()
 	B.buttons[bcounter++].attachToVariable(&dTrimGraphs_flatten);
 
 
-	B.addButton(&dField, "dField");
-	B.buttons[bcounter++].attachToVariable(&dField);
+
 
 	B.addButton(&dOtherSide, "dOtherSide");
 	B.buttons[bcounter++].attachToVariable(&dOtherSide);
@@ -287,9 +291,10 @@ void update(int value)
 		_slider_blockID = blockID;
 		mySlicer = zTsNatpowerSDF();
 
-		if (blockID == 0)
+		//iscableblock is manually added
+		if (blockID == 0 || blockID == 15||blockID == 44 || blockID == 52)
 			mySlicer.isCableBlock = true;
-
+		cout << "\n iscableblock " << mySlicer.isCableBlock << endl;
 		mySlicer.setFromJSON(blockDir, blockID, runBothPlanes, runPlaneLeft);
 
 		bb = zDomain<zPoint>(zPoint(-2.5, -2.5, 0), zPoint(2.5, 2.5, 0));
@@ -338,6 +343,10 @@ void update(int value)
 		//bool chkSDF = false;
 		//bool chkGeo = true;
 		//bool layerChk = natpower.checkPrintLayerHeights(chkSDF, chkGeo);
+		if (mySlicer.blockType == zBlockType(Wall) )
+		{
+			printHeightDomain = printHeightDomain_wall;
+		}
 		mySlicer.compute_PrintBlocks(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, true, false);
 		//printf("\n layerChk = %s | chkSDF %s | chkGeo %s", to_string(layerChk), to_string(chkSDF), to_string(chkGeo));
 		float cellSize = 0.006f;
@@ -373,8 +382,10 @@ void update(int value)
 	{
 		printf("\n SDF smooth %i", SDFFunc_NumSmooth);
 		mySlicer.compute_PrintBlocks(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, false, true);
-
 		//mySlicer.computeSDF(allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, printLayerWidth, 0, raftLayerWidth);;
+
+		mySlicer.check_SDF_LayerHeights();
+
 
 		computeSDF = !computeSDF;
 
@@ -489,7 +500,7 @@ void update(int value)
 	if (exportSDF)
 	{
 		exportSDF = !exportSDF;
-		expBlockDir = blockDir + "exportedSDF_9";
+		expBlockDir = blockDir + "exportedSDF_10";
 
 
 		bool chkTransform = false;
@@ -840,9 +851,18 @@ void draw()
 		int numGraphs = 0;
 		zObjGraphPointerArray graphs = mySlicer.getBlockTrimGraphs(numGraphs);
 
+		int numGraphs_1 = 0;
+		zObjGraphPointerArray graphs_1 = mySlicer.getBlockCableProfileGraphs(numGraphs_1);
+
+
 		if (displayAllGraphs)
 		{
 			for (auto& g : graphs)
+			{
+				g->draw();
+			}
+
+			for (auto& g : graphs_1)
 			{
 				g->draw();
 			}
@@ -857,13 +877,20 @@ void draw()
 			if (numGraphs > 0 && i >= 0 & i < numGraphs)
 			{
 				graphs[i]->draw();
+				if(numGraphs_1 > 0) graphs_1[i]->draw();
 
 				if (pentagon)
+				{
 					graphs[i + end]->draw();
+					if(numGraphs_1 > 0) graphs_1[i + end]->draw();
+				}
+					
 
 			}
 
 		}
+
+
 	}
 	if (dTrimGraphs_flatten)
 	{
@@ -898,6 +925,11 @@ void draw()
 	if (dCable)
 	{
 		for(auto c: mySlicer.o_CableGraphs)
+		{
+			c.draw();
+		}
+
+		for (auto c : mySlicer.o_CableMeshes)
 		{
 			c.draw();
 		}
@@ -961,6 +993,19 @@ void keyPress(unsigned char k, int xm, int ym)
 	if (k == 'M')
 	{
 		readSDF = true;
+	}
+	if (k == 'q') 
+	{
+		for (int i = 0; i < export_block_id_on_q.size();i++)
+		{
+			allSDFLayers = true;
+			_slider_blockID = export_block_id_on_q[i];
+			readJson = true;
+			computeFRAMES = true;
+			computeSDF = true;
+			exportSDF = true;
+		}
+
 	}
 }
 
