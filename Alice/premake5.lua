@@ -54,8 +54,6 @@ project "ALICE"
         "%{AliceIncludeDir.MATRICES}",
         "%{AliceIncludeDir.POLYCLIPPER}",
 
-        "%{AliceIncludeDir.MAYA}",
-
         "%{path_from_alice_to_zspace_core}/src/headers",
         "%{path_from_alice_to_zspace_toolsets}/src/headers",
 
@@ -74,8 +72,6 @@ project "ALICE"
         "%{AliceLibDir.GL2PS}",
         "%{AliceLibDir.GLEW}",
         "%{AliceLibDir.LIBGIZMO}",
-
-        "%{AliceLibDir.MAYA}",
 
         "%{path_from_alice_to_zspace_core}/bin/%{cfg.buildcfg}",
         "%{path_from_alice_to_zspace_toolsets}/bin/%{cfg.buildcfg}",
@@ -130,11 +126,13 @@ project "ALICE"
         includedirs
         {
             "%{AliceIncludeDir.RHINOSDK}",
+            "%{AliceIncludeDir.MAYA}",
         }
 
         libdirs
         {
             "%{AliceLibDir.RHINOSDK}",
+            "%{AliceLibDir.MAYA}",
         }
 
         delayloaddlls

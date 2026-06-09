@@ -1,5 +1,5 @@
 //#include "zInterface/objects/zObjMeshField.h"
-//#define _MAIN_
+#define _MAIN_
 #define _HAS_STD_BYTE 0
 
 #ifdef _MAIN_
@@ -8,8 +8,23 @@
 #include <zApp/include/zViewer.h>
 
 
-#include <zToolsets/natpower/zTsNatpowerSDF.h>
+#include <zToolsets/carbcomn/zTsCarbcomn.h>
 //#include <zCore/Geometry/zExtGraph.h>
+
+#if defined ZSPACE_USD_INTEROP
+#include <pxr/base/gf/matrix4d.h>
+#include <pxr/base/gf/vec3f.h>
+#include <pxr/base/vt/array.h>
+#include <pxr/usd/sdf/path.h>
+#include <pxr/usd/sdf/valueTypeName.h>
+#include <pxr/usd/usd/stage.h>
+#include <pxr/usd/usdGeom/basisCurves.h>
+#include <pxr/usd/usdGeom/mesh.h>
+#include <pxr/usd/usdGeom/tokens.h>
+#include <pxr/usd/usdGeom/xform.h>
+
+using namespace pxr;
+#endif
 
 //#include <zToolsets/geometry/zTsSDFSlicer.h>
 
@@ -23,6 +38,20 @@
 
 using namespace zSpace;
 zModel model;
+
+#if defined ZSPACE_USD_INTEROP
+namespace zSpace
+{
+	void zFnMesh::from(pxr::UsdPrim& usd, bool staticGeom) {}
+	void zFnMesh::to(pxr::UsdPrim& usd) {}
+	void zFnGraph::from(pxr::UsdPrim& usd, bool staticGeom) {}
+	void zFnGraph::to(pxr::UsdPrim& usd) {}
+	void zFnParticle::from(pxr::UsdPrim& usd, bool staticGeom) {}
+	void zFnParticle::to(pxr::UsdPrim& usd) {}
+	void zFnPointCloud::from(pxr::UsdPrim& usd, bool staticGeom) {}
+	void zFnPointCloud::to(pxr::UsdPrim& usd) {}
+}
+#endif
 
 ////////////////////////////////////////////////////////////////////////// General
 
@@ -88,7 +117,7 @@ string blockVersion = "20_3";
 
 string cablesDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder/V19_11/shared/cableGraphs";
 string blockDir = mainDir + "/V" + blockVersion + "/shared/blocks/";
-string expBlockDir = "data/NatPower/testSliceMesh/";
+string expBlockDir = "data/Carbcomn/testSliceMesh/";
 int blockID = 0;
 vector<int> export_block_id_on_q{-1};
 
@@ -114,7 +143,7 @@ zDomainFloat printHeightDomain(0.0057f, 0.0123f);
 
 
 
-zTsNatpowerSDF mySlicer;
+zTsCarbcomn mySlicer;
 
 zUtilsCore core;
 
@@ -239,6 +268,231 @@ void get2DArrayFromTransform(zTransform& transform, vector<zDoubleArray>& arr)
 	}
 }
 
+#if defined ZSPACE_USD_INTEROP
+namespace
+{
+	UsdStageRefPtr createUsdLiteStage(const std::string& path)
+	{
+		std::filesystem::path outPath(path);
+		std::error_code ec;
+		if (outPath.has_parent_path()) std::filesystem::create_directories(outPath.parent_path(), ec);
+		if (std::filesystem::exists(outPath, ec)) std::filesystem::remove(outPath, ec);
+
+		std::string usdPath = outPath.generic_string();
+		printf("\n creating USD file: %s", usdPath.c_str());
+
+		UsdStageRefPtr stage = UsdStage::CreateNew(usdPath);
+		if (!stage)
+		{
+			printf("\n error creating USD file: %s", usdPath.c_str());
+			return stage;
+		}
+
+		UsdGeomXform::Define(stage, SdfPath("/World"));
+		UsdGeomXform::Define(stage, SdfPath("/World/Geometry"));
+		stage->SetDefaultPrim(stage->GetPrimAtPath(SdfPath("/World")));
+		return stage;
+	}
+
+	GfMatrix4d toUsdMatrix(const zTransform& transform)
+	{
+		GfMatrix4d matrix;
+		matrix.Set(
+			transform(0, 0), transform(0, 1), transform(0, 2), transform(0, 3),
+			transform(1, 0), transform(1, 1), transform(1, 2), transform(1, 3),
+			transform(2, 0), transform(2, 1), transform(2, 2), transform(2, 3),
+			transform(3, 0), transform(3, 1), transform(3, 2), transform(3, 3));
+		return matrix;
+	}
+
+	TfToken tokenFromName(const std::string& name)
+	{
+		std::string clean = name;
+		for (char& c : clean)
+		{
+			const bool valid = (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '_';
+			if (!valid) c = '_';
+		}
+		if (clean.empty() || (clean[0] >= '0' && clean[0] <= '9')) clean = "_" + clean;
+		return TfToken(clean);
+	}
+
+	void applyFrame(UsdGeomXform& xform, const zTransform* frame)
+	{
+		if (!frame) return;
+
+		auto matrix = toUsdMatrix(*frame);
+		xform.AddTransformOp().Set(matrix);
+		xform.GetPrim().CreateAttribute(TfToken("Frame"), SdfValueTypeNames->Matrix4d).Set(matrix);
+	}
+
+	void saveUsdStage(const UsdStageRefPtr& stage)
+	{
+		if (stage) stage->GetRootLayer()->Save();
+	}
+
+	bool addMeshToStage(const UsdStageRefPtr& stage, zObjMesh& meshObj, const std::string& primName, const zTransform* frame = nullptr)
+	{
+		if (!stage) return false;
+
+		SdfPath meshPath("/World/Geometry");
+		meshPath = meshPath.AppendChild(tokenFromName(primName));
+
+		UsdGeomXform meshXform = UsdGeomXform::Define(stage, meshPath);
+		applyFrame(meshXform, frame);
+
+		UsdGeomMesh mesh = UsdGeomMesh::Define(stage, meshPath.AppendChild(TfToken("Mesh")));
+
+		zFnMesh fnMesh(meshObj);
+		zPointArray positions;
+		zIntArray polyConnects;
+		zIntArray polyCounts;
+		fnMesh.getVertexPositions(positions);
+		fnMesh.getPolygonData(polyConnects, polyCounts);
+
+		VtArray<GfVec3f> points;
+		points.reserve(positions.size());
+		for (const zPoint& p : positions) points.emplace_back((float)p.x, (float)p.y, (float)p.z);
+
+		VtArray<int> faceVertexIndices;
+		VtArray<int> faceVertexCounts;
+		faceVertexIndices.reserve(polyConnects.size());
+		faceVertexCounts.reserve(polyCounts.size());
+		for (int id : polyConnects) faceVertexIndices.push_back(id);
+		for (int count : polyCounts) faceVertexCounts.push_back(count);
+
+		mesh.CreatePointsAttr(VtValue(points), true);
+		mesh.CreateFaceVertexIndicesAttr(VtValue(faceVertexIndices), true);
+		mesh.CreateFaceVertexCountsAttr(VtValue(faceVertexCounts), true);
+		mesh.CreateSubdivisionSchemeAttr(VtValue(UsdGeomTokens->none), true);
+
+		return true;
+	}
+
+	bool exportMeshUsd(const std::string& path, zObjMesh& meshObj, const std::string& primName, const zTransform* frame = nullptr)
+	{
+		UsdStageRefPtr stage = createUsdLiteStage(path);
+		if (!addMeshToStage(stage, meshObj, primName, frame)) return false;
+		saveUsdStage(stage);
+		return true;
+	}
+
+	bool addGraphToStage(const UsdStageRefPtr& stage, zObjGraph& graphObj, const std::string& primName, const zTransform* frame = nullptr)
+	{
+		if (!stage) return false;
+
+		SdfPath graphPath("/World/Geometry");
+		graphPath = graphPath.AppendChild(tokenFromName(primName));
+
+		UsdGeomXform graphXform = UsdGeomXform::Define(stage, graphPath);
+		applyFrame(graphXform, frame);
+
+		UsdGeomBasisCurves curves = UsdGeomBasisCurves::Define(stage, graphPath.AppendChild(TfToken("Curves")));
+		curves.CreateTypeAttr(VtValue(UsdGeomTokens->linear), true);
+		curves.CreateWrapAttr(VtValue(UsdGeomTokens->nonperiodic), true);
+
+		zFnGraph fnGraph(graphObj);
+		zPointArray positions;
+		zIntArray edgeConnects;
+		fnGraph.getVertexPositions(positions);
+		fnGraph.getEdgeData(edgeConnects);
+
+		VtArray<GfVec3f> points;
+		VtArray<int> curveVertexCounts;
+		points.reserve(edgeConnects.size());
+		curveVertexCounts.reserve(edgeConnects.size() / 2);
+
+		for (size_t i = 0; i + 1 < edgeConnects.size(); i += 2)
+		{
+			const zPoint& start = positions[edgeConnects[i]];
+			const zPoint& end = positions[edgeConnects[i + 1]];
+
+			points.emplace_back((float)start.x, (float)start.y, (float)start.z);
+			points.emplace_back((float)end.x, (float)end.y, (float)end.z);
+
+			curveVertexCounts.push_back(2);
+		}
+
+		curves.CreatePointsAttr(VtValue(points), true);
+		curves.CreateCurveVertexCountsAttr(VtValue(curveVertexCounts), true);
+		return true;
+	}
+
+	bool exportGraphUsd(zUtilsCore&, const std::string& path, zObjGraph& graphObj, const std::string& primName, const zTransform* frame = nullptr)
+	{
+		UsdStageRefPtr stage = createUsdLiteStage(path);
+		if (!addGraphToStage(stage, graphObj, primName, frame)) return false;
+		saveUsdStage(stage);
+		return true;
+	}
+
+	void addGraphArrayToStage(const UsdStageRefPtr& stage, zObjGraphArray& graphs, const std::string& groupName)
+	{
+		for (int i = 0; i < graphs.size(); i++)
+		{
+			addGraphToStage(stage, graphs[i], groupName + "_" + core.getPaddedIndexString(i, 3));
+		}
+	}
+
+	void addMeshArrayToStage(const UsdStageRefPtr& stage, zObjMeshArray& meshes, const std::string& groupName)
+	{
+		for (int i = 0; i < meshes.size(); i++)
+		{
+			addMeshToStage(stage, meshes[i], groupName + "_" + core.getPaddedIndexString(i, 3));
+		}
+	}
+
+	bool exportSlicerUsdLite(const std::string& outputFolder)
+	{
+		const std::string path = outputFolder + "/Block_" + to_string(blockID) + "_carbcomn.usda";
+		UsdStageRefPtr stage = createUsdLiteStage(path);
+		if (!stage) return false;
+
+		if (mySlicer.getRawLeftMesh()) addMeshToStage(stage, *mySlicer.getRawLeftMesh(), "slice_left");
+		if (mySlicer.getRawRightMesh()) addMeshToStage(stage, *mySlicer.getRawRightMesh(), "slice_right");
+
+		int numGraphs = 0;
+		zObjGraphPointerArray sections = mySlicer.getBlockSectionGraphs(numGraphs);
+		vector<zTransform> transforms = mySlicer.getBlockFrames();
+		for (int i = 0; i < sections.size(); i++)
+		{
+			const zTransform* frame = (i < transforms.size()) ? &transforms[i] : nullptr;
+			addGraphToStage(stage, *sections[i], "section_" + core.getPaddedIndexString(i, 3), frame);
+		}
+
+		addGraphArrayToStage(stage, mySlicer.o_contourGraphs, "contour");
+		addGraphArrayToStage(stage, mySlicer.o_contourGraphs_flatten, "contour_flatten");
+		addGraphArrayToStage(stage, mySlicer.o_trimGraphs, "trim");
+		addGraphArrayToStage(stage, mySlicer.o_trimGraphs_bracing, "trim_bracing");
+		addGraphArrayToStage(stage, mySlicer.o_trimGraphs_cableprofile, "trim_cableprofile");
+		addGraphArrayToStage(stage, mySlicer.o_raftGraphs, "raft");
+		addMeshArrayToStage(stage, mySlicer.o_sectionMeshes, "section_mesh");
+		addMeshArrayToStage(stage, mySlicer.o_sectionMeshesPar, "section_mesh_flatten");
+
+		saveUsdStage(stage);
+		return true;
+	}
+}
+#else
+namespace
+{
+	bool exportMeshUsd(const std::string&, zObjMesh&, const std::string&, const zTransform* = nullptr)
+	{
+		return false;
+	}
+
+	bool exportGraphUsd(zUtilsCore&, const std::string&, zObjGraph&, const std::string&, const zTransform* = nullptr)
+	{
+		return false;
+	}
+
+	bool exportSlicerUsdLite(const std::string&)
+	{
+		return false;
+	}
+}
+#endif
+
 void update(int value)
 {
 	if (selectBlockFolder)
@@ -289,7 +543,7 @@ void update(int value)
 	{
 		blockID = (int)_slider_blockID;
 		_slider_blockID = blockID;
-		mySlicer = zTsNatpowerSDF();
+		mySlicer = zTsCarbcomn();
 
 		//iscableblock is manually added
 		if (blockID == 0 || blockID == 15||blockID == 44 || blockID == 52)
@@ -342,7 +596,7 @@ void update(int value)
 		mySlicer._interpolateFramesOrigins = interpolateOrigins;
 		//bool chkSDF = false;
 		//bool chkGeo = true;
-		//bool layerChk = natpower.checkPrintLayerHeights(chkSDF, chkGeo);
+		//bool layerChk = Carbcomn.checkPrintLayerHeights(chkSDF, chkGeo);
 		if (mySlicer.blockType == zBlockType(Wall) )
 		{
 			printHeightDomain = printHeightDomain_wall;
@@ -396,8 +650,8 @@ void update(int value)
 	{
 		//bool chkSDF = false;
 		//bool chkGeo = true;
-		//bool layerChk = natpower.checkPrintLayerHeights(chkSDF, chkGeo);
-		//natpower.computePrintBlocks(printHeightDomain, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, neopreneOffset, true, false);
+		//bool layerChk = Carbcomn.checkPrintLayerHeights(chkSDF, chkGeo);
+		//Carbcomn.computePrintBlocks(printHeightDomain, printLayerWidth, raftLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, neopreneOffset, true, false);
 		//printf("\n layerChk = %s | chkSDF %s | chkGeo %s", to_string(layerChk), to_string(chkSDF), to_string(chkGeo));
 
 		mySlicer.check_PrintLayerHeights_Folder(blockDir, printHeightDomain, neopreneOffset, runBothPlanes, runPlaneLeft);
@@ -418,16 +672,13 @@ void update(int value)
 		if (!filesystem::is_directory(expBlockDir) || !filesystem::exists(expBlockDir)) filesystem::create_directory(expBlockDir);
 
 
-		zFnMesh fnmesh;
 		string path;
 
-		fnmesh = zFnMesh(*mySlicer.getRawLeftMesh());
-		path = expBlockDir + "BlockSlice_" + to_string(blockID) + "_left.json";
-		fnmesh.to(path, zJSON);
+		path = expBlockDir + "BlockSlice_" + to_string(blockID) + "_left.usda";
+		exportMeshUsd(path, *mySlicer.getRawLeftMesh(), "slice_left");
 
-		fnmesh = zFnMesh(*mySlicer.getRawRightMesh());
-		path = expBlockDir + "BlockSlice_" + to_string(blockID) + "_right.json";
-		fnmesh.to(path, zJSON);
+		path = expBlockDir + "BlockSlice_" + to_string(blockID) + "_right.usda";
+		exportMeshUsd(path, *mySlicer.getRawRightMesh(), "slice_right");
 
 		exportSlice = !exportSlice;
 	}
@@ -469,28 +720,8 @@ void update(int value)
 
 		for (int i = 0; i < graphs.size(); i++)
 		{
-			json j;
-			fn = zFnGraph(*graphs[i]);
-			fn.to(j);
-			vector<zDoubleArray> frames;
-			get2DArrayFromTransform(transforms[i], frames);
-
-			//core.json_writeAttribute(j, "frames", frames);
-			j["Frame"] = frames;
-
-
-
-			string path = OutputFolder + "_section_" + core.getPaddedIndexString(i, 3) + ".json";
-
-
-			core.json_write(path, j);
-
-			//try to read one of the json
-			//zExtGraph extGraph;
-			////string path2 = OutputFolder + "section_" + core.getPaddedIndexString(0, 3) + ".json";
-			//char* chr = path.data();
-
-			//ext_graph_from(chr, extGraph);
+			string path = OutputFolder + "_section_" + core.getPaddedIndexString(i, 3) + ".usda";
+			exportGraphUsd(core, path, *graphs[i], "section", &transforms[i]);
 
 		}
 
@@ -515,13 +746,11 @@ void update(int value)
 
 		if (!filesystem::is_directory(expBlockDir) || !filesystem::exists(expBlockDir)) filesystem::create_directory(expBlockDir);
 
-
-		string OutputFolder = expBlockDir;// +"/Block_" + to_string(blockID);
+		string OutputFolder = expBlockDir;
 		cout << endl << "output folder :\n" << OutputFolder;
 		if (!filesystem::is_directory(OutputFolder) || !filesystem::exists(OutputFolder)) filesystem::create_directory(OutputFolder);
 
-		//mySlicer.exportJSON(blockDir, OutputFolder, "3dp_block", printLayerWidth, raftLayerWidth);
-		mySlicer.exportJSON_update(blockDir, OutputFolder);
+		mySlicer.exportUSD_update(blockDir, OutputFolder);
 	}
 	if (readSDF)
 	{
@@ -963,8 +1192,6 @@ void keyPress(unsigned char k, int xm, int ym)
 
 	if (k == 'e')
 	{
-		//exportSlice = true;
-		exportSections = true;
 		exportSDF = true;
 	}
 	if (k == 'E')
