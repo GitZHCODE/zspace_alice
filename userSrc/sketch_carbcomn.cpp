@@ -599,10 +599,6 @@ void update(int value)
 		//bool chkSDF = false;
 		//bool chkGeo = true;
 		//bool layerChk = Carbcomn.checkPrintLayerHeights(chkSDF, chkGeo);
-		if (mySlicer.blockType == zBlockType(Wall) )
-		{
-			printHeightDomain = printHeightDomain_wall;
-		}
 		mySlicer.compute_PrintBlocks(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, true, false);
 		//printf("\n layerChk = %s | chkSDF %s | chkGeo %s", to_string(layerChk), to_string(chkSDF), to_string(chkGeo));
 		float cellSize = 0.006f;
