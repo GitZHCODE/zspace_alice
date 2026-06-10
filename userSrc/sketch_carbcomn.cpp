@@ -268,7 +268,7 @@ void get2DArrayFromTransform(zTransform& transform, vector<zDoubleArray>& arr)
 	}
 }
 
-#if defined ZSPACE_USD_INTEROP
+#if 0 && defined ZSPACE_USD_INTEROP
 namespace
 {
 	UsdStageRefPtr createUsdLiteStage(const std::string& path)
@@ -288,9 +288,11 @@ namespace
 			return stage;
 		}
 
-		UsdGeomXform::Define(stage, SdfPath("/World"));
-		UsdGeomXform::Define(stage, SdfPath("/World/Geometry"));
-		stage->SetDefaultPrim(stage->GetPrimAtPath(SdfPath("/World")));
+		UsdPrim world = stage->DefinePrim(SdfPath("/World"), TfToken("Xform"));
+		stage->DefinePrim(SdfPath("/World/Geometry"), TfToken("Xform"));
+		if (!world) return UsdStageRefPtr();
+
+		if (stage->GetRootLayer()) stage->GetRootLayer()->SetDefaultPrim(TfToken("World"));
 		return stage;
 	}
 
