@@ -78,7 +78,7 @@ bool computeTRANSFORM = false;
 bool toLOCAL = true;
 
 
-bool dInputMesh = false;
+bool dInputMesh = true;
 bool dSliceLeft = true;
 bool dSliceRight = false;
 bool dMeshFlatten = false;
@@ -104,7 +104,7 @@ bool frameCHECKS = false;
 double background = 0.8;
 //double _slider_blockID = 44;
 double _slider_blockID = 64;
-double _slider_SDF_Func = 7;
+double _slider_SDF_Func = 5;
 double _slider_SDF_Layers = 3;
 double _slider_SDF_smooth = 1;
 
@@ -117,6 +117,7 @@ string blockVersion = "20_3";
 
 string cablesDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder/V19_11/shared/cableGraphs";
 string blockDir = mainDir + "/V" + blockVersion + "/shared/blocks/";
+string usdInputPath = "\\\\zaha-hadid.com\\Data\\Projects\\1453_CODE\\1453___research\\res_linwo\\carbcomn\\export\\carbcomnTestBlock.usda";
 string expBlockDir = "data/Carbcomn/testSliceMesh/";
 int blockID = 0;
 vector<int> export_block_id_on_q{-1};
@@ -132,7 +133,7 @@ float raftLayerWidth = 0.048;
 
 zDomainFloat neopreneOffset(0.0f, 0.0f);
 
-int SDFFunc_Num = 2;
+int SDFFunc_Num = 5;
 int SDFFunc_NumSmooth = 1;
 int numSDFLayers = 5;
 bool allSDFLayers = false;
@@ -551,7 +552,7 @@ void update(int value)
 		if (blockID == 0 || blockID == 15||blockID == 44 || blockID == 52)
 			mySlicer.isCableBlock = true;
 		cout << "\n iscableblock " << mySlicer.isCableBlock << endl;
-		mySlicer.setFromJSON(blockDir, blockID, runBothPlanes, runPlaneLeft);
+		mySlicer.setFromUSD(usdInputPath);
 
 		bb = zDomain<zPoint>(zPoint(-2.5, -2.5, 0), zPoint(2.5, 2.5, 0));
 		//mySlicer.createFieldMesh(bb, resX, resY);
@@ -764,6 +765,7 @@ void update(int value)
 	if (SDFFunc_Num != _slider_SDF_Func)
 	{
 		SDFFunc_Num = (int)_slider_SDF_Func;
+		if (SDFFunc_Num > 6) SDFFunc_Num = 6;
 		_slider_SDF_Func = SDFFunc_Num;
 	}
 
@@ -805,49 +807,75 @@ void draw()
 
 	if (dSliceLeft)
 	{
-		//mySlicer.getRawLeftMesh()->draw();
-
-		zObjMesh mesh = *mySlicer.getRawLeftMesh();
-		mesh.draw();
-		for (zItMeshEdge e(mesh); !e.end(); e++)
+		if (mySlicer.usdInputMode)
 		{
-			if (e.getColor() == zCYAN)
+			for (int s = 0; s < mySlicer.o_sectionGraphs.size(); s++)
 			{
-				model.displayUtils.drawLine(
-					e.getHalfEdge(0).getStartVertex().getPosition(),
-					e.getHalfEdge(0).getVertex().getPosition(),
-					zCYAN, 3);
+				mySlicer.o_sectionGraphs[s].setDisplayVertices(false);
+				mySlicer.o_sectionGraphs[s].draw();
+
+				for (zItGraphVertex v(mySlicer.o_sectionGraphs[s]); !v.end(); v++)
+				{
+					if (v.getColor() == zORANGE)
+					{
+						model.displayUtils.drawPoint(v.getPosition(), zORANGE, 8);
+					}
+				}
 			}
-			if (e.getColor() == zRED || e.getColor() == zBLUE)
+
+			for (int b = 0; b < mySlicer.o_trimGraphs_bracing.size(); b++)
 			{
-
-				//printf("\n r");
-				model.displayUtils.drawLine(
-					e.getHalfEdge(0).getStartVertex().getPosition(),
-					e.getHalfEdge(0).getVertex().getPosition(),
-					e.getColor(), 5);
-
-
-
-				//if (e.getColor() == zBLUE)	model.displayUtils.drawTextAtPoint(to_string(e.getId()), e.getCenter());
+				mySlicer.o_trimGraphs_bracing[b].setDisplayVertices(true);
+				mySlicer.o_trimGraphs_bracing[b].draw();
 			}
+
+			for (int b = 0; b < mySlicer.usd_bottomBracing.size(); b++)
+			{
+				zIntArray edgeConnects;
+				for (int e = 0; e < mySlicer.usd_bottomBracing[b].size() - 1; e++)
+				{
+					edgeConnects.push_back(e);
+					edgeConnects.push_back(e + 1);
+				}
+
+				zObjGraph bottomBracingGraph;
+				zFnGraph fnBottomBracing(bottomBracingGraph);
+				fnBottomBracing.create(mySlicer.usd_bottomBracing[b], edgeConnects);
+				fnBottomBracing.setEdgeColor(zBLUE);
+				fnBottomBracing.setEdgeWeight(3);
+				bottomBracingGraph.setDisplayVertices(true);
+				bottomBracingGraph.draw();
+			}
+
+			zObjMeshArray geo = mySlicer.o_sectionMeshes;
+			int numMeshes = geo.size();
+			int i = currentGraphId;
+			if (numMeshes > 0 && i >= 0 && i < numMeshes)
+			{
+				geo[i].setDisplayElements(true, true, true);
+				geo[i].draw();
+			}
+
+			mySlicer.o_MedialGraph.setDisplayVertices(true);
+			mySlicer.o_MedialGraph.draw();
 		}
-		for (zItMeshVertex v(mesh); !v.end(); v++)
-		{
-			//if (!(v.getColor() == zBLACK))
-			if (!(v.getColor() == zBLACK))
-			{
-				model.displayUtils.drawPoint(v.getPosition(), v.getColor(), 15);
-			}
-			/*if (v.getColor() == zORANGE )
-			{
-				model.displayUtils.drawPoint(v.getPosition(), v.getColor(), 15);
-			}*/
-		}
-
-
-
 	}
+
+	if (mySlicer.usdInputMode && dTrimGraphs)
+	{
+		int i = currentGraphId;
+		if (mySlicer.o_trimGraphs_bracing.size() > 0 && i >= 0 && i < mySlicer.o_trimGraphs_bracing.size())
+		{
+			mySlicer.o_trimGraphs_bracing[i].setDisplayVertices(true);
+			mySlicer.o_trimGraphs_bracing[i].draw();
+		}
+		if (mySlicer.o_trimGraphs_bracing_slots.size() > 0 && i >= 0 && i < mySlicer.o_trimGraphs_bracing_slots.size())
+		{
+			mySlicer.o_trimGraphs_bracing_slots[i].setDisplayVertices(true);
+			mySlicer.o_trimGraphs_bracing_slots[i].draw();
+		}
+	}
+
 	if (dSliceRight)
 	{
 		//mySlicer.getRawRightMesh()->draw();
@@ -1146,6 +1174,7 @@ void draw()
 	}
 	if (dInputMesh)
 	{
+		mySlicer.o_GuideMesh.setDisplayElements(true, true, true);
 		mySlicer.o_GuideMesh.draw();
 	}
 	
