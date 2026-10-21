@@ -1,5 +1,5 @@
 //#include "zInterface/objects/zObjMeshField.h"
-//#define _MAIN_
+#define _MAIN_
 #define _HAS_STD_BYTE 0
 
 #ifdef _MAIN_
@@ -61,6 +61,7 @@ bool dContourGraphs_FLT = true;
 bool dTrimGraphs = true;
 bool dTrimGraphs_flatten = true;
 bool dField = false;
+bool dToolpathTargets = true;
 bool dCritical = false;
 bool dOtherSide = true;
 bool dCable = false;
@@ -107,6 +108,7 @@ int SDFFunc_Num = 2;
 int SDFFunc_NumSmooth = 1;
 int numSDFLayers = 5;
 bool allSDFLayers = false;
+bool useDualContour = false;
 
 zDomainFloat printHeightDomain_wall(0.006f, 0.009f);
 zDomainFloat printHeightDomain(0.0057f, 0.0123f);
@@ -155,6 +157,12 @@ void setup()
 
 	B.addButton(&allSDFLayers, "all_sdf_layer");
 	B.buttons[bcounter++].attachToVariable(&allSDFLayers);
+
+	B.addButton(&useDualContour, "useDualContour");
+	B.buttons[bcounter++].attachToVariable(&useDualContour);
+
+	B.addButton(&dToolpathTargets, "dToolpathTargets");
+	B.buttons[bcounter++].attachToVariable(&dToolpathTargets);
 
 	/*B.addButton(&runBothPlanes, "runBothPlanes");
 	B.buttons[bcounter++].attachToVariable(&runBothPlanes);
@@ -347,6 +355,7 @@ void update(int value)
 		{
 			printHeightDomain = printHeightDomain_wall;
 		}
+		mySlicer.setUseDualContour(useDualContour);
 		mySlicer.compute_PrintBlocks(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, true, false);
 		//printf("\n layerChk = %s | chkSDF %s | chkGeo %s", to_string(layerChk), to_string(chkSDF), to_string(chkGeo));
 		float cellSize = 0.006f;
@@ -381,6 +390,7 @@ void update(int value)
 	if (computeSDF)
 	{
 		printf("\n SDF smooth %i", SDFFunc_NumSmooth);
+		mySlicer.setUseDualContour(useDualContour);
 		mySlicer.compute_PrintBlocks(printHeightDomain, printLayerWidth, allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, false, true);
 		//mySlicer.computeSDF(allSDFLayers, numSDFLayers, SDFFunc_Num, SDFFunc_NumSmooth, printLayerWidth, 0, raftLayerWidth);;
 
@@ -846,6 +856,84 @@ void draw()
 
 		}
 	}
+	if (dToolpathTargets)
+	{
+		int numGraphs = mySlicer.o_toolpathTargetPoints.size();
+		auto drawToolpathWidthCircle = [&](int graphId, int sampleId)
+		{
+			if (graphId >= mySlicer.o_toolpathTargetPoints.size()) return;
+			if (sampleId >= mySlicer.o_toolpathTargetPoints[graphId].size()) return;
+
+			zPoint center = mySlicer.o_toolpathTargetPoints[graphId][sampleId];
+			float printWidth = 0.0f;
+			if (graphId < mySlicer.o_toolpathPrintWidths.size() && sampleId < mySlicer.o_toolpathPrintWidths[graphId].size())
+			{
+				printWidth = mySlicer.o_toolpathPrintWidths[graphId][sampleId];
+			}
+			if (printWidth <= 0.0f) printWidth = printLayerWidth;
+
+			zVector n(0, 0, 1);
+			if (graphId < mySlicer.o_toolpathNormals.size() && sampleId < mySlicer.o_toolpathNormals[graphId].size())
+			{
+				n = mySlicer.o_toolpathNormals[graphId][sampleId];
+				if (n.length() < EPS) n = zVector(0, 0, 1);
+			}
+			n.normalize();
+
+			zVector ref = (fabs(n.z) < 0.9f) ? zVector(0, 0, 1) : zVector(1, 0, 0);
+			zVector x = ref ^ n;
+			if (x.length() < EPS) x = zVector(1, 0, 0);
+			x.normalize();
+			zVector y = n ^ x;
+			y.normalize();
+
+			bool isFeature = (graphId < mySlicer.o_toolpathFeatureFlags.size() && sampleId < mySlicer.o_toolpathFeatureFlags[graphId].size() && mySlicer.o_toolpathFeatureFlags[graphId][sampleId] == 1);
+			zColor col = isFeature ? zORANGE : zGREEN;
+			float radius = printWidth * 0.5f;
+			int numSegments = 24;
+			for (int c = 0; c < numSegments; c++)
+			{
+				float a0 = (Z_TWO_PI * c) / numSegments;
+				float a1 = (Z_TWO_PI * (c + 1)) / numSegments;
+				zPoint p0 = center + (x * (cos(a0) * radius)) + (y * (sin(a0) * radius));
+				zPoint p1 = center + (x * (cos(a1) * radius)) + (y * (sin(a1) * radius));
+				model.displayUtils.drawLine(p0, p1, col, isFeature ? 2 : 1);
+			}
+			model.displayUtils.drawPoint(center, col, isFeature ? 8 : 4);
+		};
+
+		if (displayAllGraphs)
+		{
+			for (int i = 0; i < numGraphs; i++)
+			{
+				for (int j = 0; j < mySlicer.o_toolpathTargetPoints[i].size(); j++)
+				{
+					drawToolpathWidthCircle(i, j);
+				}
+			}
+		}
+		else
+		{
+			int i = currentGraphId;
+			int end = !pentagon ? numGraphs : floor(numGraphs * 0.5);
+			if (numGraphs > 0 && i >= 0 && i < numGraphs)
+			{
+				for (int j = 0; j < mySlicer.o_toolpathTargetPoints[i].size(); j++)
+				{
+					drawToolpathWidthCircle(i, j);
+				}
+
+				if (pentagon && i + end < numGraphs)
+				{
+					int k = i + end;
+					for (int j = 0; j < mySlicer.o_toolpathTargetPoints[k].size(); j++)
+					{
+						drawToolpathWidthCircle(k, j);
+					}
+				}
+			}
+		}
+	}
 	if (dTrimGraphs)
 	{
 		int numGraphs = 0;
@@ -942,6 +1030,7 @@ void draw()
 	glColor3f(0, 0, 0);
 	drawString("currentGraphId #:" + to_string(currentGraphId), vec(winW - 350, winH - 500, 0));
 	drawString("isRegual? #:" + to_string(mySlicer.isRegular), vec(winW - 350, winH - 200, 0));
+	drawString("Contour: " + string(useDualContour ? "Dual" : "Marching"), vec(winW - 350, winH - 230, 0));
 
 	restore3d();
 

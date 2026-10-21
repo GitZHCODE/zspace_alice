@@ -1,5 +1,5 @@
 //#include "zInterface/objects/zObjMeshField.h"
-#define _MAIN_
+//#define _MAIN_
 #define _HAS_STD_BYTE 0
 
 #ifdef _MAIN_
@@ -117,7 +117,7 @@ string blockVersion = "20_3";
 
 string cablesDir = "//zaha-hadid.com/data/Projects/1453_CODE/1453___research/res_Navee/_NatPower/App/V3/Data/NatPower/outFolder/V19_11/shared/cableGraphs";
 string blockDir = mainDir + "/V" + blockVersion + "/shared/blocks/";
-string usdInputPath = "\\\\zaha-hadid.com\\Data\\Projects\\1453_CODE\\1453___research\\res_linwo\\carbcomn\\export\\carbcomnTestBlock.usda";
+string usdInputPath = "\\\\zaha-hadid.com\\Data\\Projects\\1453_CODE\\1453___research\\res_linwo\\carbcomn\\20260616_carbComnAlice\\inputUsd\\input.usda";
 string expBlockDir = "data/Carbcomn/testSliceMesh/";
 int blockID = 0;
 vector<int> export_block_id_on_q{-1};
